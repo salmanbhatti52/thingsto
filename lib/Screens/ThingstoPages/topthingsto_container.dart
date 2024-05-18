@@ -57,7 +57,7 @@ class TopThingstoContainer extends StatelessWidget {
                             ),
                             Container(
                               width: Get.width * 0.37,
-                              height: 67,
+                              height: 55,
                               padding: const EdgeInsets.only(left: 20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),

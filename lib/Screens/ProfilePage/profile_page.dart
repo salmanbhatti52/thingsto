@@ -80,32 +80,32 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    "https://s3-alpha-sig.figma.com/img/2975/1018/18d5e576e9e6167bc9063a64cf63f6e6?Expires=1716768000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=GUveI9YklU43mh-EqreTHpZGsbgO6Acnl1Kh-VtM~cUn6uSOxc9NpPMol1DjRZ1BKttSDi00jJeZbpLTdmjErJ7iYZ9Ldgfv1qZMGHqwkW8qSuZkTuTJfr-kdpMFnCvb0952S5QI8YmPD1GMKzXMUye8xEteCAzFQKNp7m6wVb3XBbeML517f6BDMy~59qaIWZJmZH-meJdRbKt8jUUQm342oKI2w6QC~nXaDqb4jG5sbVXXNMZNIqV-SasImH5LqJC81-gJnmMjVeQ7fdhz9TpKbkHYCuS4CkWH1TkB5Ll3Apcsc8IeOUXr5eif~xhtTvHYZDXd~ijPSxvEQob0GQ__",
+                                  child: Image.asset(
+                                    AppAssets.dummy2,
                                     fit: BoxFit.fill,
                                     width: 80,
                                     height: 95,
-                                    loadingBuilder: (BuildContext context, Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      } else {
-                                        return SizedBox(
-                                          width: 80,
-                                          height: 95,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              color: AppColor.primaryColor,
-                                              value: loadingProgress.expectedTotalBytes !=
-                                                  null
-                                                  ? loadingProgress.cumulativeBytesLoaded /
-                                                  loadingProgress.expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
+                                    // loadingBuilder: (BuildContext context, Widget child,
+                                    //     ImageChunkEvent? loadingProgress) {
+                                    //   if (loadingProgress == null) {
+                                    //     return child;
+                                    //   } else {
+                                    //     return SizedBox(
+                                    //       width: 80,
+                                    //       height: 95,
+                                    //       child: Center(
+                                    //         child: CircularProgressIndicator(
+                                    //           color: AppColor.primaryColor,
+                                    //           value: loadingProgress.expectedTotalBytes !=
+                                    //               null
+                                    //               ? loadingProgress.cumulativeBytesLoaded /
+                                    //               loadingProgress.expectedTotalBytes!
+                                    //               : null,
+                                    //         ),
+                                    //       ),
+                                    //     );
+                                    //   }
+                                    // },
                                   ),
                                 ),
                                 SizedBox(width: Get.width * 0.06,),

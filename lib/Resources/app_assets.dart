@@ -71,4 +71,8 @@ class AppAssets {
 
   static const String smallT = 'assets/images/smallT.svg';
 
+  static const String dummyImage = 'assets/images/dummyImage.jpg';
+
+  static const String dummy2 = 'assets/images/dummy2.png';
+
 }

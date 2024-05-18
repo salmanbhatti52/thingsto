@@ -46,7 +46,7 @@ class _HomeBarState extends State<HomeBar> {
           : null,
       child: Padding(
         padding: EdgeInsets.only(
-          left: 15,
+          left: widget.titleTrue ? 15 : 0,
           right: 15,
           top: widget.titleTrue ? Get.height * 0.08 : Get.height * 0.06,
         ),

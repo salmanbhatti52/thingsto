@@ -154,11 +154,11 @@ class SettingPage extends StatelessWidget {
                       text: "Share App",
                       text1: "Share app with your friends",
                       onBack: (){
-                        Get.to(
-                              () => const EditProfile(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
+                        // Get.to(
+                        //       () => const EditProfile(),
+                        //   duration: const Duration(milliseconds: 350),
+                        //   transition: Transition.rightToLeft,
+                        // );
                       },
                     ),
                     SizedBox(
@@ -169,11 +169,11 @@ class SettingPage extends StatelessWidget {
                       text: "Rate App",
                       text1: "Rate how was your experience",
                       onBack: (){
-                        Get.to(
-                              () => const EditProfile(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
+                        // Get.to(
+                        //       () => const EditProfile(),
+                        //   duration: const Duration(milliseconds: 350),
+                        //   transition: Transition.rightToLeft,
+                        // );
                       },
                     ),
                     SizedBox(

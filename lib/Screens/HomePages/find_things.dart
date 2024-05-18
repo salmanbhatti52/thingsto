@@ -36,7 +36,7 @@ class _FindThingsState extends State<FindThings> {
             ),
             CustomDropdown(
               itemList: itemListForCity,
-              hintText: "city",
+              hintText: "City",
               onChanged: (value) {
                 selectCity = value;
                 debugPrint("selectCity: $selectCity");
@@ -53,7 +53,7 @@ class _FindThingsState extends State<FindThings> {
             ),
             CustomDropdown(
               itemList: itemListForThing,
-              hintText: "sports",
+              hintText: "Sports",
               onChanged: (value) {
                 selectThing = value;
                 debugPrint("selectThing: $selectThing");

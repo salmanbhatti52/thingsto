@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 35.0),
+                    padding: EdgeInsets.symmetric(horizontal: 20.0,),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -128,13 +128,30 @@ class _HomePageState extends State<HomePage> {
                     height: Get.height * 0.022,
                   ),
                   const HomeSuggestions(),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                      left: 30.0,
-                      right: 10.0,
-                      top: 25.0,
+                  SizedBox(
+                    height: Get.height * 0.022,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15,),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 10.0
                     ),
-                    child: LabelField(
+                    height: Get.height * 0.125,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffFFFAF5),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(width: 1, color: AppColor.secondaryColor,),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 87, 178, 0.08),
+                          blurRadius: 15,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: const LabelField(
                       text: "We are now more than 50,000. Don’t hesitate to send your suggestions everyone.",
                       fontSize: 18,
                       align: TextAlign.left,

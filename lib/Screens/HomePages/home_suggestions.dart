@@ -26,7 +26,7 @@ class HomeSuggestions extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               image: const DecorationImage(
-                image: AssetImage(AppAssets.map),
+                image: AssetImage(AppAssets.dummyImage),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.srgbToLinearGamma(),
               ),
