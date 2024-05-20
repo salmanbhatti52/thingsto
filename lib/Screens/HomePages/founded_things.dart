@@ -29,11 +29,11 @@ class _FoundedThingsState extends State<FoundedThings>
   }
 
   List<dynamic> imgListAvatars = [
-    "https://s3-alpha-sig.figma.com/img/9e81/a743/52f62cef39e80a9502cdfab459f611b8?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SgqyuzY0N7h-QvFTXRCzaUNdZqm9ijCVkQkVl~djLzIg8-MF6IJhWP3lFIsBgMQGCPaJYqxwzTyJQ17D8HkIb6tSbJuv8m1t7s7uvhagEn5EVwjGfVghw8uWAvfmpy7IRD3CEkxMmn~TjxAfOHCTzma6nXKO4wGcoVRl2JQduiBFPT6XEJ0UQRWL47hL-FNBKrpenVAma-HMyw2IS3Qyf91iVAC9zaxuPwRzo-CjS~KBeB94yGuvKH6qbSfBdOT2VoP4s-yHKv531DwWv1WJkLFWCtGAS7k-ZgugH9prW2vSc3IK~dQywROOJAOyr7K773z1l5stLHXTlZMUxowFDQ__",
-    "https://s3-alpha-sig.figma.com/img/9e81/a743/52f62cef39e80a9502cdfab459f611b8?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SgqyuzY0N7h-QvFTXRCzaUNdZqm9ijCVkQkVl~djLzIg8-MF6IJhWP3lFIsBgMQGCPaJYqxwzTyJQ17D8HkIb6tSbJuv8m1t7s7uvhagEn5EVwjGfVghw8uWAvfmpy7IRD3CEkxMmn~TjxAfOHCTzma6nXKO4wGcoVRl2JQduiBFPT6XEJ0UQRWL47hL-FNBKrpenVAma-HMyw2IS3Qyf91iVAC9zaxuPwRzo-CjS~KBeB94yGuvKH6qbSfBdOT2VoP4s-yHKv531DwWv1WJkLFWCtGAS7k-ZgugH9prW2vSc3IK~dQywROOJAOyr7K773z1l5stLHXTlZMUxowFDQ__",
-    "https://s3-alpha-sig.figma.com/img/9e81/a743/52f62cef39e80a9502cdfab459f611b8?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SgqyuzY0N7h-QvFTXRCzaUNdZqm9ijCVkQkVl~djLzIg8-MF6IJhWP3lFIsBgMQGCPaJYqxwzTyJQ17D8HkIb6tSbJuv8m1t7s7uvhagEn5EVwjGfVghw8uWAvfmpy7IRD3CEkxMmn~TjxAfOHCTzma6nXKO4wGcoVRl2JQduiBFPT6XEJ0UQRWL47hL-FNBKrpenVAma-HMyw2IS3Qyf91iVAC9zaxuPwRzo-CjS~KBeB94yGuvKH6qbSfBdOT2VoP4s-yHKv531DwWv1WJkLFWCtGAS7k-ZgugH9prW2vSc3IK~dQywROOJAOyr7K773z1l5stLHXTlZMUxowFDQ__",
-    "https://s3-alpha-sig.figma.com/img/9e81/a743/52f62cef39e80a9502cdfab459f611b8?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SgqyuzY0N7h-QvFTXRCzaUNdZqm9ijCVkQkVl~djLzIg8-MF6IJhWP3lFIsBgMQGCPaJYqxwzTyJQ17D8HkIb6tSbJuv8m1t7s7uvhagEn5EVwjGfVghw8uWAvfmpy7IRD3CEkxMmn~TjxAfOHCTzma6nXKO4wGcoVRl2JQduiBFPT6XEJ0UQRWL47hL-FNBKrpenVAma-HMyw2IS3Qyf91iVAC9zaxuPwRzo-CjS~KBeB94yGuvKH6qbSfBdOT2VoP4s-yHKv531DwWv1WJkLFWCtGAS7k-ZgugH9prW2vSc3IK~dQywROOJAOyr7K773z1l5stLHXTlZMUxowFDQ__",
-  ];
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgi42jlN4rxyVoiuJ5iADlOsXCTBZT9nfVgV-bmM5IWw&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgi42jlN4rxyVoiuJ5iADlOsXCTBZT9nfVgV-bmM5IWw&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgi42jlN4rxyVoiuJ5iADlOsXCTBZT9nfVgV-bmM5IWw&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgi42jlN4rxyVoiuJ5iADlOsXCTBZT9nfVgV-bmM5IWw&s",
+   ];
 
   int _current = 0;
   final CarouselController _controller = CarouselController();

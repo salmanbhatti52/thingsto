@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -89,9 +90,7 @@ class _AddNewThingsState extends State<AddNewThings>
           SizedBox(
             height: Get.height * 0.02,
           ),
-          SizedBox(
-            width: Get.width,
-            height: isKeyboardVisible ? Get.height * 0.53 : Get.height * 0.83,
+          Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(

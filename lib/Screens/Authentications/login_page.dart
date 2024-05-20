@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/Authentications/forgot_password.dart';
 import 'package:thingsto/Screens/Authentications/signup_page.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Widgets/Text.dart';
@@ -108,11 +109,11 @@ class _LoginPageState extends State<LoginPage> {
                               bottom: Get.height * 0.00),
                           child: GestureDetector(
                             onTap: () {
-                              // Get.to(
-                              //       () => const ForgotPassword(),
-                              //   duration: const Duration(milliseconds: 350),
-                              //   transition: Transition.rightToLeft,
-                              // );
+                              Get.to(
+                                    () => ForgotPassword(),
+                                duration: const Duration(milliseconds: 350),
+                                transition: Transition.rightToLeft,
+                              );
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.end,

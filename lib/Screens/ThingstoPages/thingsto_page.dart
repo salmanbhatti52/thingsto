@@ -7,7 +7,6 @@ import 'package:thingsto/Screens/ThingstoPages/thingsto_container.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/row_text.dart';
-
 import 'category_container.dart';
 import 'topthingsto_container.dart';
 
@@ -59,9 +58,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
               ],
             ),
           ),
-          SizedBox(
-            width: Get.width,
-            height: Get.height * 0.69,
+          Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -105,6 +102,9 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     height: Get.height * 0.02,
                   ),
                   const TopThingstoContainer(),
+                  SizedBox(
+                    height: Get.height * 0.02,
+                  ),
                 ],
               ),
             ),

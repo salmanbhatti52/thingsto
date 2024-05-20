@@ -10,7 +10,7 @@ class HelpDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Dialog(
+    return Dialog(
       backgroundColor: Colors.transparent,
       alignment: Alignment.center,
       child: Column(
@@ -60,28 +60,35 @@ class HelpDialog extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.025,
                 ),
-                const LabelField(
-                  text:
-                  "1. Items submitted must comply with\n   our charter and our conditions of\n   use.",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: AppColor.lightBrown,
-                  align: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    children: [
+                      const LabelField(
+                        text:
+                        "1. Items submitted must comply with our charter and our conditions of use.",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: AppColor.lightBrown,
+                        align: TextAlign.left,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.005,
+                      ),
+                      const LabelField(
+                        text:
+                        "2. In particular, the thing proposed must not already been published and must not be contrary to morality or the law.",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: AppColor.lightBrown,
+                        maxLIne: 4,
+                        align: TextAlign.left,
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.003,
-                ),
-                const LabelField(
-                  text:
-                  "   2. In particular, the thing proposed\n       must not already been published\n       and must not be contrary to morality\n       or the law.",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: AppColor.lightBrown,
-                  maxLIne: 4,
-                  align: TextAlign.left,
-                ),
-                SizedBox(
-                  height: Get.height * 0.04,
+                  height: Get.height * 0.03,
                 ),
                 LargeButton(
                   width: Get.width * 0.2,

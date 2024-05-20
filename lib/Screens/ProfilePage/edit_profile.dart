@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -41,9 +42,7 @@ class _EditProfileState extends State<EditProfile> {
           SizedBox(
             height: Get.height * 0.02,
           ),
-          SizedBox(
-            width: Get.width,
-            height: isKeyboardVisible ? Get.height * 0.45 : Get.height * 0.83,
+          Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(

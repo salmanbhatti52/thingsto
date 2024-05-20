@@ -46,7 +46,7 @@ class RankUserList extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          "https://s3-alpha-sig.figma.com/img/a6d3/50d6/f5584825bef248505d2d6e0fe0222968?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AFCqXh8v8975SgJ5YUXO7vrTxwqYkBWIoYiOzbp2Jf0FY1HYGHhUghxBimsNSlunr7Sf-~AJJPUiylEynO1T79iOB7gKTZpc80YH3al4Xju56lzCKQwTKY03s4xjFB7MMCTfWhJfQwrd5KuVUehznPfB1QtsuxLJrijbaoqFMDIwjPLAFi0CIMtoeA4o7xazZ7DCH-G5RShmOh7HJfpj5U8KOQlGTySZbsmKU4eoLbZgEFuxdGk6-gB~sr~b0kVYCRtHobHRQieBHOfWrHb7utWXM9LkFIOCeLjKvN7aAXSbp7H2feuCCHPeIVme-d4OT5CJL9qeL53iMnQm6cbQVQ__",
+                          "https://img.freepik.com/free-photo/3d-rendering-cartoon-like-boy_23-2150797566.jpg?size=626&ext=jpg",
                           fit: BoxFit.fill,
                           width: 84,
                           height: 84,

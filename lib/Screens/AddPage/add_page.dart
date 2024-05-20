@@ -69,7 +69,7 @@ class AddPage extends StatelessWidget {
               ),
               LargeButton(
                 width: Get.width * 0.45,
-                height : Get.height * 0.045,
+                height : Get.height * 0.047,
                 text: "Propose a Thing",
                 onTap: () {
                   Get.to(

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
@@ -32,154 +33,156 @@ class SettingPage extends StatelessWidget {
           SizedBox(
             height: Get.height * 0.02,
           ),
-          SizedBox(
-            width: Get.width,
-            height: Get.height * 0.83,
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SettingContainer(
-                      image: AppAssets.editProfile,
-                      text: "Edit Profile",
-                      text1: "Edit your personal details",
-                      onBack: (){
-                        Get.to(
-                              () => const EditProfile(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.notification,
-                      text: "Notifications Settings",
-                      text1: "Change notifications settings",
-                      onBack: (){
-                        Get.to(
-                              () => const NotificationSetting(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.lang,
-                      text: "Language",
-                      text1: "English",
-                      onBack: (){
-                        Get.to(
-                              () => const LanguageChangePage(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.password,
-                      text: "Change Password",
-                      text1: "Reset your password here",
-                      onBack: (){
-                        Get.to(
-                              () => const PasswordChangePage(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.contact,
-                      text: "Contact Us",
-                      text1: "Contact for any query or help",
-                      onBack: (){
-                        Get.to(
-                              () => const ContactPage(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.del,
-                      text: "Delete Account",
-                      text1: "Delete your account and all the data",
-                      onBack: (){
-                        Get.to(
-                              () => const DeleteAccountPage(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.out,
-                      text: "Sign Out",
-                      text1: "SIgn out from the app",
-                      onBack: (){
-                        Get.offAll(
-                              () => const LoginPage(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.rightToLeft,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.share,
-                      text: "Share App",
-                      text1: "Share app with your friends",
-                      onBack: (){
-                        // Get.to(
-                        //       () => const EditProfile(),
-                        //   duration: const Duration(milliseconds: 350),
-                        //   transition: Transition.rightToLeft,
-                        // );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.015,
-                    ),
-                    SettingContainer(
-                      image: AppAssets.rate,
-                      text: "Rate App",
-                      text1: "Rate how was your experience",
-                      onBack: (){
-                        // Get.to(
-                        //       () => const EditProfile(),
-                        //   duration: const Duration(milliseconds: 350),
-                        //   transition: Transition.rightToLeft,
-                        // );
-                      },
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.02,
-                    ),
-                  ],
+          Expanded(
+            child: SizedBox(
+              width: Get.width,
+              height: Get.height * 0.83,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 25,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SettingContainer(
+                        image: AppAssets.editProfile,
+                        text: "Edit Profile",
+                        text1: "Edit your personal details",
+                        onBack: (){
+                          Get.to(
+                                () => const EditProfile(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.notification,
+                        text: "Notifications Settings",
+                        text1: "Change notifications settings",
+                        onBack: (){
+                          Get.to(
+                                () => const NotificationSetting(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.lang,
+                        text: "Language",
+                        text1: "English",
+                        onBack: (){
+                          Get.to(
+                                () => const LanguageChangePage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.password,
+                        text: "Change Password",
+                        text1: "Reset your password here",
+                        onBack: (){
+                          Get.to(
+                                () => const PasswordChangePage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.contact,
+                        text: "Contact Us",
+                        text1: "Contact for any query or help",
+                        onBack: (){
+                          Get.to(
+                                () => const ContactPage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.del,
+                        text: "Delete Account",
+                        text1: "Delete your account and all the data",
+                        onBack: (){
+                          Get.to(
+                                () => const DeleteAccountPage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.out,
+                        text: "Sign Out",
+                        text1: "SIgn out from the app",
+                        onBack: (){
+                          Get.offAll(
+                                () => const LoginPage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.share,
+                        text: "Share App",
+                        text1: "Share app with your friends",
+                        onBack: (){
+                          // Get.to(
+                          //       () => const EditProfile(),
+                          //   duration: const Duration(milliseconds: 350),
+                          //   transition: Transition.rightToLeft,
+                          // );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.rate,
+                        text: "Rate App",
+                        text1: "Rate how was your experience",
+                        onBack: (){
+                          // Get.to(
+                          //       () => const EditProfile(),
+                          //   duration: const Duration(milliseconds: 350),
+                          //   transition: Transition.rightToLeft,
+                          // );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

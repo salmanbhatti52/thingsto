@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -21,9 +22,7 @@ class DeleteAccountPage extends StatelessWidget {
               Get.back();
             },
           ),
-          SizedBox(
-            width:  Get.width,
-            height: Get.height * 0.86,
+          Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/Authentications/login_page.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFieldValidation.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
-class PasswordChangePage extends StatefulWidget {
-  const PasswordChangePage({super.key});
+class PasswordChange extends StatefulWidget {
+  const PasswordChange({super.key});
 
   @override
-  State<PasswordChangePage> createState() => _PasswordChangePageState();
+  State<PasswordChange> createState() => _PasswordChangeState();
 }
 
-class _PasswordChangePageState extends State<PasswordChangePage> {
+class _PasswordChangeState extends State<PasswordChange> {
 
   final passwordController = TextEditingController();
   bool isPasswordVisible = true;
@@ -43,13 +43,15 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Change Password",
+            title: "Reset Password",
             bottomPad: 15,
             onBack: () {
               Get.back();
             },
           ),
-          Expanded(
+          SizedBox(
+            width: Get.width,
+            height: isKeyboardVisible ? Get.height * 0.43 : Get.height * 0.86,
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
@@ -60,10 +62,10 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: Get.height * 0.07,
+                      height: Get.height * 0.2,
                     ),
                     const LabelField(
-                      text: 'Password',
+                      text: 'New Password',
                     ),
                     const SizedBox(
                       height: 8,
@@ -84,7 +86,7 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                     ),
                     const SizedBox(height: 18,),
                     const LabelField(
-                      text: 'Confirm Password',
+                      text: 'Confirm New Password',
                     ),
                     const SizedBox(
                       height: 8,
@@ -104,12 +106,16 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                       textInputAction: TextInputAction.done,
                     ),
                     SizedBox(
-                      height: Get.height * 0.49,
+                      height: Get.height * 0.2,
                     ),
                     LargeButton(
-                      text: "Confirm",
+                      text: "Reset",
                       onTap: () {
-                        Get.back();
+                        Get.to(
+                              () => const LoginPage(),
+                          duration: const Duration(milliseconds: 350),
+                          transition: Transition.upToDown,
+                        );
                       },
                     ),
                     SizedBox(

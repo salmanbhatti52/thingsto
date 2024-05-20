@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -42,9 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             },
           ),
-          SizedBox(
-            width: Get.width,
-            height: Get.height * 0.77,
+          Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
@@ -221,6 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const LabelField(
                       text: 'Summary of stats for each category',
                       fontSize: 18,
+                      align: TextAlign.left,
                     ),
                     const SummaryStats(),
                     SizedBox(
