@@ -35,7 +35,7 @@ class MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
     super.initState();
     currentIndex = widget.initialIndex;
     pages = [
-      HomePage(),
+      const HomePage(),
       const RankPage(),
       const ThingstoPage(),
       const AddPage(),

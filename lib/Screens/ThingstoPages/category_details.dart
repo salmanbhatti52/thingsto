@@ -55,7 +55,7 @@ class CategoryDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 10,),
                 const LabelField(
-                  text: "Châteaux\nDU 95",
+                  text: "Chateaux\nDU 95",
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                   color: AppColor.blackColor,

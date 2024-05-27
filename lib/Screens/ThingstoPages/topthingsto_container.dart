@@ -49,7 +49,7 @@ class TopThingstoContainer extends StatelessWidget {
                         Column(
                           children: [
                             const LabelField(
-                              text: "La Masson du",
+                              text: "La Mason du",
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
                               color: AppColor.blackColor,

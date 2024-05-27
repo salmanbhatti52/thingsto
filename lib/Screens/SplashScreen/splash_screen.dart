@@ -13,15 +13,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
     Future.delayed(
       const Duration(seconds: 2),
-          () {
+      () {
         Get.off(
-              () => const LoginPage(),
+          () => const LoginPage(),
         );
       },
     );
@@ -38,8 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(),
-              SvgPicture.asset(AppAssets.logo,),
-              SvgPicture.asset(AppAssets.name,),
+              SvgPicture.asset(
+                AppAssets.logo,
+              ),
+              SvgPicture.asset(
+                AppAssets.name,
+              ),
             ],
           ),
         ),
