@@ -79,11 +79,11 @@ class CustomTextFormField extends StatelessWidget {
           ),
           errorStyle: GoogleFonts.poppins(
             fontSize: 14,
-            color: AppColor.hintColor,
+            color: Colors.red,
             fontWeight: FontWeight.w400,
           ),
           errorBorder:  OutlineInputBorder(
-            borderSide: const BorderSide(width: 1, color: AppColor.borderColor),
+            borderSide: const BorderSide(width: 1, color: Colors.red),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedErrorBorder:  OutlineInputBorder(

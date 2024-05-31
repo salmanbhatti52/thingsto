@@ -27,11 +27,11 @@ class ThingstoDetails extends StatelessWidget {
               child: Column(
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(bottom: 15.0),
+                    padding: EdgeInsets.only(bottom: 55.0),
                     child: FoundedThings(),
                   ),
                   LargeButton(
-                    text: "Done",
+                    text: "Validate this Thing",
                     onTap: () {
                       Get.back();
                     },

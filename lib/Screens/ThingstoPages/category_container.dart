@@ -1,14 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
 class CategoryContainer extends StatefulWidget {
   final VoidCallback? onSelect;
-  const CategoryContainer({super.key, this.onSelect});
+  final List categories;
+  const CategoryContainer({super.key, this.onSelect,  required this.categories,});
 
   @override
   State<CategoryContainer> createState() => _CategoryContainerState();
@@ -23,8 +24,9 @@ class _CategoryContainerState extends State<CategoryContainer> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ScrollPhysics(),
-        itemCount: 6,
+        itemCount: widget.categories.length,
         itemBuilder: (BuildContext context, i) {
+          final category = widget.categories[i];
           return Padding(
             padding: const EdgeInsets.only(right: 10.0, top: 15),
             child: Column(
@@ -55,15 +57,39 @@ class _CategoryContainerState extends State<CategoryContainer> {
                       ],
                     ),
                     child: Center(
-                      child: SvgPicture.asset(
-                        AppAssets.museums,
+                      child: Image.network(
+                        '$baseUrlImage${category['image']}',
+                        // width: 50,
+                        // height: 50,
+                        // fit: BoxFit.fill,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                          return SvgPicture.asset(
+                            AppAssets.museums,
+                          );
+                        },
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return Center(
+                            child:
+                            CircularProgressIndicator(
+                              color: AppColor.primaryColor,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 10,),
-                const LabelField(
-                  text: "Museums",
+                LabelField(
+                  text: category['name'],
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                   color: AppColor.blackColor,

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/category_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/category_details.dart';
 import 'package:thingsto/Screens/ThingstoPages/thingsto_container.dart';
+import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/row_text.dart';
+import 'package:thingsto/Widgets/shimmer_effect.dart';
 import 'category_container.dart';
 import 'topthingsto_container.dart';
 
@@ -19,6 +23,16 @@ class ThingstoPage extends StatefulWidget {
 
 class _ThingstoPageState extends State<ThingstoPage> {
   bool isSelect = false;
+  final CategoryController categoryController = Get.put(CategoryController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      categoryController.getCategory(usersCustomersId: userID.toString(), currentLattitude: "30.157458", currentLongitude: "71.5249154",);
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -75,13 +89,50 @@ class _ThingstoPageState extends State<ThingstoPage> {
                         ),
                   isSelect
                       ? const CategoryDetails()
-                      : CategoryContainer(
-                          onSelect: () {
-                            setState(() {
-                              isSelect = true;
-                            });
-                          },
-                        ),
+                      : Obx(() {
+                          if (categoryController.isLoading.value) {
+                            return Shimmers(
+                              width: Get.width,
+                              height: Get.height * 0.15,
+                              width1: Get.width * 0.18,
+                              height1: Get.height * 0.08,
+                              length: 6,
+                            );
+                          }
+                          if (categoryController.isError.value) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 40.0),
+                                child: LabelField(
+                                  text: "Categories not found",
+                                  fontSize: 21,
+                                  color: AppColor.blackColor,
+                                  interFont: true,
+                                ),
+                              ),
+                            );
+                          }
+                          if (categoryController.categories.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'Categories not found',
+                                style: TextStyle(
+                                  color: AppColor.blackColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            );
+                          }
+                          return CategoryContainer(
+                            categories: categoryController.categories,
+                            onSelect: () {
+                              setState(() {
+                                isSelect = true;
+                              });
+                            },
+                          );
+                        },
+                  ),
                   SizedBox(
                     height: Get.height * 0.01,
                   ),

@@ -1,4 +1,6 @@
 class AppAssets {
+  static const String dummyPic =
+      'https://amoremio.lared.lat/uploads/placeholder.jpg';
 
   static const String logo = 'assets/images/logo.svg';
 
@@ -7,6 +9,10 @@ class AppAssets {
   static const String name = 'assets/images/name.svg';
 
   static const String search = 'assets/images/search.svg';
+
+  static const String copyLink = 'assets/images/copyLink.svg';
+
+  static const String cameraPlus = 'assets/images/cameraPlus.svg';
 
   static const String camera = 'assets/images/camera.svg';
 
@@ -73,5 +79,4 @@ class AppAssets {
   static const String dummyImage = 'assets/images/dummyImage.jpg';
 
   static const String dummy2 = 'assets/images/dummy2.png';
-
 }

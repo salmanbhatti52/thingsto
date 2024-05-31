@@ -9,12 +9,14 @@ import 'package:thingsto/Screens/ProfilePage/delete_account.dart';
 import 'package:thingsto/Screens/ProfilePage/edit_profile.dart';
 import 'package:thingsto/Screens/ProfilePage/language_change.dart';
 import 'package:thingsto/Screens/ProfilePage/notification_setting.dart';
+import 'package:thingsto/Screens/ProfilePage/share_app.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 
 import '../password_change.dart';
 
 class SettingPage extends StatelessWidget {
-  const SettingPage({super.key});
+  Map<dynamic, dynamic> getProfile = {};
+   SettingPage({super.key, required this.getProfile});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class SettingPage extends StatelessWidget {
                         text1: "Edit your personal details",
                         onBack: (){
                           Get.to(
-                                () => const EditProfile(),
+                                () => EditProfile(getProfile: getProfile,),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );
@@ -96,7 +98,7 @@ class SettingPage extends StatelessWidget {
                         text1: "Reset your password here",
                         onBack: (){
                           Get.to(
-                                () => const PasswordChangePage(),
+                                () => PasswordChangePage(),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );
@@ -126,7 +128,7 @@ class SettingPage extends StatelessWidget {
                         text1: "Delete your account and all the data",
                         onBack: (){
                           Get.to(
-                                () => const DeleteAccountPage(),
+                                () => DeleteAccountPage(),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );
@@ -141,7 +143,7 @@ class SettingPage extends StatelessWidget {
                         text1: "SIgn out from the app",
                         onBack: (){
                           Get.offAll(
-                                () => const LoginPage(),
+                                () => LoginPage(),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );
@@ -155,11 +157,11 @@ class SettingPage extends StatelessWidget {
                         text: "Share App",
                         text1: "Share app with your friends",
                         onBack: (){
-                          // Get.to(
-                          //       () => const EditProfile(),
-                          //   duration: const Duration(milliseconds: 350),
-                          //   transition: Transition.rightToLeft,
-                          // );
+                          Get.to(
+                                () => const ShareApp(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
                         },
                       ),
                       SizedBox(

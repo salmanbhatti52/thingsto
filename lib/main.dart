@@ -1,13 +1,16 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/SplashScreen/splash_screen.dart';
+import 'Utills/const.dart';
 
 //  Flutter Version :: 3.19.7  //
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  prefs = await SharedPreferences.getInstance();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

@@ -1,43 +1,34 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:thingsto/Resources/app_assets.dart';
-import 'package:thingsto/Resources/app_colors.dart';
-import 'package:thingsto/Screens/Authentications/login_page.dart';
-import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:thingsto/Controllers/auth_controllers.dart';
 import 'package:thingsto/Widgets/Text.dart';
-import 'package:thingsto/Widgets/TextFieldLabel.dart';
-import 'package:thingsto/Widgets/TextFieldValidation.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Resources/app_assets.dart';
+import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Widgets/TextFieldLabel.dart';
+import 'package:thingsto/Widgets/TextFieldValidation.dart';
+import 'package:thingsto/Screens/Authentications/login_page.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class SignupPage extends StatelessWidget {
+  SignupPage({super.key});
 
-  @override
-  State<SignupPage> createState() => _SignupPageState();
-}
-
-class _SignupPageState extends State<SignupPage> {
   final formKey = GlobalKey<FormState>();
-  bool isPasswordVisible = true;
-  bool isConfirmPasswordVisible = true;
+
   final firstNameController = TextEditingController();
+
   final lastNameController = TextEditingController();
+
   final emailController = TextEditingController();
+
+  final referralCodeController = TextEditingController();
+
   final passwordController = TextEditingController();
+
   final confirmPasswordController = TextEditingController();
 
-  passwordTap() {
-    setState(() {
-      isPasswordVisible = !isPasswordVisible;
-    });
-  }
-
-  confirmPasswordTap() {
-    setState(() {
-      isConfirmPasswordVisible = !isConfirmPasswordVisible;
-    });
-  }
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +75,12 @@ class _SignupPageState extends State<SignupPage> {
                         CustomTextFormField(
                           controller: firstNameController,
                           hintText: "First Name here",
-                          // validator: validateEmail,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'First Name is required';
+                            }
+                            return null;
+                          },
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
@@ -101,7 +97,12 @@ class _SignupPageState extends State<SignupPage> {
                         CustomTextFormField(
                           controller: lastNameController,
                           hintText: "Last Name here",
-                          // validator: validateEmail,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Last Name is required';
+                            }
+                            return null;
+                          },
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
@@ -127,24 +128,46 @@ class _SignupPageState extends State<SignupPage> {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Password',
+                          text: 'Referral Code',
                         ),
                         const SizedBox(
                           height: 8,
                         ),
                         CustomTextFormField(
-                          controller: passwordController,
-                          hintText: "********",
-                          suffixImage: isPasswordVisible
-                              ? AppAssets.eyeOpen
-                              : AppAssets.eyeOpen,
-                          suffixTap: () {
-                            passwordTap();
+                          controller: referralCodeController,
+                          hintText: "1233456",
+                          validator:(value) {
+                            if (value == null || value.isEmpty || value.length <= 5) {
+                              return 'Referral Code is required';
+                            }
+                            return null;
                           },
-                          obscureText: isPasswordVisible,
-                          validator: validatePassword,
-                          keyboardType: TextInputType.visiblePassword,
+                          keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
+                          showSuffix: false,
+                        ),
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        const LabelField(
+                          text: 'Password',
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Obx(
+                          () => CustomTextFormField(
+                            controller: passwordController,
+                            hintText: "********",
+                            suffixImage: authController.isPasswordVisible.value
+                                ? AppAssets.eyeOpen
+                                : AppAssets.eyeOpen,
+                            suffixTap: authController.passwordTap,
+                            obscureText: authController.isPasswordVisible.value,
+                            validator: validatePassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.next,
+                          ),
                         ),
                         const SizedBox(
                           height: 18,
@@ -155,19 +178,21 @@ class _SignupPageState extends State<SignupPage> {
                         const SizedBox(
                           height: 8,
                         ),
-                        CustomTextFormField(
-                          controller: confirmPasswordController,
-                          hintText: "********",
-                          suffixImage: isConfirmPasswordVisible
-                              ? AppAssets.eyeOpen
-                              : AppAssets.eyeOpen,
-                          suffixTap: () {
-                            confirmPasswordTap();
-                          },
-                          obscureText: isConfirmPasswordVisible,
-                          validator: validatePassword,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.done,
+                        Obx(
+                          () => CustomTextFormField(
+                            controller: confirmPasswordController,
+                            hintText: "********",
+                            suffixImage:
+                                authController.isConfirmPasswordVisible.value
+                                    ? AppAssets.eyeOpen
+                                    : AppAssets.eyeOpen,
+                            suffixTap: authController.confirmPasswordTap,
+                            obscureText:
+                                authController.isConfirmPasswordVisible.value,
+                            validator: validatePassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.done,
+                          ),
                         ),
                       ],
                     ),
@@ -176,15 +201,37 @@ class _SignupPageState extends State<SignupPage> {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-                LargeButton(
-                  text: "Signup",
-                  onTap: () {
-                    Get.to(
-                      () => const MyBottomNavigationBar(),
-                      duration: const Duration(milliseconds: 350),
-                      transition: Transition.rightToLeft,
-                    );
-                  },
+                Obx(
+                  () => authController.isLoading.value
+                      ? LargeButton(
+                          text: "Please Wait...",
+                          onTap: () {},
+                        )
+                      : LargeButton(
+                          text: "Signup",
+                          onTap: () {
+                            if (formKey.currentState!.validate()) {
+                              if (passwordController.text ==
+                                  confirmPasswordController.text) {
+                                authController.register(
+                                  surName: firstNameController.text,
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                  oneSignalId: "123456",
+                                  currentLongitude: '71.5249154',
+                                  currentLatitude: '30.157458',
+                                );
+                              } else {
+                                CustomSnackbar.show(
+                                  title: 'Signup Response',
+                                  message: "Password do not matched",
+                                );
+                              }
+                            }
+                          },
+                        ),
                 ),
                 SizedBox(
                   height: Get.height * 0.05,
@@ -200,7 +247,7 @@ class _SignupPageState extends State<SignupPage> {
                     GestureDetector(
                       onTap: () {
                         Get.to(
-                          () => const LoginPage(),
+                          () => LoginPage(),
                           duration: const Duration(milliseconds: 350),
                           transition: Transition.downToUp,
                         );

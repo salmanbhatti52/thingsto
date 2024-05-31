@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/setting_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
 class DeleteAccountPage extends StatelessWidget {
-  const DeleteAccountPage({super.key});
+    DeleteAccountPage({super.key});
+
+  final SettingController settingController = Get.put(SettingController());
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +60,18 @@ class DeleteAccountPage extends StatelessWidget {
                     SizedBox(
                       height: Get.height * 0.25,
                     ),
-                    LargeButton(
-                      text: "Confirm",
-                      onTap: () {
-                        Get.back();
-                      },
+                    Obx(
+                          () => settingController.isLoading.value
+                          ? LargeButton(
+                        text: "Please Wait...",
+                        onTap: () {},
+                      )
+                          : LargeButton(
+                        text: "Confirm",
+                        onTap: () {
+                            settingController.deleteAccount();
+                        },
+                      ),
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

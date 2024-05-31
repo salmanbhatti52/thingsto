@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/auth_controllers.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/Authentications/forgot_password.dart';
 import 'package:thingsto/Screens/Authentications/signup_page.dart';
-import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Widgets/Text.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFieldValidation.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginPage extends StatelessWidget {
+     LoginPage({super.key});
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  bool isPasswordVisible = true;
+
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
-  passwordTap() {
-    setState(() {
-      isPasswordVisible = !isPasswordVisible;
-    });
-  }
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -89,19 +81,19 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 8,
                         ),
-                        CustomTextFormField(
-                          controller: passwordController,
-                          hintText: "********",
-                          suffixImage: isPasswordVisible
-                              ? AppAssets.eyeOpen
-                              : AppAssets.eyeOpen,
-                          suffixTap: () {
-                            passwordTap();
-                          },
-                          obscureText: isPasswordVisible,
-                          validator: validatePassword,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.done,
+                        Obx(
+                              () => CustomTextFormField(
+                            controller: passwordController,
+                            hintText: "********",
+                            suffixImage: authController.isPasswordVisible.value
+                                ? AppAssets.eyeOpen
+                                : AppAssets.eyeOpen,
+                            suffixTap: authController.passwordTap,
+                            obscureText: authController.isPasswordVisible.value,
+                            validator: validatePassword,
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.done,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
@@ -138,15 +130,26 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-                LargeButton(
-                  text: "Login",
-                  onTap: () {
-                    Get.to(
-                      () => const MyBottomNavigationBar(),
-                      duration: const Duration(milliseconds: 350),
-                      transition: Transition.rightToLeft,
-                    );
-                  },
+                Obx(
+                      () => authController.isLoading.value
+                      ? LargeButton(
+                    text: "Please Wait...",
+                    onTap: () {},
+                  )
+                      : LargeButton(
+                    text: "Login",
+                    onTap: () {
+                      if (formKey.currentState!.validate()) {
+                        authController.login(
+                            email: emailController.text,
+                            password: passwordController.text,
+                            oneSignalId: "123456",
+                            currentLongitude: '71.5249154',
+                            currentLatitude: '30.157458',
+                          );
+                        }
+                    },
+                  ),
                 ),
                 SizedBox(
                   height: Get.height * 0.24,
@@ -162,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                     GestureDetector(
                       onTap: () {
                         Get.to(
-                          () => const SignupPage(),
+                          () => SignupPage(),
                           duration: const Duration(milliseconds: 350),
                           transition: Transition.downToUp,
                         );

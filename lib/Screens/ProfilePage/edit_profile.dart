@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/update_profile_controller.dart';
+import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
@@ -8,7 +12,8 @@ import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  Map<dynamic, dynamic> getProfile = {};
+   EditProfile({super.key, required this.getProfile});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -24,6 +29,18 @@ class _EditProfileState extends State<EditProfile> {
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
 
+  UpdateProfileController  updateProfileController = Get.put(UpdateProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    surNameController.text = widget.getProfile['sur_name'] ?? '';
+    firstNameController.text = widget.getProfile['first_name'] ?? '';
+    lastNameController.text = widget.getProfile['last_name'] ?? '';
+    emailController.text = widget.getProfile['email'] ?? '';
+    selectAge = widget.getProfile['age']?.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +54,6 @@ class _EditProfileState extends State<EditProfile> {
               Get.back();
             },
           ),
-          SizedBox(
-            height: Get.height * 0.02,
-          ),
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -50,6 +64,56 @@ class _EditProfileState extends State<EditProfile> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: Get.height * 0.03,
+                    ),
+                    Center(
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Container(
+                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 2, color: AppColor.primaryColor),),
+                              child: ClipOval(
+                                child: SizedBox.fromSize(
+                                  size: const Size.fromRadius(50), // Image radius
+                                  child: widget.getProfile['profile_picture'] == null
+                                      ? Image.network('$baseUrlImage${widget.getProfile['profile_picture']}',)
+                                      : Image.network(
+                                    AppAssets.dummyPic,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: Get.width * 0.28,
+                            bottom: 1,
+                            child: GestureDetector(
+                              onTap: (){
+                                updateProfileController.imagePick();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: AppColor.whiteColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 1,
+                                    color: AppColor.primaryColor,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(AppAssets.cameraPlus,),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.025,
+                    ),
                     const LabelField(
                       text: 'Surname',
                     ),
@@ -130,7 +194,7 @@ class _EditProfileState extends State<EditProfile> {
                       showSuffix: false,
                     ),
                     SizedBox(
-                      height: Get.height * 0.2,
+                      height: Get.height * 0.06,
                     ),
                     LargeButton(
                       text: "Save Changes",
