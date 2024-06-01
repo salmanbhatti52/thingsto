@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -13,15 +14,18 @@ import 'package:thingsto/Widgets/large_Button.dart';
 
 class EditProfile extends StatefulWidget {
   Map<dynamic, dynamic> getProfile = {};
-   EditProfile({super.key, required this.getProfile});
+  EditProfile({super.key, required this.getProfile});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
-
-  List<String> itemListForAge = ["20", "25", "30",];
+  List<String> itemListForAge = [
+    "20",
+    "25",
+    "30",
+  ];
   String? selectAge;
 
   final surNameController = TextEditingController();
@@ -29,7 +33,8 @@ class _EditProfileState extends State<EditProfile> {
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
 
-  UpdateProfileController  updateProfileController = Get.put(UpdateProfileController());
+  UpdateProfileController updateProfileController =
+      Get.put(UpdateProfileController());
 
   @override
   void initState() {
@@ -71,27 +76,42 @@ class _EditProfileState extends State<EditProfile> {
                       child: Stack(
                         children: [
                           Center(
-                            child: Container(
-                              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 2, color: AppColor.primaryColor),),
-                              child: ClipOval(
-                                child: SizedBox.fromSize(
-                                  size: const Size.fromRadius(50), // Image radius
-                                  child: widget.getProfile['profile_picture'] == null
-                                      ? Image.network('$baseUrlImage${widget.getProfile['profile_picture']}',)
-                                      : Image.network(
-                                    AppAssets.dummyPic,
-                                  ),
+                            child: Obx(() {
+                              String? profilePicUrl =
+                                  widget.getProfile['profile_picture'];
+
+                              ImageProvider backgroundImage;
+                              if (updateProfileController.imageFile.value !=
+                                  null) {
+                                backgroundImage = FileImage(File(
+                                    updateProfileController
+                                        .imageFile.value!.path),);
+                              } else if (profilePicUrl != null) {
+                                backgroundImage = NetworkImage(baseUrlImage+profilePicUrl);
+                              } else {
+                                backgroundImage =
+                                    const NetworkImage(AppAssets.dummyPic);
+                              }
+
+                              return Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      width: 2, color: AppColor.primaryColor),
                                 ),
-                              ),
-                            ),
+                                child: CircleAvatar(
+                                  radius: 50,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: backgroundImage,
+                                ),
+                              );
+                            }),
                           ),
                           Positioned(
                             right: Get.width * 0.28,
                             bottom: 1,
                             child: GestureDetector(
-                              onTap: (){
-                                updateProfileController.imagePick();
-                              },
+                              onTap: updateProfileController.imagePick,
                               child: Container(
                                 padding: const EdgeInsets.all(3),
                                 decoration: BoxDecoration(
@@ -103,7 +123,7 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 ),
                                 child: Center(
-                                  child: SvgPicture.asset(AppAssets.cameraPlus,),
+                                  child: SvgPicture.asset(AppAssets.cameraPlus),
                                 ),
                               ),
                             ),
@@ -171,7 +191,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     CustomDropdown(
                       itemList: itemListForAge,
-                      hintText: "Select Age",
+                      hintText: selectAge!.isNotEmpty ? selectAge.toString() : "Select Age",
                       onChanged: (value) {
                         selectAge = value;
                         debugPrint("selectAge: $selectAge");
@@ -196,11 +216,26 @@ class _EditProfileState extends State<EditProfile> {
                     SizedBox(
                       height: Get.height * 0.06,
                     ),
-                    LargeButton(
-                      text: "Save Changes",
-                      onTap: () {
-                        Get.back();
-                      },
+                    Obx(
+                      () => updateProfileController.isLoading.value
+                          ? LargeButton(
+                              text: "Please Wait...",
+                              onTap: () {},
+                            )
+                          : LargeButton(
+                              text: "Save Changes",
+                              onTap: () {
+                                updateProfileController.updateProfile(
+                                  surName: surNameController.text,
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  age: selectAge.toString(),
+                                  profilePicture: updateProfileController
+                                      .base64Image.value
+                                      .toString(),
+                                );
+                              },
+                            ),
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

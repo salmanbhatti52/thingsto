@@ -5,6 +5,7 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/HomePages/find_things.dart';
 import 'package:thingsto/Screens/HomePages/founded_things.dart';
 import 'package:thingsto/Screens/HomePages/home_suggestions.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
@@ -19,6 +20,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isDropDownShow = false;
   bool isFind = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getName();
+  }
+
+  getName()  {
+    surName = prefs.getString('surName');
+    if (surName != null) {
+      debugPrint("surname :: $surName");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,25 +54,25 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            child: const Column(
+            child: Column(
               children: [
-                HomeBar(
+                const HomeBar(
                   icon1: AppAssets.logoName,
                   icon2: AppAssets.notify,
                 ),
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0,),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0,),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        LabelField(
+                        const LabelField(
                           text: "Welcome",
                           fontSize: 18,
                         ),
                         LabelField(
-                          text: "John",
+                          text: surName.toString(),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColor.lightBrown,

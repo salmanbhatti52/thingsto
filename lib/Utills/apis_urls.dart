@@ -18,4 +18,6 @@ String changePasswordApiUrl = '${baseUrl}change_password';
 
 String getProfileApiUrl = '${baseUrl}customers_profile';
 
+String updateProfileApiUrl = '${baseUrl}update_profile';
+
 String categoriesApiUrl = '${baseUrl}categories';

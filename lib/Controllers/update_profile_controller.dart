@@ -2,14 +2,20 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
+import 'package:thingsto/Utills/apis_urls.dart';
+import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class UpdateProfileController extends GetxController {
 
   Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
   RxString base64Image = RxString("");
+  var isLoading = false.obs;
 
   Future<void> imagePick() async {
     final picker = ImagePicker();
@@ -50,9 +56,6 @@ class UpdateProfileController extends GetxController {
     );
     if (croppedFile != null) {
       imageFile.value = croppedFile;
-      if (imageFile.value != null) {
-        Get.back();
-      }
       await convertToBase64(croppedFile);
     }
   }
@@ -62,6 +65,70 @@ class UpdateProfileController extends GetxController {
     String base64String = base64Encode(imageBytes);
     base64Image.value = base64String;
     debugPrint("base64Image ${base64Image.value}");
+  }
+
+  /* Update Profile Function */
+
+  updateProfile({
+    String? usersCustomersId,
+    required String surName,
+    required String firstName,
+    required String lastName,
+    required String age,
+    String? email,
+    String? currentLongitude,
+    String? currentLattitude,
+    String? notifications,
+    required String profilePicture,
+  }) async {
+    try {
+      isLoading.value = true;
+      email = (prefs.getString('email').toString());
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("email $email");
+      debugPrint("userId $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "sur_name": surName,
+        "first_name": firstName,
+        "last_name": lastName,
+        "age": age,
+        "email": email,
+        "current_longitude": "71.5249154",
+        "current_lattitude": "30.157458",
+        "notifications": "Yes",
+        "profile_picture": profilePicture,
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(updateProfileApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var updateData = jsonDecode(response.body);
+      debugPrint("updateData $updateData");
+      if (updateData['status'] == 'success') {
+        var userData = updateData['data'][0];
+        await prefs.setString('surName', userData['sur_name']);
+        CustomSnackbar.show(
+          title: 'Update Profile Response',
+          message: "Profile Update successfully.",
+        );
+        Get.off(
+              () => const MyBottomNavigationBar(initialIndex: 4,),
+          duration: const Duration(milliseconds: 350),
+          transition: Transition.downToUp,
+        );
+      } else {
+        debugPrint(updateData['message']);
+        CustomSnackbar.show(
+          title: 'Update Profile Response',
+          message: "Some thing wrong",
+        );
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
 }

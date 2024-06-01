@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -40,13 +41,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    userID = (prefs.getString('users_customers_id').toString());
-    debugPrint("userID $userID");
-    getProfileController.getUserProfile(
-      usersCustomersId: userID.toString(),
-    );
+    getUserProfile();
+  }
+
+  Future<void> getUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userID = prefs.getString('users_customers_id');
+    if (userID != null) {
+      getProfileController.getUserProfile(usersCustomersId: userID);
+    }
   }
 
   @override
@@ -117,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               : profilePictureUrl.isNotEmpty && profilePictureUrl != null
                                                   ? Image.network(
                                                       '$baseUrlImage$profilePictureUrl',
-                                                      fit: BoxFit.fill,
+                                                      fit: BoxFit.cover,
                                                       width: 80,
                                                       height: 95,
                                                       loadingBuilder: (BuildContext context, Widget child,

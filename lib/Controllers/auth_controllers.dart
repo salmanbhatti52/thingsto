@@ -61,8 +61,9 @@ class AuthController extends GetxController {
         var userData = signupData['data'][0];
 
         await prefs.setString('users_customers_id', userData['users_customers_id'].toString());
-        await prefs.setString('firstName', userData['first_name']);
-        await prefs.setString('lastName', userData['last_name']);
+        // await prefs.setString('firstName', userData['first_name']);
+        // await prefs.setString('lastName', userData['last_name']);
+        await prefs.setString('surName', userData['sur_name']);
         await prefs.setString('email', userData['email']);
         await prefs.setString('isLogin', 'true');
 
@@ -116,8 +117,9 @@ class AuthController extends GetxController {
         var userData = loginData['data'][0];
 
         await prefs.setString('users_customers_id', userData['users_customers_id'].toString());
-        await prefs.setString('firstName', userData['first_name']);
-        await prefs.setString('lastName', userData['last_name']);
+        // await prefs.setString('firstName', userData['first_name']);
+        // await prefs.setString('lastName', userData['last_name']);
+        await prefs.setString('surName', userData['sur_name']);
         await prefs.setString('email', userData['email']);
         await prefs.setString('isLogin', 'true');
 
