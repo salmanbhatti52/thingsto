@@ -11,6 +11,7 @@ import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class EditProfile extends StatefulWidget {
   Map<dynamic, dynamic> getProfile = {};
@@ -28,6 +29,7 @@ class _EditProfileState extends State<EditProfile> {
   ];
   String? selectAge;
 
+  final formKey = GlobalKey<FormState>();
   final surNameController = TextEditingController();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -66,165 +68,169 @@ class _EditProfileState extends State<EditProfile> {
                 padding: EdgeInsets.symmetric(
                   horizontal: Get.width * 0.08,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: Get.height * 0.03,
-                    ),
-                    Center(
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Obx(() {
-                              String? profilePicUrl =
-                                  widget.getProfile['profile_picture'];
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.03,
+                      ),
+                      Center(
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Obx(() {
+                                String? profilePicUrl =
+                                widget.getProfile['profile_picture'];
 
-                              ImageProvider backgroundImage;
-                              if (updateProfileController.imageFile.value !=
-                                  null) {
-                                backgroundImage = FileImage(File(
-                                    updateProfileController
-                                        .imageFile.value!.path),);
-                              } else if (profilePicUrl != null) {
-                                backgroundImage = NetworkImage(baseUrlImage+profilePicUrl);
-                              } else {
-                                backgroundImage =
-                                    const NetworkImage(AppAssets.dummyPic);
-                              }
+                                ImageProvider backgroundImage;
+                                if (updateProfileController.imageFile.value !=
+                                    null) {
+                                  backgroundImage = FileImage(File(
+                                      updateProfileController
+                                          .imageFile.value!.path),);
+                                } else if (profilePicUrl != null) {
+                                  backgroundImage = NetworkImage(baseUrlImage+profilePicUrl);
+                                } else {
+                                  backgroundImage =
+                                  const NetworkImage(AppAssets.dummyPic);
+                                }
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      width: 2, color: AppColor.primaryColor),
-                                ),
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage: backgroundImage,
-                                ),
-                              );
-                            }),
-                          ),
-                          Positioned(
-                            right: Get.width * 0.28,
-                            bottom: 1,
-                            child: GestureDetector(
-                              onTap: updateProfileController.imagePick,
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  color: AppColor.whiteColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    width: 1,
-                                    color: AppColor.primaryColor,
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        width: 2, color: AppColor.primaryColor),
                                   ),
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(AppAssets.cameraPlus),
+                                  child: CircleAvatar(
+                                    radius: 50,
+                                    backgroundColor: Colors.transparent,
+                                    backgroundImage: backgroundImage,
+                                  ),
+                                );
+                              }),
+                            ),
+                            Positioned(
+                              right: Get.width * 0.28,
+                              bottom: 1,
+                              child: GestureDetector(
+                                onTap: updateProfileController.imagePick,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    color: AppColor.whiteColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 1,
+                                      color: AppColor.primaryColor,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(AppAssets.cameraPlus),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.025,
-                    ),
-                    const LabelField(
-                      text: 'Surname',
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    CustomTextFormField(
-                      controller: surNameController,
-                      hintText: "Surname here",
-                      // validator: validateEmail,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.next,
-                      showSuffix: false,
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    const LabelField(
-                      text: 'First Name',
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    CustomTextFormField(
-                      controller: firstNameController,
-                      hintText: "First Name here",
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.next,
-                      showSuffix: false,
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    const LabelField(
-                      text: 'Last Name',
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    CustomTextFormField(
-                      controller: lastNameController,
-                      hintText: "Last Name here",
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      showSuffix: false,
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    const LabelField(
-                      text: 'Age',
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    CustomDropdown(
-                      itemList: itemListForAge,
-                      hintText: selectAge!.isNotEmpty ? selectAge.toString() : "Select Age",
-                      onChanged: (value) {
-                        selectAge = value;
-                        debugPrint("selectAge: $selectAge");
-                      },
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    const LabelField(
-                      text: 'Email',
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    CustomTextFormField(
-                      controller: emailController,
-                      hintText: "username@gmail.com",
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.done,
-                      showSuffix: false,
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.06,
-                    ),
-                    Obx(
-                      () => updateProfileController.isLoading.value
-                          ? LargeButton(
-                              text: "Please Wait...",
-                              onTap: () {},
-                            )
-                          : LargeButton(
-                              text: "Save Changes",
-                              onTap: () {
+                      SizedBox(
+                        height: Get.height * 0.025,
+                      ),
+                      const LabelField(
+                        text: 'Surname',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextFormField(
+                        controller: surNameController,
+                        hintText: "Surname here",
+                        // validator: validateEmail,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
+                        showSuffix: false,
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'First Name',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextFormField(
+                        controller: firstNameController,
+                        hintText: "First Name here",
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
+                        showSuffix: false,
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'Last Name',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextFormField(
+                        controller: lastNameController,
+                        hintText: "Last Name here",
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.done,
+                        showSuffix: false,
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'Age',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomDropdown(
+                        itemList: itemListForAge,
+                        hintText: selectAge != null ? selectAge.toString() : "Select Age",
+                        onChanged: (value) {
+                          selectAge = value;
+                          debugPrint("selectAge: $selectAge");
+                        },
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'Email',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextFormField(
+                        controller: emailController,
+                        hintText: "username@gmail.com",
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        showSuffix: false,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.06,
+                      ),
+                      Obx(
+                            () => updateProfileController.isLoading.value
+                            ? LargeButton(
+                          text: "Please Wait...",
+                          onTap: () {},
+                        )
+                            : LargeButton(
+                          text: "Save Changes",
+                          onTap: () {
+                            if (formKey.currentState!.validate()) {
+                              if (selectAge != null) {
                                 updateProfileController.updateProfile(
                                   surName: surNameController.text,
                                   firstName: firstNameController.text,
@@ -234,14 +240,22 @@ class _EditProfileState extends State<EditProfile> {
                                       .base64Image.value
                                       .toString(),
                                 );
-                              },
-                            ),
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.02,
-                    ),
-                  ],
-                ),
+                              } else {
+                                CustomSnackbar.show(
+                                  title: 'Update Profile Response',
+                                  message: "Please Select Age",
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                    ],
+                  ),
+                )
               ),
             ),
           ),

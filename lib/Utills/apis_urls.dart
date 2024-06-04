@@ -1,8 +1,12 @@
 
-String baseUrl = 'https://things.eigix.net/api/';
-String baseUrlImage = 'https://things.eigix.net/public/';
+String baseUrl = 'https://thingsto.fr/portal/api/';
+String baseUrlImage = 'https://thingsto.fr/portal/public/';
 
                    /* Urls */
+
+String systemSettingsApiUrl = '${baseUrl}system_settings';
+
+String checkReferralCodeApiUrl = '${baseUrl}check_referral_code';
 
 String signUpApiUrl = '${baseUrl}signup';
 
@@ -21,3 +25,11 @@ String getProfileApiUrl = '${baseUrl}customers_profile';
 String updateProfileApiUrl = '${baseUrl}update_profile';
 
 String categoriesApiUrl = '${baseUrl}categories';
+
+String categoriesSubApiUrl = '${baseUrl}categories_sub';
+
+String categoriesAllApiUrl = '${baseUrl}categories_all';
+
+String thingsAddApiUrl = '${baseUrl}things_add';
+
+String thingsGetApiUrl = '${baseUrl}things';

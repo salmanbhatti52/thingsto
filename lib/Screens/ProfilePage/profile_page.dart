@@ -9,7 +9,6 @@ import 'package:thingsto/Screens/HomePages/home_suggestions.dart';
 import 'package:thingsto/Screens/ProfilePage/SettingPage/setting_page.dart';
 import 'package:thingsto/Screens/ProfilePage/summary_stats.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
-import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
@@ -85,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Obx(() {
                       final profile = getProfileController.getProfile;
                       final profilePictureUrl = profile['profile_picture'] ?? '';
-                      final userName = "${profile['first_name']} ${profile['last_name']}" ?? '';
+                      final userName = "${profile['first_name']} ${profile['last_name']}";
                       return Stack(
                         children: [
                           Container(

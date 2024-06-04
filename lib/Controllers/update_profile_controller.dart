@@ -9,6 +9,7 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class UpdateProfileController extends GetxController {
@@ -76,13 +77,16 @@ class UpdateProfileController extends GetxController {
     required String lastName,
     required String age,
     String? email,
-    String? currentLongitude,
-    String? currentLattitude,
     String? notifications,
     required String profilePicture,
   }) async {
     try {
       isLoading.value = true;
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
       email = (prefs.getString('email').toString());
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("email $email");
@@ -94,8 +98,8 @@ class UpdateProfileController extends GetxController {
         "last_name": lastName,
         "age": age,
         "email": email,
-        "current_longitude": "71.5249154",
-        "current_lattitude": "30.157458",
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
         "notifications": "Yes",
         "profile_picture": profilePicture,
       };

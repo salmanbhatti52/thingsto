@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'dart:convert';
-import 'package:thingsto/Utills/const.dart';
 
 class GetProfileController extends GetxController {
   var isLoading = false.obs;

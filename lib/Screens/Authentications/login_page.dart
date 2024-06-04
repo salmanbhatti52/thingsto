@@ -143,9 +143,6 @@ class LoginPage extends StatelessWidget {
                         authController.login(
                             email: emailController.text,
                             password: passwordController.text,
-                            oneSignalId: "123456",
-                            currentLongitude: '71.5249154',
-                            currentLatitude: '30.157458',
                           );
                         }
                     },

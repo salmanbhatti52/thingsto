@@ -4,6 +4,8 @@ class AppAssets {
 
   static const String logo = 'assets/images/logo.svg';
 
+  static const String filter = 'assets/images/filter.svg';
+
   static const String logoName = 'assets/images/logoThingsto.png';
 
   static const String name = 'assets/images/name.svg';

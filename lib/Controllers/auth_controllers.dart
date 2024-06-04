@@ -6,8 +6,8 @@ import 'package:thingsto/Screens/Authentications/login_page.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
-
 import '../Screens/Authentications/email_verification.dart';
 
 class AuthController extends GetxController {
@@ -16,18 +16,126 @@ class AuthController extends GetxController {
   var userId = 0.obs;
   RxBool isPasswordVisible = true.obs;
   RxBool isConfirmPasswordVisible = true.obs;
+  var geoApiKey = ''.obs;
+  var oneSignalApiKey = ''.obs;
 
   passwordTap() {
-      isPasswordVisible.value = !isPasswordVisible.value;
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 
   confirmPasswordTap() {
-      isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+
+  /* User System Setting  Function */
+
+  systemSetting() async {
+    try {
+      isLoading.value = true;
+      final response = await http.get(Uri.parse(systemSettingsApiUrl));
+
+      var systemSettingData = jsonDecode(response.body);
+      debugPrint("systemSettingData $systemSettingData");
+      if (systemSettingData['status'] == 'success') {
+        final List settings = systemSettingData['data'];
+        for (var setting in settings) {
+          if (setting['type'] == 'geo_api_key') {
+            geoApiKey(setting['description']);
+            await prefs.setString(
+              'geo_api_key',
+              geoApiKey(
+                setting['description'],
+              ),
+            );
+            break;
+          }
+        }
+        for (var setting in settings) {
+          if (setting['type'] == 'onesignal_appId') {
+            oneSignalApiKey(setting['description']);
+            await prefs.setString(
+              'onesignal_appId',
+              oneSignalApiKey(
+                setting['description'],
+              ),
+            );
+            break;
+          }
+        }
+      } else {
+        debugPrint(systemSettingData['status']);
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* User Referral  Function */
+
+  checkReferrals({
+    required String referralCode,
+    required String surName,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      isLoading.value = true;
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      systemSetting();
+      Map<String, String> data = {
+        "referral_code": referralCode,
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(checkReferralCodeApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var referralData = jsonDecode(response.body);
+      debugPrint("referralData $referralData");
+      if (referralData['status'] == 'success') {
+        var referralId = referralData['data']["referral_users_customers_id"];
+        register(
+          referralUsersCustomersId: referralId.toString(),
+          surName: firstName,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          oneSignalId: oneSignalApiKey.toString(),
+          currentLongitude: longitude1.toString(),
+          currentLatitude: latitude1.toString(),
+        );
+        Get.offAll(
+          () => const MyBottomNavigationBar(),
+          duration: const Duration(milliseconds: 350),
+          transition: Transition.rightToLeft,
+        );
+      } else {
+        debugPrint(referralData['status']);
+        var errorMsg = referralData['message'];
+        CustomSnackbar.show(
+          title: 'Signup Response',
+          message: errorMsg.toString(),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   /* User Register  Function */
 
   register({
+    required String referralUsersCustomersId,
     required String surName,
     required String firstName,
     required String lastName,
@@ -40,6 +148,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       Map<String, String> data = {
+        "referral_users_customers_id": "1",
         "sur_name": surName,
         "first_name": firstName,
         "last_name": lastName,
@@ -57,10 +166,10 @@ class AuthController extends GetxController {
       var signupData = jsonDecode(response.body);
       debugPrint("signupData $signupData");
       if (signupData['status'] == 'success') {
-
         var userData = signupData['data'][0];
 
-        await prefs.setString('users_customers_id', userData['users_customers_id'].toString());
+        await prefs.setString(
+            'users_customers_id', userData['users_customers_id'].toString());
         // await prefs.setString('firstName', userData['first_name']);
         // await prefs.setString('lastName', userData['last_name']);
         await prefs.setString('surName', userData['sur_name']);
@@ -72,7 +181,6 @@ class AuthController extends GetxController {
           duration: const Duration(milliseconds: 350),
           transition: Transition.rightToLeft,
         );
-
       } else {
         debugPrint(signupData['status']);
         var errorMsg = signupData['message'];
@@ -93,18 +201,21 @@ class AuthController extends GetxController {
   login({
     required String email,
     required String password,
-    required String oneSignalId,
-    required String currentLongitude,
-    required String currentLatitude,
   }) async {
     try {
       isLoading.value = true;
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      systemSetting();
       Map<String, String> data = {
         "email": email,
         "password": password,
-        "one_signal_id": oneSignalId,
-        "current_longitude": currentLongitude,
-        "current_lattitude": currentLatitude,
+        "one_signal_id": oneSignalApiKey.toString(),
+        "current_longitude": longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(loginApiUrl),
@@ -113,10 +224,10 @@ class AuthController extends GetxController {
       var loginData = jsonDecode(response.body);
       debugPrint("loginData $loginData");
       if (loginData['status'] == 'success') {
-
         var userData = loginData['data'][0];
 
-        await prefs.setString('users_customers_id', userData['users_customers_id'].toString());
+        await prefs.setString(
+            'users_customers_id', userData['users_customers_id'].toString());
         // await prefs.setString('firstName', userData['first_name']);
         // await prefs.setString('lastName', userData['last_name']);
         await prefs.setString('surName', userData['sur_name']);
@@ -128,7 +239,6 @@ class AuthController extends GetxController {
           duration: const Duration(milliseconds: 350),
           transition: Transition.rightToLeft,
         );
-
       } else {
         debugPrint(loginData['status']);
         var errorMsg = loginData['message'];
@@ -161,18 +271,19 @@ class AuthController extends GetxController {
       var forgotData = jsonDecode(response.body);
       debugPrint("forgotData $forgotData");
       if (forgotData['status'] == 'success') {
-
         CustomSnackbar.show(
           title: 'Forgot Password Response',
           message: forgotData['data']["message"],
         );
 
         Get.to(
-              () => EmailVerify(email: email, otp: forgotData['data']["otp"],),
+          () => EmailVerify(
+            email: email,
+            otp: forgotData['data']["otp"],
+          ),
           duration: const Duration(milliseconds: 350),
           transition: Transition.rightToLeft,
         );
-
       } else {
         debugPrint(forgotData['status']);
         var errorMsg = forgotData['message'];
@@ -211,13 +322,11 @@ class AuthController extends GetxController {
       var modifyData = jsonDecode(response.body);
       debugPrint("modifyData $modifyData");
       if (modifyData['status'] == 'success') {
-
         Get.offAll(
-              () => LoginPage(),
+          () => LoginPage(),
           duration: const Duration(milliseconds: 350),
           transition: Transition.upToDown,
         );
-
       } else {
         debugPrint(modifyData['status']);
         var errorMsg = modifyData['message'];

@@ -4,3 +4,5 @@ late SharedPreferences prefs;
 
 String? userID;
 String? surName;
+String? googleApiKey;
+String? oneSignalId;

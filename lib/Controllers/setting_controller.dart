@@ -108,4 +108,5 @@ class SettingController extends GetxController {
       isLoading.value = false;
     }
   }
+
 }

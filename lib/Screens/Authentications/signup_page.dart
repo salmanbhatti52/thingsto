@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:thingsto/Controllers/auth_controllers.dart';
+import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/Text.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
@@ -15,19 +16,12 @@ class SignupPage extends StatelessWidget {
   SignupPage({super.key});
 
   final formKey = GlobalKey<FormState>();
-
   final firstNameController = TextEditingController();
-
   final lastNameController = TextEditingController();
-
   final emailController = TextEditingController();
-
   final referralCodeController = TextEditingController();
-
   final passwordController = TextEditingController();
-
   final confirmPasswordController = TextEditingController();
-
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -135,9 +129,9 @@ class SignupPage extends StatelessWidget {
                         ),
                         CustomTextFormField(
                           controller: referralCodeController,
-                          hintText: "1233456",
+                          hintText: "Referral code here",
                           validator:(value) {
-                            if (value == null || value.isEmpty || value.length <= 5) {
+                            if (value == null || value.isEmpty) {
                               return 'Referral Code is required';
                             }
                             return null;
@@ -209,19 +203,16 @@ class SignupPage extends StatelessWidget {
                         )
                       : LargeButton(
                           text: "Signup",
-                          onTap: () {
+                          onTap: () async {
                             if (formKey.currentState!.validate()) {
-                              if (passwordController.text ==
-                                  confirmPasswordController.text) {
-                                authController.register(
-                                  surName: firstNameController.text,
-                                  firstName: firstNameController.text,
-                                  lastName: lastNameController.text,
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                  oneSignalId: "123456",
-                                  currentLongitude: '71.5249154',
-                                  currentLatitude: '30.157458',
+                              if (passwordController.text == confirmPasswordController.text) {
+                                authController.checkReferrals(
+                                    referralCode: referralCodeController.text,
+                                    surName: firstNameController.text,
+                                    firstName: firstNameController.text,
+                                    lastName: lastNameController.text,
+                                    email: emailController.text,
+                                    password: passwordController.text,
                                 );
                               } else {
                                 CustomSnackbar.show(

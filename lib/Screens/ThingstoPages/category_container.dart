@@ -6,16 +6,11 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
-class CategoryContainer extends StatefulWidget {
-  final VoidCallback? onSelect;
+class CategoryContainer extends StatelessWidget {
+  final Function(String, String) onSelect;
   final List categories;
-  const CategoryContainer({super.key, this.onSelect,  required this.categories,});
+  const CategoryContainer({super.key, required this.onSelect,  required this.categories,});
 
-  @override
-  State<CategoryContainer> createState() => _CategoryContainerState();
-}
-
-class _CategoryContainerState extends State<CategoryContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,18 +19,17 @@ class _CategoryContainerState extends State<CategoryContainer> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ScrollPhysics(),
-        itemCount: widget.categories.length,
+        itemCount: categories.length,
         itemBuilder: (BuildContext context, i) {
-          final category = widget.categories[i];
+          final category = categories[i];
+          var categoryId = category['categories_id'];
           return Padding(
             padding: const EdgeInsets.only(right: 10.0, top: 15),
             child: Column(
               children: [
                 GestureDetector(
                   onTap: (){
-                    if (widget.onSelect != null) {
-                      widget.onSelect!();
-                    }
+                    onSelect(category['name'], categoryId.toString(),);
                   },
                   child: Container(
                     width: Get.width * 0.18,
@@ -57,32 +51,35 @@ class _CategoryContainerState extends State<CategoryContainer> {
                       ],
                     ),
                     child: Center(
-                      child: Image.network(
-                        '$baseUrlImage${category['image']}',
-                        // width: 50,
-                        // height: 50,
-                        // fit: BoxFit.fill,
-                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                          return SvgPicture.asset(
-                            AppAssets.museums,
-                          );
-                        },
-                        loadingBuilder:
-                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return Center(
-                            child:
-                            CircularProgressIndicator(
-                              color: AppColor.primaryColor,
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Image.network(
+                          '$baseUrlImage${category['image']}',
+                          // width: 50,
+                          // height: 50,
+                          // fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                            return SvgPicture.asset(
+                              AppAssets.museums,
+                            );
+                          },
+                          loadingBuilder:
+                              (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child:
+                              CircularProgressIndicator(
+                                color: AppColor.primaryColor,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),

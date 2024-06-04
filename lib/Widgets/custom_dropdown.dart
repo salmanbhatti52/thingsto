@@ -5,7 +5,7 @@ import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 
 class CustomDropdown extends StatefulWidget {
-  final List<String> itemList;
+  final List<dynamic> itemList;
   final String? initialValue;
   final String hintText;
   final Function(String?) onChanged;

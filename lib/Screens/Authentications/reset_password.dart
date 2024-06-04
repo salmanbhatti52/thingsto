@@ -7,7 +7,6 @@ import 'package:thingsto/Widgets/Text.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFieldValidation.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
-import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
 class PasswordChange extends StatelessWidget {
