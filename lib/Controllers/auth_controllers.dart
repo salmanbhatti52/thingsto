@@ -121,7 +121,7 @@ class AuthController extends GetxController {
         debugPrint(referralData['status']);
         var errorMsg = referralData['message'];
         CustomSnackbar.show(
-          title: 'Signup Response',
+          title: 'Error',
           message: errorMsg.toString(),
         );
       }
@@ -185,7 +185,7 @@ class AuthController extends GetxController {
         debugPrint(signupData['status']);
         var errorMsg = signupData['message'];
         CustomSnackbar.show(
-          title: 'Signup Response',
+          title: 'Error',
           message: errorMsg.toString(),
         );
       }
@@ -243,7 +243,7 @@ class AuthController extends GetxController {
         debugPrint(loginData['status']);
         var errorMsg = loginData['message'];
         CustomSnackbar.show(
-          title: 'Login Response',
+          title: 'Error',
           message: errorMsg.toString(),
         );
       }
@@ -272,7 +272,7 @@ class AuthController extends GetxController {
       debugPrint("forgotData $forgotData");
       if (forgotData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Forgot Password Response',
+          title: 'Success',
           message: forgotData['data']["message"],
         );
 
@@ -288,7 +288,7 @@ class AuthController extends GetxController {
         debugPrint(forgotData['status']);
         var errorMsg = forgotData['message'];
         CustomSnackbar.show(
-          title: 'Forgot Password Response',
+          title: 'Error',
           message: errorMsg.toString(),
         );
       }
@@ -331,7 +331,7 @@ class AuthController extends GetxController {
         debugPrint(modifyData['status']);
         var errorMsg = modifyData['message'];
         CustomSnackbar.show(
-          title: 'Login Response',
+          title: 'Error',
           message: errorMsg.toString(),
         );
       }

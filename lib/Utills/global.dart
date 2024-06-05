@@ -13,19 +13,19 @@ class GlobalService {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      CustomSnackbar.show(title: "Location Services", message: "Location services are disabled. Please enable the services.",);
+      CustomSnackbar.show(title: "Error", message: "Location services are disabled. Please enable the services.",);
       return false;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        CustomSnackbar.show(title: "Location Services", message: "Location permissions are denied.",);
+        CustomSnackbar.show(title: "Error", message: "Location permissions are denied.",);
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      CustomSnackbar.show(title: "Location Services", message: "Location permissions are permanently denied, we cannot request permissions.",);
+      CustomSnackbar.show(title: "Error", message: "Location permissions are permanently denied, we cannot request permissions.",);
       return false;
     }
     return true;

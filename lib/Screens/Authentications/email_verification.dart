@@ -108,7 +108,7 @@ class EmailVerify extends StatelessWidget {
                       );
                     } else {
                       CustomSnackbar.show(
-                        title: 'Otp Verification Response',
+                        title: 'Error',
                         message: "Otp do not match.",
                       );
                     }

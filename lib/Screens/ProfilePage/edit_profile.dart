@@ -242,7 +242,7 @@ class _EditProfileState extends State<EditProfile> {
                                 );
                               } else {
                                 CustomSnackbar.show(
-                                  title: 'Update Profile Response',
+                                  title: 'Error',
                                   message: "Please Select Age",
                                 );
                               }

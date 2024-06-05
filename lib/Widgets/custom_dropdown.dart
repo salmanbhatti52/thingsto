@@ -32,6 +32,18 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   @override
+  void didUpdateWidget(CustomDropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.itemList != oldWidget.itemList) {
+      setState(() {
+        if (!widget.itemList.contains(_selectedItem)) {
+          _selectedItem = null;
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,

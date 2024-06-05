@@ -1,11 +1,8 @@
-import 'dart:math';
-
+import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,6 +17,7 @@ import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class AddNewThings extends StatefulWidget {
   const AddNewThings({super.key});
@@ -38,16 +36,22 @@ class _AddNewThingsState extends State<AddNewThings>
   String? selectSubCategory;
   String? selectCategoryId;
   String? selectSubCategoryId;
+  final formKey = GlobalKey<FormState>();
   final thingNameController = TextEditingController();
   final pointsController = TextEditingController();
   late TextEditingController locationController;
   final descController = TextEditingController();
   final linkController = TextEditingController();
+  final textController = TextEditingController();
   bool _isChecked = false;
   late AnimationController _controller;
   late Animation<double> _animation;
   double latitude = 0;
   double longitude = 0;
+  String country = "";
+  String state = "";
+  String city = "";
+  String postCode = "";
 
   @override
   void initState() {
@@ -139,7 +143,9 @@ class _AddNewThingsState extends State<AddNewThings>
                       ),
                     ),
                   )
-                      : Column(
+                      : Form(
+                    key: formKey,
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const LabelField(
@@ -162,10 +168,11 @@ class _AddNewThingsState extends State<AddNewThings>
                             debugPrint(
                                 "selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
                             // Filter subcategories based on selected category
-                            // itemListForSubCategory = addThingsController.subcategories
-                            //     .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
-                            //     .map((c) => c['name'].toString())
-                            //     .toList();
+                            itemListForSubCategory = addThingsController.subcategories
+                                .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
+                                .map((c) => c['name'].toString())
+                                .toList();
+                            selectSubCategory = null;
                           });
                         },
                       ),
@@ -184,15 +191,11 @@ class _AddNewThingsState extends State<AddNewThings>
                         onChanged: (value) {
                           setState(() {
                             selectSubCategory = value;
-                            selectSubCategoryId = addThingsController
-                                .subcategories
-                                .firstWhere((c) => c['name'] == value)[
-                            'categories_id']
-                                .toString();
-                            debugPrint(
-                                "selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
+                            selectSubCategoryId = addThingsController.subcategories.firstWhere((c) => c['name'] == value)['categories_id'].toString();
+                            debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
                           });
                         },
+                        initialValue: selectSubCategory,
                       ),
                       const SizedBox(
                         height: 18,
@@ -254,7 +257,10 @@ class _AddNewThingsState extends State<AddNewThings>
                                 locationController.text = addressDetails['address']!;
                                 latitude = latitude1;
                                 longitude = longitude1;
-
+                                country = addressDetails['country'].toString();
+                                state = addressDetails['state'].toString();
+                                city = addressDetails['city'].toString();
+                                postCode = addressDetails['postCode'].toString();
                                 debugPrint('current address: ${addressDetails['address']}');
                                 debugPrint('current city: ${addressDetails['city']}');
                                 debugPrint('current state: ${addressDetails['state']}');
@@ -303,14 +309,22 @@ class _AddNewThingsState extends State<AddNewThings>
                                         final placeDetails = await _placesService.getPlaceDetails(id!);
                                         setState(() {
                                           latitudeLongitude = LatLng(latitude, longitude);
-                                          locationController.text =
-                                          "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText!}";
+                                          locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText!}";
                                           _autoCompleteResult.clear();
                                         });
                                         latitude = placeDetails.lat!;
                                         longitude = placeDetails.lng!;
-                                        debugPrint("latte $latitude");
-                                        debugPrint("long $longitude");
+                                        country = placeDetails.city.toString();
+                                        state = placeDetails.state.toString();
+                                        city = placeDetails.city.toString();
+                                        postCode = placeDetails.zip.toString();
+                                        debugPrint('current address: ${locationController.text}');
+                                        debugPrint('current city: $city');
+                                        debugPrint('current state: $state');
+                                        debugPrint('current country: $country');
+                                        debugPrint('current postal code: $postCode');
+                                        debugPrint('current latitude: $latitude');
+                                        debugPrint('current longitude: $longitude');
                                       },
                                     );
                                   },
@@ -369,34 +383,56 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      DottedBorder(
-                        color: AppColor.primaryColor,
-                        strokeWidth: 1,
-                        radius: const Radius.circular(10),
-                        borderType: BorderType.RRect,
-                        child: Container(
-                          width: Get.width,
-                          height: Get.height * 0.163,
-                          color: AppColor.secondaryColor,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(AppAssets.upload),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const LabelField(
-                                  text: "Upload Photos (upto 5)",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColor.hintColor,
-                                ),
-                              ],
+                      GestureDetector(
+                        onTap: addThingsController.pickImages,
+                        child: DottedBorder(
+                          color: AppColor.primaryColor,
+                          strokeWidth: 1,
+                          radius: const Radius.circular(10),
+                          borderType: BorderType.RRect,
+                          child: Container(
+                            width: Get.width,
+                            height: Get.height * 0.163,
+                            color: AppColor.secondaryColor,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(AppAssets.upload),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const LabelField(
+                                    text: "Upload Photos (upto 5)",
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColor.hintColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
+                      Obx(() {
+                        return addThingsController.imageFiles.isEmpty ? const SizedBox() : SizedBox(
+                          height : Get.height * 0.3,
+                          child: GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: addThingsController.imageFiles.length,
+                            itemBuilder: (context, index) {
+                              return Image.file(
+                                File(addThingsController.imageFiles[index].path),
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        );
+                      }),
                       const SizedBox(
                         height: 18,
                       ),
@@ -447,6 +483,80 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
+                      const LabelField(
+                        text: 'Tags',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          CustomTextFormField(
+                            height: 40,
+                            width: Get.width * 0.3,
+                            controller: textController,
+                            hintText: "Add Tags",
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            showSuffix: false,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: IconButton(
+                              onPressed: (){
+                                if (textController.text.isEmpty) {
+                                  return CustomSnackbar.show(title: "Error", message: "Please type tag before adding");
+                                } else {
+                                  addThingsController.addTag(textController.text);
+                                  textController.clear();
+                                  // setState(() {});
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.add_circle_outline_rounded,
+                                color: AppColor.primaryColor,
+                                size: 35,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Obx(() {
+                        return addThingsController.tags.isNotEmpty
+                            ? Column(
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 35,
+                              child: ListView.builder(
+                                itemCount: addThingsController.tags.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(right: 5),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: LabelField(text: addThingsController.tags[index], color: AppColor.whiteColor,),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                            :  const SizedBox();
+                      }),
+                      const SizedBox(
+                        height: 18,
+                      ),
                       Row(
                         children: [
                           GestureDetector(
@@ -493,14 +603,30 @@ class _AddNewThingsState extends State<AddNewThings>
                       LargeButton(
                         text: "Add Thing",
                         onTap: () {
-                          Get.back();
+                          if (formKey.currentState!.validate()) {
+                              addThingsController.addThings(
+                                  categoriesId: selectCategoryId.toString(),
+                                  name: thingNameController.text,
+                                  earnPoints: pointsController.text,
+                                  location: locationController.text,
+                                  longitude: longitude.toString(),
+                                  lattitude: latitude.toString(),
+                                  country: country,
+                                  state: state,
+                                  city: city,
+                                  postCode: "59300",
+                                  sourcesLinks: linkController.text,
+                                  confirmModerator: _isChecked ? "1" : "0",
+                                  description: descController.text,
+                              );
+                          }
                         },
                       ),
                       SizedBox(
                         height: Get.height * 0.02,
                       ),
                     ],
-                  );
+                  ),);
                 }),
               ),
             ),

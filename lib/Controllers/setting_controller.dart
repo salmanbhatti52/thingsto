@@ -48,14 +48,14 @@ class SettingController extends GetxController {
       if (deleteData['status'] == 'success') {
         Get.back();
         CustomSnackbar.show(
-          title: 'Delete Account Response',
+          title: 'Success',
           message: deleteData['message'],
         );
       } else {
         Get.back();
         debugPrint(deleteData['message']);
         CustomSnackbar.show(
-          title: 'Delete Account Response',
+          title: 'Error',
           message: deleteData['message'],
         );
       }
@@ -92,13 +92,13 @@ class SettingController extends GetxController {
       debugPrint("changePasswordData $changePasswordData");
       if (changePasswordData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Change Password Response',
+          title: 'Success',
           message: "Password change successfully.",
         );
       } else {
         debugPrint(changePasswordData['message']);
         CustomSnackbar.show(
-          title: 'Change Password Response',
+          title: 'Error',
           message: changePasswordData['message'],
         );
       }

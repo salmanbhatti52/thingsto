@@ -216,7 +216,7 @@ class SignupPage extends StatelessWidget {
                                 );
                               } else {
                                 CustomSnackbar.show(
-                                  title: 'Signup Response',
+                                  title: 'Error',
                                   message: "Password do not matched",
                                 );
                               }

@@ -113,7 +113,7 @@ class UpdateProfileController extends GetxController {
         var userData = updateData['data'][0];
         await prefs.setString('surName', userData['sur_name']);
         CustomSnackbar.show(
-          title: 'Update Profile Response',
+          title: 'Success',
           message: "Profile Update successfully.",
         );
         Get.off(
@@ -124,7 +124,7 @@ class UpdateProfileController extends GetxController {
       } else {
         debugPrint(updateData['message']);
         CustomSnackbar.show(
-          title: 'Update Profile Response',
+          title: 'Error',
           message: "Some thing wrong",
         );
       }
