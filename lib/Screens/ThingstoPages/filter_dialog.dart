@@ -35,6 +35,20 @@ class _FilterDialogState extends State<FilterDialog> {
     "Karachi",
   ];
 
+  var itemListForCategory = [
+    "Category",
+    "Category",
+    "Category",
+  ];
+
+  var itemListForSubCategory = [
+    "SubCategory",
+    "SubCategory",
+    "SubCategory",
+  ];
+
+  String? selectCategory;
+  String? selectSubCategory;
   String? selectCountry;
   String? selectCity;
 
@@ -48,7 +62,7 @@ class _FilterDialogState extends State<FilterDialog> {
         children: [
           Container(
             width: Get.width * 0.8,
-            height: Get.height * 0.73,
+            height: Get.height * 0.9,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -58,7 +72,7 @@ class _FilterDialogState extends State<FilterDialog> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: Get.height * 0.025,
+                    height: Get.height * 0.015,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -86,7 +100,7 @@ class _FilterDialogState extends State<FilterDialog> {
                     ),
                   ),
                   SizedBox(
-                    height: Get.height * 0.026,
+                    height: Get.height * 0.022,
                   ),
                   const LabelField(
                     text: "Filter your results with following parameters",
@@ -94,7 +108,7 @@ class _FilterDialogState extends State<FilterDialog> {
                     color: AppColor.lightBrown,
                   ),
                   SizedBox(
-                    height: Get.height * 0.025,
+                    height: Get.height * 0.015,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -164,7 +178,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           },
                         ),
                         const SizedBox(
-                          height: 18,
+                          height: 15,
                         ),
                         const LabelField(
                           text: 'City',
@@ -181,7 +195,41 @@ class _FilterDialogState extends State<FilterDialog> {
                           },
                         ),
                         const SizedBox(
-                          height: 18,
+                          height: 15,
+                        ),
+                        const LabelField(
+                          text: 'Category',
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        CustomDropdown(
+                          itemList: itemListForCategory,
+                          hintText: "Select Category",
+                          onChanged: (value) {
+                            selectCategory = value;
+                            debugPrint("selectCategory: $selectCategory");
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        const LabelField(
+                          text: 'Subcategory',
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        CustomDropdown(
+                          itemList: itemListForSubCategory,
+                          hintText: "Select SubCategory",
+                          onChanged: (value) {
+                            selectSubCategory = value;
+                            debugPrint("selectSubCategory: $selectSubCategory");
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
                         ),
                         const LabelField(
                           text: 'Distance',
@@ -229,7 +277,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           ],
                         ),
                         const SizedBox(
-                          height: 10,
+                          height: 8,
                         ),
                         Row(
                           children: [
@@ -271,7 +319,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           ],
                         ),
                         const SizedBox(
-                          height: 10,
+                          height: 8,
                         ),
                         Row(
                           children: [
@@ -316,7 +364,7 @@ class _FilterDialogState extends State<FilterDialog> {
                     ),
                   ),
                   SizedBox(
-                    height: Get.height * 0.026,
+                    height: Get.height * 0.02,
                   ),
                   LargeButton(
                     width: Get.width * 0.25,

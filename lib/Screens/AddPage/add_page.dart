@@ -73,7 +73,7 @@ class AddPage extends StatelessWidget {
                 text: "Propose a Thing",
                 onTap: () {
                   Get.to(
-                        () => AddNewThings(),
+                        () => const AddNewThings(),
                     duration: const Duration(milliseconds: 350),
                     transition: Transition.rightToLeft,
                   );

@@ -1,11 +1,44 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
+import 'package:http/http.dart' as http;
+
+import 'const.dart';
 
 class GlobalService {
   static String? _currentAddress;
   static Position? _currentPosition;
+
+  static Future<String?> fetchPlaceId(double latitude, double longitude) async {
+    googleApiKey = (prefs.getString('geo_api_key').toString());
+    debugPrint("googleApiKey $googleApiKey");
+    final apiKey = googleApiKey;
+    final radius = 1000;
+
+    final url = Uri.parse('https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+        '?location=$latitude,$longitude'
+        '&radius=$radius'
+        '&key=$apiKey');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['results'] != null && data['results'].isNotEmpty) {
+        final placeId = data['results'][0]['place_id'];
+        print('Place ID: $placeId');
+        return placeId;
+      } else {
+        print('No results found.');
+      }
+    } else {
+      print('Failed to fetch data');
+    }
+    return null;
+  }
+
 
   static Future<bool> handleLocationPermission() async {
     bool serviceEnabled;

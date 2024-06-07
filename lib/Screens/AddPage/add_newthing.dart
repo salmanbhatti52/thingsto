@@ -52,6 +52,7 @@ class _AddNewThingsState extends State<AddNewThings>
   String state = "";
   String city = "";
   String postCode = "";
+  String placesId = "";
 
   @override
   void initState() {
@@ -124,7 +125,7 @@ class _AddNewThingsState extends State<AddNewThings>
                   horizontal: Get.width * 0.08,
                 ),
                 child: Obx(() {
-                  return addThingsController.isLoading.value
+                  return addThingsController.isLoading1.value
                       ? Center(
                     child: Padding(
                       padding: EdgeInsets.only(top: Get.height * 0.35),
@@ -253,6 +254,12 @@ class _AddNewThingsState extends State<AddNewThings>
                               double latitude1 = GlobalService.currentLocation!.latitude;
                               double longitude1 = GlobalService.currentLocation!.longitude;
                               var addressDetails = await GlobalService.getAddressFromLatLng(GlobalService.currentLocation!);
+                              final placeId = await GlobalService.fetchPlaceId(GlobalService.currentLocation!.latitude, GlobalService.currentLocation!.longitude);
+                              if (placeId != null) {
+                                debugPrint('Place ID: $placeId');
+                              } else {
+                                debugPrint('Failed to fetch Place ID');
+                              }
                               setState(() {
                                 locationController.text = addressDetails['address']!;
                                 latitude = latitude1;
@@ -261,6 +268,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 state = addressDetails['state'].toString();
                                 city = addressDetails['city'].toString();
                                 postCode = addressDetails['postCode'].toString();
+                                placesId = placeId.toString();
                                 debugPrint('current address: ${addressDetails['address']}');
                                 debugPrint('current city: ${addressDetails['city']}');
                                 debugPrint('current state: ${addressDetails['state']}');
@@ -307,6 +315,12 @@ class _AddNewThingsState extends State<AddNewThings>
                                       onTap: () async {
                                         var id = _autoCompleteResult[index].placeId;
                                         final placeDetails = await _placesService.getPlaceDetails(id!);
+                                        final placeId = await GlobalService.fetchPlaceId(placeDetails.lat!, placeDetails.lng!);
+                                        if (placeId != null) {
+                                          debugPrint('Place ID: $placeId');
+                                        } else {
+                                          debugPrint('Failed to fetch Place ID');
+                                        }
                                         setState(() {
                                           latitudeLongitude = LatLng(latitude, longitude);
                                           locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText!}";
@@ -318,6 +332,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                         state = placeDetails.state.toString();
                                         city = placeDetails.city.toString();
                                         postCode = placeDetails.zip.toString();
+                                        placesId = placeId.toString();
                                         debugPrint('current address: ${locationController.text}');
                                         debugPrint('current city: $city');
                                         debugPrint('current state: $state');
@@ -325,6 +340,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                         debugPrint('current postal code: $postCode');
                                         debugPrint('current latitude: $latitude');
                                         debugPrint('current longitude: $longitude');
+                                        debugPrint('current placesId: $placesId');
                                       },
                                     );
                                   },
@@ -600,27 +616,35 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      LargeButton(
-                        text: "Add Thing",
-                        onTap: () {
-                          if (formKey.currentState!.validate()) {
-                              addThingsController.addThings(
-                                  categoriesId: selectCategoryId.toString(),
-                                  name: thingNameController.text,
-                                  earnPoints: pointsController.text,
-                                  location: locationController.text,
-                                  longitude: longitude.toString(),
-                                  lattitude: latitude.toString(),
-                                  country: country,
-                                  state: state,
-                                  city: city,
-                                  postCode: "59300",
-                                  sourcesLinks: linkController.text,
-                                  confirmModerator: _isChecked ? "1" : "0",
-                                  description: descController.text,
-                              );
-                          }
-                        },
+                      Obx(
+                            () => addThingsController.isLoading.value
+                            ? LargeButton(
+                          text: "Please Wait...",
+                          onTap: () {},
+                        )
+                            : LargeButton(
+                              text: "Add Thing",
+                              onTap: ()  {
+                                if (formKey.currentState!.validate()) {
+                                  addThingsController.addThings(
+                                    categoriesId: selectCategoryId.toString(),
+                                    name: thingNameController.text.toString(),
+                                    earnPoints: pointsController.text.toString(),
+                                    location: locationController.text.tr,
+                                    longitude: longitude.toString(),
+                                    lattitude: latitude.toString(),
+                                    country: country.toString(),
+                                    placeId: placesId.toString(),
+                                    state: state.toString(),
+                                    city: city.toString(),
+                                    postCode: postCode,
+                                    sourcesLinks: linkController.text.toString(),
+                                    confirmModerator: _isChecked ? "1" : "0",
+                                    description: descController.text.toString(),
+                                  );
+                                }
+                              },
+                            ),
                       ),
                       SizedBox(
                         height: Get.height * 0.02,

@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/thingsto_details.dart';
+import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
+import 'things_details.dart';
+
 class ThingstoContainer extends StatelessWidget {
-  const ThingstoContainer({super.key});
+  final List thingsto;
+  const ThingstoContainer({super.key, required this.thingsto,});
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +23,15 @@ class ThingstoContainer extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ScrollPhysics(),
-        itemCount: 6,
+        itemCount: thingsto.length,
         itemBuilder: (BuildContext context, i) {
+          final things = thingsto[i];
           return Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: GestureDetector(
               onTap: (){
                 Get.to(
-                      () => const ThingstoDetails(),
+                      () => ThingstoDetails(thingsto: things,),
                   duration: const Duration(milliseconds: 350),
                   transition: Transition.rightToLeft,
                 );
@@ -44,18 +50,55 @@ class ThingstoContainer extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(height: 10,),
-                    SvgPicture.asset(
-                      AppAssets.camera,
+                    // const SizedBox(height: 10,),
+                    // SvgPicture.asset(
+                    //   AppAssets.camera,
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.network(
+                            '$baseUrlImage${things['images'][0]['name']}',
+                          width: Get.width,
+                          height: Get.height * 0.13,
+                          fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                            return SvgPicture.asset(
+                                AppAssets.camera,
+                            );
+                          },
+                          loadingBuilder:
+                              (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child:
+                              CircularProgressIndicator(
+                                color: AppColor.primaryColor,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const LabelField(
-                          text: "La Masson du",
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                          color: AppColor.blackColor,
-                          interFont: true,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: LabelField(
+                            text: things['name'],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: AppColor.blackColor,
+                            interFont: true,
+                          ),
                         ),
                         Container(
                           width: Get.width * 0.37,
@@ -75,17 +118,20 @@ class ThingstoContainer extends StatelessWidget {
                           child:  Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const LabelField(
-                                text: "Environ à 2.8 km",
+                              LabelField(
+                                text: things['location'],
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
                                 color: AppColor.primaryColor,
                                 interFont: true,
+                                maxLIne: 1,
+                                align: TextAlign.left,
                               ),
                               const SizedBox(height: 3,),
                               LargeButton(
-                                text: "Musées",
+                                text: things['tags'][0]['name'],
                                 fontWeight: FontWeight.w500,
+                                maxLIne: 1,
                                 fontSize: 9,
                                 width: 51,
                                 height: 20,

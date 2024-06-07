@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
 class RowText extends StatelessWidget {
   final String text;
-  const RowText({super.key, required this.text});
+  final Function onTap;
+  const RowText({super.key, required this.text, required this.onTap,});
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +21,17 @@ class RowText extends StatelessWidget {
             color: AppColor.blackColor,
             interFont: true,
           ),
-          const LabelField(
-            text: "See all",
-            fontWeight: FontWeight.w500,
-            fontSize: 15,
-            color: AppColor.primaryColor,
-            interFont: true,
+          GestureDetector(
+            onTap: () {
+              onTap();
+            },
+            child: const LabelField(
+              text: "See all",
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
+              color: AppColor.primaryColor,
+              interFont: true,
+            ),
           ),
         ],
       ),

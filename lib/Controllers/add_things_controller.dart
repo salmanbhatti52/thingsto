@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +11,7 @@ import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class AddThingsController extends GetxController {
+  var isLoading1 = false.obs;
   var isLoading = false.obs;
   var isError = false.obs;
   var categoriesAll = [].obs;
@@ -38,28 +39,44 @@ class AddThingsController extends GetxController {
       if (pickedFiles.length > 5) {
         CustomSnackbar.show(title: "Error", message: "You can only select up to 5 images.");
       } else {
-        imageFiles.value = pickedFiles;
-        // base64Images.value = pickedFiles.map((file) {
-        //   final bytes = File(file.path).readAsBytesSync();
-        //   return base64Encode(bytes);
-        // }).toList();
-        // debugPrint("base64Images $base64Images");
-        for (XFile file in pickedFiles) {
-          File imageFile = File(file.path);
-          List<int> imageBytes = await imageFile.readAsBytes();
-          String base64String = base64Encode(imageBytes);
-          base64Images.add(base64String);
-          debugPrint("Base64 Image: $base64String");
-        }
+        imageFiles.assignAll(pickedFiles);
+        _convertImagesToBase64();
       }
     }
   }
+
+  Future<void> _convertImagesToBase64() async {
+    try {
+      base64Images.clear();
+      List<Future<void>> conversions = [];
+      for (var imageFile in imageFiles) {
+        conversions.add(_convertImageToBase64(imageFile));
+      }
+      await Future.wait(conversions);
+      debugPrint('Base64 Images: $base64Images');
+    } catch (e) {
+      debugPrint("Error converting images to base64: $e");
+    }
+  }
+
+  Future<void> _convertImageToBase64(XFile imageFile) async {
+    try {
+      Uint8List bytes = await imageFile.readAsBytes();
+      String base64Image = base64Encode(bytes);
+      debugPrint('Image: $base64Image');
+      base64Images.add(base64Image);
+    } catch (e) {
+      debugPrint("Error converting image to base64: $e");
+    }
+  }
+
+
 
   /* Get All Category  Function */
 
   getAllCategory() async {
     try {
-      isLoading.value = true;
+      isLoading1.value = true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       await GlobalService.getCurrentPosition();
@@ -90,7 +107,7 @@ class AddThingsController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading.value = false;
+      isLoading1.value = false;
     }
   }
 
@@ -106,6 +123,7 @@ class AddThingsController extends GetxController {
     required String country,
     required String state,
     required String city,
+    required String placeId,
     required String postCode,
     required String sourcesLinks,
     required String confirmModerator,
@@ -113,45 +131,62 @@ class AddThingsController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-      userID = (prefs.getString('users_customers_id').toString());
-      googleApiKey = (prefs.getString('geo_api_key').toString());
-      debugPrint("userID $userID");
-      debugPrint("googleApiKey $googleApiKey");
 
-      Map<String, String> tagsMap = {};
-      for (int i = 0; i < tags.length; i++) {
-        tagsMap[i.toString()] = tags[i];
-      }
-
-      Map<String, String> imagesMap = {};
-      for (int i = 0; i < base64Images.length; i++) {
-        imagesMap[i.toString()] = base64Images[i];
-      }
-
-      Map<String, String> data = {
-        "users_customers_id": userID.toString(),
-        "categories_id": categoriesId,
-        "name": name,
-        "earn_points": earnPoints,
-        "location": location,
-        "longitude":  longitude,
-        "lattitude": lattitude,
-        "google_place_id": googleApiKey.toString(),
-        "country": country,
-        "state": state,
-        "city": city,
-        "post_code": postCode,
-        "sources_links": sourcesLinks,
-        "confirm_by_moderator": confirmModerator,
-        "description": description,
-        "tags": jsonEncode(tagsMap),
-        "images": jsonEncode(imagesMap),
+      var headersList = {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
       };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(thingsAddApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
+      var url = Uri.parse(thingsAddApiUrl);
 
-      var addThingsData = jsonDecode(response.body);
+
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+
+      // Map<String, String> imagesMap = {};
+      // for (int i = 0; i < base64Images.length; i++) {
+      //   imagesMap[i.toString()] = base64Images[i];
+      // }
+
+      List<Map<String, String>> imagesList = [];
+
+      for (int i = 0; i < base64Images.length; i++) {
+        String base64Image = base64Images[i];
+        String mediaType = 'Image';
+        String extension = 'jpg';
+        imagesList.add({
+          'base64_data': base64Image,
+          'media_type': mediaType,
+          'extension': extension,
+        });
+      }
+
+      var data = {
+        "users_customers_id": userID,
+        "categories_id": categoriesId.toString(),
+        "name": name.toString(),
+        "earn_points": earnPoints.toString(),
+        "location": location.toString(),
+        "longitude": longitude.toString(),
+        "lattitude": lattitude.toString(),
+        "google_place_id": placeId.toString(),
+        "country": country.toString(),
+        "state": state.toString(),
+        "city": city.toString(),
+        "post_code": postCode.isEmpty ? "59300" : postCode.toString(),
+        "sources_links": sourcesLinks.toString(),
+        "confirm_by_moderator": confirmModerator.toString(),
+        "description": description.toString(),
+        "tags": tags,
+        "images": imagesList,
+      };
+
+      debugPrint("data $data");
+      var req = http.Request('POST', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(data);
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+      var addThingsData = jsonDecode(resBody);
       debugPrint("addThingsData $addThingsData");
       if (addThingsData['status'] == 'success') {
         var message = addThingsData['message'];
@@ -160,7 +195,7 @@ class AddThingsController extends GetxController {
           message: message.toString(),
         );
         Get.off(
-              () => const MyBottomNavigationBar(initialIndex: 4,),
+              () => const MyBottomNavigationBar(initialIndex: 3,),
           duration: const Duration(milliseconds: 350),
           transition: Transition.downToUp,
         );
@@ -178,6 +213,5 @@ class AddThingsController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
 }

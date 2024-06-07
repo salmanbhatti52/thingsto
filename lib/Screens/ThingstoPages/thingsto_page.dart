@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:thingsto/Controllers/category_controller.dart';
+import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/category_details.dart';
@@ -26,7 +26,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
   bool isSelect = false;
   String selectedCategoryName = '';
   String selectedCategoryId = '';
-  final CategoryController categoryController = Get.put(CategoryController());
+  final ThingstoController thingstoController = Get.put(ThingstoController());
   final List<Map<String, String>> categoryHistory = [];
 
   @override
@@ -34,9 +34,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
     super.initState();
     userID = (prefs.getString('users_customers_id').toString());
     debugPrint("userID $userID");
-    categoryController.getCategory(
+    thingstoController.getCategory(
       usersCustomersId: userID.toString(),
-    );
+    ).then((_){
+      thingstoController.getThingsto(
+        usersCustomersId: userID.toString(),
+      );
+    });
   }
 
   void selectCategory(String categoryName, String categoryId) {
@@ -44,7 +48,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
       isSelect = true;
       selectedCategoryName = categoryName;
       selectedCategoryId = categoryId;
-      categoryController.getChildCategory(
+      thingstoController.getChildCategory(
         categoriesId: categoryId,
       );
       categoryHistory.add({'name': categoryName, 'id': categoryId});
@@ -59,12 +63,12 @@ class _ThingstoPageState extends State<ThingstoPage> {
           isSelect = false;
           selectedCategoryName = '';
           selectedCategoryId = '';
-          categoryController.subcategories.clear();
+          thingstoController.subcategories.clear();
         } else {
           final previousCategory = categoryHistory.last;
           selectedCategoryName = previousCategory['name']!;
           selectedCategoryId = previousCategory['id']!;
-          categoryController.getChildCategory(
+          thingstoController.getChildCategory(
             categoriesId: selectedCategoryId,
           );
         }
@@ -135,14 +139,16 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   isSelect
                       ? RowText(
                           text: selectedCategoryName,
+                    onTap: (){},
                         )
-                      : const RowText(
+                      : RowText(
                           text: "Categories",
+                    onTap: (){},
                         ),
                   isSelect
                       ? Obx(
                           () {
-                            if (categoryController.isSubLoading.value) {
+                            if (thingstoController.isSubLoading.value) {
                               return Shimmers(
                                 width: Get.width,
                                 height: Get.height * 0.15,
@@ -164,7 +170,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             //     ),
                             //   );
                             // }
-                            if (categoryController.subcategories.isEmpty) {
+                            if (thingstoController.subcategories.isEmpty) {
                               return const Center(
                                 child: Text(
                                   'Subcategories not found',
@@ -176,14 +182,14 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               );
                             }
                             return CategoryDetails(
-                              subcategories: categoryController.subcategories,
+                              subcategories: thingstoController.subcategories,
                               onSelect: selectCategory,
                             );
                           },
                         )
                       : Obx(
                           () {
-                            if (categoryController.isLoading.value) {
+                            if (thingstoController.isLoading.value) {
                               return Shimmers(
                                 width: Get.width,
                                 height: Get.height * 0.15,
@@ -192,20 +198,20 @@ class _ThingstoPageState extends State<ThingstoPage> {
                                 length: 6,
                               );
                             }
-                            if (categoryController.isError.value) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 40.0),
-                                  child: LabelField(
-                                    text: "Categories not found",
-                                    fontSize: 21,
-                                    color: AppColor.blackColor,
-                                    interFont: true,
-                                  ),
-                                ),
-                              );
-                            }
-                            if (categoryController.categories.isEmpty) {
+                            // if (thingstoController.isError.value) {
+                            //   return const Center(
+                            //     child: Padding(
+                            //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                            //       child: LabelField(
+                            //         text: "Categories not found",
+                            //         fontSize: 21,
+                            //         color: AppColor.blackColor,
+                            //         interFont: true,
+                            //       ),
+                            //     ),
+                            //   );
+                            // }
+                            if (thingstoController.categories.isEmpty) {
                               return const Center(
                                 child: Text(
                                   'Categories not found',
@@ -217,7 +223,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               );
                             }
                             return CategoryContainer(
-                              categories: categoryController.categories,
+                              categories: thingstoController.categories,
                               onSelect: selectCategory,
                             );
                           },
@@ -225,18 +231,61 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   SizedBox(
                     height: Get.height * 0.01,
                   ),
-                  const RowText(
+                  RowText(
                     text: "Things to",
+                    onTap: (){},
                   ),
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  const ThingstoContainer(),
+                  Obx(
+                        () {
+                      if (thingstoController.isLoading.value) {
+                        return Shimmers(
+                          width: Get.width,
+                          height:  Get.height * 0.255,
+                          width1: Get.width * 0.37,
+                          height1: Get.height * 0.08,
+                          length: 6,
+                        );
+                      }
+                      // if (thingstoController.isError.value) {
+                      //   return const Center(
+                      //     child: Padding(
+                      //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                      //       child: LabelField(
+                      //         text: "Things not found",
+                      //         fontSize: 21,
+                      //         color: AppColor.blackColor,
+                      //         interFont: true,
+                      //       ),
+                      //     ),
+                      //   );
+                      // }
+                      if (thingstoController.thingsto.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Things not found',
+                            style: TextStyle(
+                              color: AppColor.blackColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                        );
+                      }
+                      return ThingstoContainer(
+                        thingsto: thingstoController.thingsto,
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: Get.height * 0.03,
                   ),
-                  const RowText(
+                  RowText(
                     text: "Top Things to",
+                    onTap: () {
+
+                    },
                   ),
                   SizedBox(
                     height: Get.height * 0.02,

@@ -41,24 +41,18 @@ class AuthController extends GetxController {
         for (var setting in settings) {
           if (setting['type'] == 'geo_api_key') {
             geoApiKey(setting['description']);
-            await prefs.setString(
-              'geo_api_key',
-              geoApiKey(
-                setting['description'],
-              ),
-            );
+            await prefs.setString('geo_api_key', geoApiKey.toString(),);
+            googleApiKey = (prefs.getString('geo_api_key').toString());
+            debugPrint("googleApiKey $googleApiKey");
             break;
           }
         }
         for (var setting in settings) {
           if (setting['type'] == 'onesignal_appId') {
             oneSignalApiKey(setting['description']);
-            await prefs.setString(
-              'onesignal_appId',
-              oneSignalApiKey(
-                setting['description'],
-              ),
-            );
+            await prefs.setString('onesignal_appId', oneSignalApiKey.toString(),);
+            oneSignalId = (prefs.getString('onesignal_appId').toString());
+            debugPrint("oneSignalId $oneSignalId");
             break;
           }
         }
@@ -101,6 +95,8 @@ class AuthController extends GetxController {
       debugPrint("referralData $referralData");
       if (referralData['status'] == 'success') {
         var referralId = referralData['data']["referral_users_customers_id"];
+        oneSignalId = (prefs.getString('onesignal_appId').toString());
+        debugPrint("oneSignalId $oneSignalId");
         register(
           referralUsersCustomersId: referralId.toString(),
           surName: firstName,
@@ -108,14 +104,9 @@ class AuthController extends GetxController {
           lastName: lastName,
           email: email,
           password: password,
-          oneSignalId: oneSignalApiKey.toString(),
+          oneSignalId: oneSignalId.toString(),
           currentLongitude: longitude1.toString(),
           currentLatitude: latitude1.toString(),
-        );
-        Get.offAll(
-          () => const MyBottomNavigationBar(),
-          duration: const Duration(milliseconds: 350),
-          transition: Transition.rightToLeft,
         );
       } else {
         debugPrint(referralData['status']);
@@ -204,16 +195,18 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      systemSetting();
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
       debugPrint('current latitude: $latitude1');
       debugPrint('current longitude: $longitude1');
-      systemSetting();
+      oneSignalId = (prefs.getString('onesignal_appId').toString());
+      debugPrint("oneSignalId $oneSignalId");
       Map<String, String> data = {
         "email": email,
         "password": password,
-        "one_signal_id": oneSignalApiKey.toString(),
+        "one_signal_id": oneSignalId.toString(),
         "current_longitude": longitude1.toString(),
         "current_lattitude": latitude1.toString(),
       };
@@ -341,4 +334,5 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+
 }

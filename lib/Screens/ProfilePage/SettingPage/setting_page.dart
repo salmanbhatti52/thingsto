@@ -10,6 +10,7 @@ import 'package:thingsto/Screens/ProfilePage/edit_profile.dart';
 import 'package:thingsto/Screens/ProfilePage/language_change.dart';
 import 'package:thingsto/Screens/ProfilePage/notification_setting.dart';
 import 'package:thingsto/Screens/ProfilePage/share_app.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 
 import '../password_change.dart';
@@ -141,7 +142,8 @@ class SettingPage extends StatelessWidget {
                         image: AppAssets.out,
                         text: "Sign Out",
                         text1: "SIgn out from the app",
-                        onBack: (){
+                        onBack: () async {
+                          await prefs.clear();
                           Get.offAll(
                                 () => LoginPage(),
                             duration: const Duration(milliseconds: 350),
