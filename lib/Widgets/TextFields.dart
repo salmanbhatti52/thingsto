@@ -14,6 +14,10 @@ class CustomTextFormField extends StatelessWidget {
   final double? width;
   final double? height;
   final bool obscureText;
+  final String prefixImage;
+  final bool showPrefix;
+  final Color? prefixColor;
+  final dynamic Function()? prefixTap;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final String? Function(String?)? validator;
@@ -23,15 +27,19 @@ class CustomTextFormField extends StatelessWidget {
     super.key,
     required this.controller,
     this.suffixImage = AppAssets.eyeOpen,
+    this.prefixImage = AppAssets.search,
     required this.hintText,
     this.obscureText = false,
     this.suffixColor,
+    this.prefixColor,
     this.height,
     this.width,
     this.validator,
     this.suffixTap,
+    this.prefixTap,
     this.onChanged,
     this.showSuffix = true,
+    this.showPrefix = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
   });
@@ -71,6 +79,10 @@ class CustomTextFormField extends StatelessWidget {
                 suffixImage,
                 color: suffixColor,
               ),
+          ) : null,
+          prefixIcon: showPrefix ? IconButton(
+              onPressed: prefixTap,
+              icon: Icon(Icons.search, color: prefixColor, size: 25,),
           ) : null,
           enabledBorder:  OutlineInputBorder(
             borderSide: const BorderSide(width: 1, color: AppColor.borderColor),

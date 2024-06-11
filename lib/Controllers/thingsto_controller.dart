@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:thingsto/Utills/apis_urls.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
 
 class ThingstoController extends GetxController {
@@ -12,6 +13,8 @@ class ThingstoController extends GetxController {
   var categories = [].obs;
   var subcategories = [].obs;
   var thingsto = [].obs;
+  var totalLikes = 0.obs;
+  var isLiked = false.obs;
 
   /* Get Parent Category Function */
 
@@ -121,6 +124,39 @@ class ThingstoController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /* Like Unlike Things Function */
+
+  Future<void> likeUnlikeUser(String thingId) async {
+    try {
+      String userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "likers_id": userID.toString(),
+        "things_id": thingId.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(thingLikeUnlikeApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var thingstoData = jsonDecode(response.body);
+      debugPrint("thingstoData $thingstoData");
+      if (thingstoData['status'] == 'success') {
+        totalLikes.value = thingstoData['data']['total_likes'];
+        isLiked.value = !isLiked.value;
+      } else {
+        debugPrint(thingstoData['status']);
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    }
+  }
+
+  void initializeLikes(List<dynamic> likes) {
+    String userID = (prefs.getString('users_customers_id').toString());
+    debugPrint("userID $userID");
+    isLiked.value = likes.any((like) => like['likers_id'] == int.parse(userID));
   }
 
 }

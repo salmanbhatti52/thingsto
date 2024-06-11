@@ -33,3 +33,5 @@ String categoriesAllApiUrl = '${baseUrl}categories_all';
 String thingsAddApiUrl = '${baseUrl}things_add';
 
 String thingsGetApiUrl = '${baseUrl}things';
+
+String thingLikeUnlikeApiUrl = '${baseUrl}things_like_unlike';

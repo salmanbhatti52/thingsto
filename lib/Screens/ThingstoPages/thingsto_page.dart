@@ -3,17 +3,17 @@ import 'package:get/get.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
-import 'package:thingsto/Screens/ThingstoPages/category_details.dart';
+import 'package:thingsto/Screens/ThingstoPages/Categories/category_container.dart';
+import 'package:thingsto/Screens/ThingstoPages/Categories/category_details.dart';
+import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_container.dart';
+import 'package:thingsto/Screens/ThingstoPages/TopThings/topthingsto_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/filter_dialog.dart';
-import 'package:thingsto/Screens/ThingstoPages/thingsto_container.dart';
+import 'package:thingsto/Screens/ThingstoPages/things_see_all.dart';
 import 'package:thingsto/Utills/const.dart';
-import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/row_text.dart';
 import 'package:thingsto/Widgets/shimmer_effect.dart';
-import 'category_container.dart';
-import 'topthingsto_container.dart';
 
 class ThingstoPage extends StatefulWidget {
   const ThingstoPage({super.key});
@@ -114,6 +114,8 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   suffixImage: AppAssets.filter,
+                  showPrefix: true,
+                  prefixColor: AppColor.labelTextColor,
                   suffixTap: () {
                     showDialog(
                       context: context,
@@ -233,7 +235,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   ),
                   RowText(
                     text: "Things to",
-                    onTap: (){},
+                    onTap: (){
+                      Get.to(
+                            () => ThingsSeeAll(thingsto: thingstoController.thingsto,),
+                        duration: const Duration(milliseconds: 350),
+                        transition: Transition.rightToLeft,
+                      );
+                    },
                   ),
                   SizedBox(
                     height: Get.height * 0.02,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Controllers/update_profile_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -9,7 +10,6 @@ import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
-import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
@@ -22,11 +22,8 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  List<String> itemListForAge = [
-    "20",
-    "25",
-    "30",
-  ];
+  List<String> itemListForAge = List<String>.generate(89, (index) => (index + 12).toString());
+
   String? selectAge;
 
   final formKey = GlobalKey<FormState>();
@@ -261,6 +258,132 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CustomDropdown extends StatefulWidget {
+  final List<dynamic> itemList;
+  final String? initialValue;
+  final String hintText;
+  final Function(String?) onChanged;
+
+  const CustomDropdown({
+    super.key,
+    required this.itemList,
+    required this.hintText,
+    this.initialValue,
+    required this.onChanged,
+  });
+
+  @override
+  _CustomDropdownState createState() => _CustomDropdownState();
+}
+
+class _CustomDropdownState extends State<CustomDropdown> {
+  String? _selectedItem;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedItem = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        _showAgePicker(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 10,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: AppColor.secondaryColor,
+          border: Border.all(
+            color: AppColor.borderColor,
+            width: 1,
+          ),
+        ),
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.058,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _selectedItem ?? widget.hintText,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppColor.hintColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            SvgPicture.asset(AppAssets.dropDown),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAgePicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: AppColor.whiteColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Container(
+            width: 100,
+           decoration: BoxDecoration(
+             color: AppColor.whiteColor,
+             borderRadius: BorderRadius.circular(10),
+           ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              const SizedBox(
+              height: 10,
+            ),
+              const LabelField(
+                text: 'Select Age',
+                align: TextAlign.left,
+              ),
+              const Divider(color: AppColor.lightBrown,),
+              Container(
+                color: AppColor.whiteColor,
+                height: 150,
+                child: ListView.builder(
+                  itemCount: widget.itemList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    String item = widget.itemList[index];
+                    return ListTile(
+                      title: Center(
+                        child: Text(
+                          item,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _selectedItem = item;
+                          widget.onChanged(_selectedItem);
+                        });
+                        Navigator.of(context).pop();
+                        debugPrint("selectedItem: $_selectedItem");
+                      },
+                    );
+                  },
+                ),
+              ),],),),);
+      },
     );
   }
 }

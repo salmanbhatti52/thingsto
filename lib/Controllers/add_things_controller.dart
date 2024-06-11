@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -15,18 +17,21 @@ class AddThingsController extends GetxController {
   var isLoading = false.obs;
   var isError = false.obs;
   var categoriesAll = [].obs;
-  var categories = [].obs;
-  var subcategories = [].obs;
   final ImagePicker _picker = ImagePicker();
   var imageFiles = <XFile>[].obs;
   var base64Images = <String>[].obs;
+  var pickedFile = ''.obs;
   RxList<String> tags = <String>[].obs;
+
+  /* Add Tags  Function */
 
   void addTag(String tag) {
     if (tag.isNotEmpty) {
       tags.add(tag);
     }
   }
+
+  /* Get Image  Function */
 
   Future<void> pickImages() async {
     final List<XFile> pickedFiles = await _picker.pickMultiImage(
@@ -70,6 +75,19 @@ class AddThingsController extends GetxController {
     }
   }
 
+  /* Get Audio  Function */
+
+  Future<void> pickAudioFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+
+    if (result != null) {
+      pickedFile.value = result.files.single.path!;
+    } else {
+      CustomSnackbar.show(title: "Error", message: "Something Wrong");
+    }
+  }
 
 
   /* Get All Category  Function */
@@ -98,8 +116,6 @@ class AddThingsController extends GetxController {
       if (allCategoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categoriesAll.value = data;
-        categories.value = data.where((c) => c['parent_id'] == 0).toList();
-        subcategories.value = data.where((c) => c['parent_id'] != 0).toList();
       } else {
         debugPrint(allCategoryData['status']);
         isError.value = true;
@@ -149,16 +165,39 @@ class AddThingsController extends GetxController {
 
       List<Map<String, String>> imagesList = [];
 
-      for (int i = 0; i < base64Images.length; i++) {
-        String base64Image = base64Images[i];
-        String mediaType = 'Image';
-        String extension = 'jpg';
+      String base64Audio = '';
+      if(base64Images.isNotEmpty) {
+        for (int i = 0; i < base64Images.length; i++) {
+          String base64Image = base64Images[i];
+          String mediaType = 'Image';
+          String extension = 'jpg';
+          imagesList.add({
+            'base64_data': base64Image,
+            'media_type': mediaType,
+            'extension': extension,
+          });
+        }
+      } else {
+        if (pickedFile.value.isNotEmpty) {
+          File audioFile = File(pickedFile.value);
+          if (await audioFile.exists()) {
+            List<int> audioBytes = await audioFile.readAsBytes();
+            base64Audio = base64Encode(audioBytes);
+            debugPrint("base64Audio $base64Audio");
+          } else {
+            debugPrint("Error: Audio file does not exist at ${pickedFile.value}");
+          }
+        }
+        String base64Image = base64Audio;
+        String mediaType = 'Music';
+        String extension = 'mp3';
         imagesList.add({
           'base64_data': base64Image,
           'media_type': mediaType,
           'extension': extension,
         });
       }
+
 
       var data = {
         "users_customers_id": userID,

@@ -12,6 +12,8 @@ class AppAssets {
 
   static const String search = 'assets/images/search.svg';
 
+  static const String music = 'assets/images/music.svg';
+
   static const String copyLink = 'assets/images/copyLink.svg';
 
   static const String cameraPlus = 'assets/images/cameraPlus.svg';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/HomePages/find_things.dart';
@@ -9,6 +11,7 @@ import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/shimmer_effect.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,23 +23,44 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isDropDownShow = false;
   bool isFind = false;
+  late GoogleMapController mapController;
+  late LatLng _center;
+  late LatLng _currentLocation;
+  final ThingstoController thingstoController = Get.put(ThingstoController());
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getName();
+    userID = (prefs.getString('users_customers_id').toString());
+    debugPrint("userID $userID");
+      thingstoController.getThingsto(
+        usersCustomersId: userID.toString(),
+      );
   }
 
   getName()  {
     surName = prefs.getString('surName');
-    if (surName != null) {
+    systemLattitude = prefs.getString('system_lattitude');
+    systemLongitude = prefs.getString('system_longitude');
+    if (surName != null && systemLattitude!= null && systemLongitude != null) {
       debugPrint("surname :: $surName");
+      debugPrint("systemLattitude :: $systemLattitude");
+      debugPrint("systemLongitude :: $systemLongitude");
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    double latitude = double.parse(systemLattitude.toString());
+    double longitude = double.parse(systemLongitude.toString());
+    _center = LatLng(latitude, longitude);
+    _currentLocation = LatLng(latitude, longitude);
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: Column(
@@ -134,13 +158,70 @@ class _HomePageState extends State<HomePage> {
                         child: FoundedThings(),
                       )
                   : const SizedBox(),
-                  Image.asset(
-                    AppAssets.map,
+                  // Image.asset(
+                  //   AppAssets.map,
+                  // ),
+                  SizedBox(
+                    height: Get.height * 0.3,
+                    child: GoogleMap(
+                      onMapCreated: _onMapCreated,
+                      mapType: MapType.normal,
+
+                      initialCameraPosition: CameraPosition(
+                        target: _center,
+                        zoom: 11.0,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: const MarkerId("Location"),
+                          position: _currentLocation,
+                        ),
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),
-                  const HomeSuggestions(),
+                  Obx(
+                        () {
+                      if (thingstoController.isLoading.value) {
+                        return Shimmers(
+                          width: Get.width,
+                          height:  Get.height * 0.255,
+                          width1: Get.width * 0.37,
+                          height1: Get.height * 0.08,
+                          length: 6,
+                        );
+                      }
+                      // if (thingstoController.isError.value) {
+                      //   return const Center(
+                      //     child: Padding(
+                      //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                      //       child: LabelField(
+                      //         text: "Things not found",
+                      //         fontSize: 21,
+                      //         color: AppColor.blackColor,
+                      //         interFont: true,
+                      //       ),
+                      //     ),
+                      //   );
+                      // }
+                      if (thingstoController.thingsto.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Things not found',
+                            style: TextStyle(
+                              color: AppColor.blackColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                        );
+                      }
+                      return HomeSuggestions(
+                        thingsto: thingstoController.thingsto,
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),

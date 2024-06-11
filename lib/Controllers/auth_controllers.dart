@@ -18,6 +18,8 @@ class AuthController extends GetxController {
   RxBool isConfirmPasswordVisible = true.obs;
   var geoApiKey = ''.obs;
   var oneSignalApiKey = ''.obs;
+  var systemLattitudes = ''.obs;
+  var systemLongitudes = ''.obs;
 
   passwordTap() {
     isPasswordVisible.value = !isPasswordVisible.value;
@@ -53,6 +55,24 @@ class AuthController extends GetxController {
             await prefs.setString('onesignal_appId', oneSignalApiKey.toString(),);
             oneSignalId = (prefs.getString('onesignal_appId').toString());
             debugPrint("oneSignalId $oneSignalId");
+            break;
+          }
+        }
+        for (var setting in settings) {
+          if (setting['type'] == 'system_lattitude') {
+            systemLattitudes(setting['description']);
+            await prefs.setString('system_lattitude', systemLattitudes.toString(),);
+            systemLattitude = (prefs.getString('system_lattitude').toString());
+            debugPrint("systemLattitude $systemLattitude");
+            break;
+          }
+        }
+        for (var setting in settings) {
+          if (setting['type'] == 'system_longitude') {
+            systemLongitudes(setting['description']);
+            await prefs.setString('system_longitude', systemLongitudes.toString(),);
+            systemLongitude = (prefs.getString('system_longitude').toString());
+            debugPrint("systemLongitude $systemLongitude");
             break;
           }
         }

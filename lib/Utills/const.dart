@@ -6,3 +6,5 @@ String? userID;
 String? surName;
 String? googleApiKey;
 String? oneSignalId;
+String? systemLattitude;
+String? systemLongitude;

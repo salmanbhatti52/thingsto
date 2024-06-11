@@ -291,7 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: Get.height * 0.015,
                     ),
                     const HomeSuggestions(
-                      pad: 0,
+                      thingsto: [],
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

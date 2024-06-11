@@ -32,6 +32,11 @@ class _AddNewThingsState extends State<AddNewThings>
 
   var itemListForCategory = [];
   var itemListForSubCategory = [];
+  var itemListForSelection = [
+    "Image",
+    "Music",
+  ];
+  String? selectFile;
   String? selectCategory;
   String? selectSubCategory;
   String? selectCategoryId;
@@ -63,14 +68,10 @@ class _AddNewThingsState extends State<AddNewThings>
     locationController = TextEditingController(text: "");
 
     addThingsController.getAllCategory().then((_) {
-      itemListForCategory = addThingsController.categories
-          .map((c) => c['name'].toString())
-          .toList();
-      itemListForSubCategory = addThingsController.subcategories
+      itemListForCategory = addThingsController.categoriesAll
           .map((c) => c['name'].toString())
           .toList();
       debugPrint("itemListForCategory: $itemListForCategory");
-      debugPrint("itemListForSubCategory: $itemListForSubCategory");
     });
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -161,15 +162,11 @@ class _AddNewThingsState extends State<AddNewThings>
                         onChanged: (value) {
                           setState(() {
                             selectCategory = value;
-                            selectCategoryId = addThingsController
-                                .categories
-                                .firstWhere((c) => c['name'] == value)[
-                            'categories_id']
-                                .toString();
-                            debugPrint(
-                                "selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
+                            selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
+                            ['categories_id'].toString();
+                            debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
                             // Filter subcategories based on selected category
-                            itemListForSubCategory = addThingsController.subcategories
+                            itemListForSubCategory = addThingsController.categoriesAll
                                 .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
                                 .map((c) => c['name'].toString())
                                 .toList();
@@ -180,27 +177,33 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      const LabelField(
-                        text: 'Subcategory',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      CustomDropdown(
-                        itemList: itemListForSubCategory,
-                        hintText: "Select Subcategory",
-                        onChanged: (value) {
-                          setState(() {
-                            selectSubCategory = value;
-                            selectSubCategoryId = addThingsController.subcategories.firstWhere((c) => c['name'] == value)['categories_id'].toString();
-                            debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
-                          });
-                        },
-                        initialValue: selectSubCategory,
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
+                     if(itemListForSubCategory.isNotEmpty)
+                     Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         const LabelField(
+                           text: 'Subcategory',
+                         ),
+                         const SizedBox(
+                           height: 8,
+                         ),
+                         CustomDropdown(
+                           itemList: itemListForSubCategory,
+                           hintText: "Select Subcategory",
+                           onChanged: (value) {
+                             setState(() {
+                               selectSubCategory = value;
+                               selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
+                               debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
+                             });
+                           },
+                           initialValue: selectSubCategory,
+                         ),
+                         const SizedBox(
+                           height: 18,
+                         ),
+                       ],
+                     ),
                       const LabelField(
                         text: 'Thing Name',
                       ),
@@ -399,41 +402,104 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      GestureDetector(
-                        onTap: addThingsController.pickImages,
-                        child: DottedBorder(
-                          color: AppColor.primaryColor,
-                          strokeWidth: 1,
-                          radius: const Radius.circular(10),
-                          borderType: BorderType.RRect,
-                          child: Container(
-                            width: Get.width,
-                            height: Get.height * 0.163,
-                            color: AppColor.secondaryColor,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(AppAssets.upload),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const LabelField(
-                                    text: "Upload Photos (upto 5)",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColor.hintColor,
-                                  ),
-                                ],
+                      const LabelField(
+                        text: 'Select File',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomDropdown(
+                        itemList: itemListForSelection,
+                        hintText: selectFile != null ? selectFile.toString() : "Choose File",
+                        onChanged: (value) {
+                          setState(() {
+                            selectFile = value;
+                            addThingsController.base64Images.clear();
+                            addThingsController.imageFiles.clear();
+                            addThingsController.pickedFile.value = "";
+                            debugPrint("base64Images: ${addThingsController.base64Images.length}");
+                            debugPrint("pickedFile: ${addThingsController.pickedFile.value}");
+                          });
+                          debugPrint("select File: $selectFile");
+                        },
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      if(selectFile == "Image")
+                        GestureDetector(
+                          onTap: addThingsController.pickImages,
+                          child: DottedBorder(
+                            color: AppColor.primaryColor,
+                            strokeWidth: 1,
+                            radius: const Radius.circular(10),
+                            borderType: BorderType.RRect,
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height * 0.163,
+                              color: AppColor.secondaryColor,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(AppAssets.upload),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const LabelField(
+                                      text: "Upload Photos (upto 5)",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColor.hintColor,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      if(selectFile == "Music")
+                        GestureDetector(
+                          onTap: addThingsController.pickAudioFile,
+                          child: DottedBorder(
+                            color: AppColor.primaryColor,
+                            strokeWidth: 1,
+                            radius: const Radius.circular(10),
+                            borderType: BorderType.RRect,
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height * 0.1,
+                              color: AppColor.secondaryColor,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(AppAssets.upload),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const LabelField(
+                                      text: "Upload Music",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColor.hintColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       Obx(() {
-                        return addThingsController.imageFiles.isEmpty ? const SizedBox() : SizedBox(
-                          height : Get.height * 0.3,
+                        if (addThingsController.imageFiles.isEmpty) {
+                          return const SizedBox();
+                        }
+                        int rows = (addThingsController.imageFiles.length / 3).ceil();
+                        double gridHeight = (Get.width / 3) * rows + (rows - 1) * 10;
+                        return SizedBox(
+                          height: gridHeight,
                           child: GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
                               crossAxisSpacing: 10,
@@ -441,14 +507,44 @@ class _AddNewThingsState extends State<AddNewThings>
                             ),
                             itemCount: addThingsController.imageFiles.length,
                             itemBuilder: (context, index) {
-                              return Image.file(
-                                File(addThingsController.imageFiles[index].path),
-                                fit: BoxFit.cover,
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  File(addThingsController.imageFiles[index].path,),
+                                  fit: BoxFit.cover,
+                                ),
                               );
                             },
                           ),
                         );
                       }),
+                      Obx(() {
+                        return addThingsController.pickedFile.value.isEmpty
+                            ? const SizedBox()
+                            : const Column(
+                          children: [
+                            SizedBox(
+                              height: 18,
+                            ),
+                        Row(
+                          children: [
+                            LabelField(
+                              text: 'Selected file: ',
+                              align: TextAlign.left,
+                            ),
+                            LabelField(
+                              text: 'File Attached',
+                              align: TextAlign.left,
+                              fontSize: 14,
+                              color: AppColor.hintColor,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ],
+                        ),
+                          ],
+                        );
+                      }
+                      ),
                       const SizedBox(
                         height: 18,
                       ),
@@ -627,7 +723,7 @@ class _AddNewThingsState extends State<AddNewThings>
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
                                   addThingsController.addThings(
-                                    categoriesId: selectCategoryId.toString(),
+                                    categoriesId: selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
                                     name: thingNameController.text.toString(),
                                     earnPoints: pointsController.text.toString(),
                                     location: locationController.text.tr,

@@ -1,15 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
-import 'package:thingsto/Screens/ThingstoPages/thingsto_details.dart';
+import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
-
-import 'things_details.dart';
 
 class ThingstoContainer extends StatelessWidget {
   final List thingsto;
@@ -31,7 +28,7 @@ class ThingstoContainer extends StatelessWidget {
             child: GestureDetector(
               onTap: (){
                 Get.to(
-                      () => ThingstoDetails(thingsto: things,),
+                      () => ThingsValidate(thingsto: things,),
                   duration: const Duration(milliseconds: 350),
                   transition: Transition.rightToLeft,
                 );
@@ -58,14 +55,15 @@ class ThingstoContainer extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: Image.network(
+                        child: things['images'][0]['media_type'] == "Image"
+                            ? Image.network(
                             '$baseUrlImage${things['images'][0]['name']}',
                           width: Get.width,
                           height: Get.height * 0.13,
                           fit: BoxFit.fill,
                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                             return SvgPicture.asset(
-                                AppAssets.camera,
+                                AppAssets.music,
                             );
                           },
                           loadingBuilder:
@@ -84,6 +82,14 @@ class ThingstoContainer extends StatelessWidget {
                               ),
                             );
                           },
+                        )
+                            : Column(
+                          children: [
+                            SizedBox(height: Get.height * 0.05,),
+                            SvgPicture.asset(
+                              AppAssets.music,
+                            ),
+                          ],
                         ),
                       ),
                     ),

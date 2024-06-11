@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_colors.dart';
-import 'package:thingsto/Screens/HomePages/founded_things.dart';
-import 'package:thingsto/Screens/ThingstoPages/things_details.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'things_details.dart';
 
-class ThingstoDetails extends StatelessWidget {
+class ThingsValidate extends StatelessWidget {
   final Map<String, dynamic> thingsto;
-  const ThingstoDetails({super.key, required this.thingsto,});
+  const ThingsValidate({super.key, required this.thingsto,});
 
   @override
   Widget build(BuildContext context) {
