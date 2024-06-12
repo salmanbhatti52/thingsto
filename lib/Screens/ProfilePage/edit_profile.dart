@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -328,62 +329,107 @@ class _CustomDropdownState extends State<CustomDropdown> {
     );
   }
 
+  // void _showAgePicker(BuildContext context) {
+  //   // showDialog(
+  //   //   context: context,
+  //   //   builder: (BuildContext context) {
+  //   //     return Dialog(
+  //   //       backgroundColor: AppColor.whiteColor,
+  //   //       shape: RoundedRectangleBorder(
+  //   //         borderRadius: BorderRadius.circular(10),
+  //   //       ),
+  //   //       child: Container(
+  //   //         width: 100,
+  //   //        decoration: BoxDecoration(
+  //   //          color: AppColor.whiteColor,
+  //   //          borderRadius: BorderRadius.circular(10),
+  //   //        ),
+  //   //         child: Column(
+  //   //           mainAxisSize: MainAxisSize.min,
+  //   //           children: [
+  //   //           const SizedBox(
+  //   //           height: 10,
+  //   //         ),
+  //   //           const LabelField(
+  //   //             text: 'Select Age',
+  //   //             align: TextAlign.left,
+  //   //           ),
+  //   //           const Divider(color: AppColor.lightBrown,),
+  //   //           Container(
+  //   //             color: AppColor.whiteColor,
+  //   //             height: 150,
+  //   //             child: ListView.builder(
+  //   //               itemCount: widget.itemList.length,
+  //   //               itemBuilder: (BuildContext context, int index) {
+  //   //                 String item = widget.itemList[index];
+  //   //                 return ListTile(
+  //   //                   title: Center(
+  //   //                     child: Text(
+  //   //                       item,
+  //   //                       style: GoogleFonts.poppins(
+  //   //                         fontSize: 14,
+  //   //                         fontWeight: FontWeight.w400,
+  //   //                       ),
+  //   //                     ),
+  //   //                   ),
+  //   //                   onTap: () {
+  //   //                     setState(() {
+  //   //                       _selectedItem = item;
+  //   //                       widget.onChanged(_selectedItem);
+  //   //                     });
+  //   //                     Navigator.of(context).pop();
+  //   //                     debugPrint("selectedItem: $_selectedItem");
+  //   //                   },
+  //   //                 );
+  //   //               },
+  //   //             ),
+  //   //           ),],),),);
+  //   //   },
+  //   // );
+  // }
+
   void _showAgePicker(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: AppColor.whiteColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            width: 100,
-           decoration: BoxDecoration(
-             color: AppColor.whiteColor,
-             borderRadius: BorderRadius.circular(10),
-           ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              const SizedBox(
-              height: 10,
-            ),
-              const LabelField(
-                text: 'Select Age',
-                align: TextAlign.left,
-              ),
-              const Divider(color: AppColor.lightBrown,),
-              Container(
-                color: AppColor.whiteColor,
-                height: 150,
-                child: ListView.builder(
-                  itemCount: widget.itemList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String item = widget.itemList[index];
-                    return ListTile(
-                      title: Center(
-                        child: Text(
-                          item,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+    showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext context) {
+      return Container(
+        height: 260,
+        color: AppColor.whiteColor,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 200,
+              child: CupertinoPicker(
+                backgroundColor: AppColor.whiteColor,
+                itemExtent: 32.0,
+                onSelectedItemChanged: (int index) {
+                  setState(() {
+                    _selectedItem = widget.itemList[index];
+                    widget.onChanged(_selectedItem);
+                  });
+                },
+                children: widget.itemList.map((item) {
+                  return Center(
+                    child: Text(
+                      item,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
                       ),
-                      onTap: () {
-                        setState(() {
-                          _selectedItem = item;
-                          widget.onChanged(_selectedItem);
-                        });
-                        Navigator.of(context).pop();
-                        debugPrint("selectedItem: $_selectedItem");
-                      },
-                    );
-                  },
-                ),
-              ),],),),);
-      },
-    );
-  }
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            CupertinoButton(
+              child: Text('Done', style: GoogleFonts.poppins()),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        ),
+      );
+    },);
+}
 }

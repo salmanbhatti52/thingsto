@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
@@ -48,7 +49,9 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
     String? userID = prefs.getString('users_customers_id');
     if (userID != null) {
-      getProfileController.getUserProfile(usersCustomersId: userID);
+      getProfileController.getUserProfile(usersCustomersId: userID).then((_){
+        getProfileController.getFavoritesThings();
+      });
     }
   }
 
@@ -290,8 +293,45 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: Get.height * 0.015,
                     ),
-                    const HomeSuggestions(
-                      thingsto: [],
+                    Obx(
+                          () {
+                        if (getProfileController.isLoading.value) {
+                          return Shimmers(
+                            width: Get.width,
+                            height:  Get.height * 0.255,
+                            width1: Get.width * 0.37,
+                            height1: Get.height * 0.08,
+                            length: 6,
+                          );
+                        }
+                        // if (thingstoController.isError.value) {
+                        //   return const Center(
+                        //     child: Padding(
+                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                        //       child: LabelField(
+                        //         text: "Things not found",
+                        //         fontSize: 21,
+                        //         color: AppColor.blackColor,
+                        //         interFont: true,
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
+                        if (getProfileController.favorites.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              'Things not found',
+                              style: TextStyle(
+                                color: AppColor.blackColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        }
+                        return HomeSuggestions(
+                          thingsto: getProfileController.favorites,
+                        );
+                      },
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

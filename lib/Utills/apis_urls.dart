@@ -34,4 +34,8 @@ String thingsAddApiUrl = '${baseUrl}things_add';
 
 String thingsGetApiUrl = '${baseUrl}things';
 
+String thingsTopGetApiUrl = '${baseUrl}things_top';
+
 String thingLikeUnlikeApiUrl = '${baseUrl}things_like_unlike';
+
+String thingsFavouritesApiUrl = '${baseUrl}things_favourites';

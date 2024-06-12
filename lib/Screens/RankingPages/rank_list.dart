@@ -11,7 +11,7 @@ class RankUserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Get.height * 0.652,
+      height: Get.height * 0.65,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         physics: const ScrollPhysics(),

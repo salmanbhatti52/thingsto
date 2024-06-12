@@ -91,6 +91,7 @@ class CategoryContainer extends StatelessWidget {
                   fontSize: 12,
                   color: AppColor.blackColor,
                   interFont: true,
+                  maxLIne: 2,
                 ),
               ],
             ),

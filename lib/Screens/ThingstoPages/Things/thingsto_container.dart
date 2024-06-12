@@ -94,17 +94,15 @@ class ThingstoContainer extends StatelessWidget {
                       ),
                     ),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: LabelField(
-                            text: things['name'],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            color: AppColor.blackColor,
-                            interFont: true,
-                          ),
+                        LabelField(
+                          text: things['name'],
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: AppColor.blackColor,
+                          interFont: true,
+                          maxLIne: 1,
                         ),
                         Container(
                           width: Get.width * 0.37,

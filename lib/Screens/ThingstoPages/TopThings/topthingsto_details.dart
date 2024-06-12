@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
@@ -17,15 +16,15 @@ import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
-class ThingsDetails extends StatefulWidget {
-  final Map<String, dynamic>? thingsto;
-  const ThingsDetails({super.key, this.thingsto,});
+class TopThingsDetails extends StatefulWidget {
+  final Map<String, dynamic>? topThingsto;
+  const TopThingsDetails({super.key, this.topThingsto,});
 
   @override
-  State<ThingsDetails> createState() => _ThingsDetailsState();
+  State<TopThingsDetails> createState() => _TopThingsDetailsState();
 }
 
-class _ThingsDetailsState extends State<ThingsDetails>
+class _TopThingsDetailsState extends State<TopThingsDetails>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animateController = AnimationController(
     duration: const Duration(milliseconds: 200),
@@ -59,8 +58,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
   @override
   void initState() {
     super.initState();
-    if (widget.thingsto != null && widget.thingsto!.containsKey('images')) {
-      var media = widget.thingsto!['images'];
+    if (widget.topThingsto != null && widget.topThingsto!.containsKey('images')) {
+      var media = widget.topThingsto!['images'];
       if (media is List) {
         for (var item in media) {
           if (item is Map<String, dynamic> && item.containsKey('name')) {
@@ -170,11 +169,11 @@ class _ThingsDetailsState extends State<ThingsDetails>
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> tags = widget.thingsto?["tags"] ?? [];
-    double latitude = double.parse(widget.thingsto?["lattitude"]);
-    double longitude = double.parse(widget.thingsto?["longitude"]);
-    thingstoController.totalLikes.value = int.parse(widget.thingsto!["total_likes"].toString());
-    thingstoController.initializeLikes(widget.thingsto?["likes"]);
+    List<dynamic> tags = widget.topThingsto?["tags"] ?? [];
+    double latitude = double.parse(widget.topThingsto?["lattitude"]);
+    double longitude = double.parse(widget.topThingsto?["longitude"]);
+    thingstoController.totalLikes.value = int.parse(widget.topThingsto!["total_likes"].toString());
+    thingstoController.initializeLikes(widget.topThingsto?["likes"]);
     _center = LatLng(latitude, longitude);
     _currentLocation = LatLng(latitude, longitude);
     List<Widget> mediaSliders = listOfMedia.map((item) {
@@ -307,13 +306,13 @@ class _ThingsDetailsState extends State<ThingsDetails>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               LabelField(
-                text: widget.thingsto?["name"],
+                text: widget.topThingsto?["name"],
                 fontSize: 20,
               ),
               GestureDetector(
                 onTap: () {
                   thingstoController.likeUnlikeUser(
-                    widget.thingsto!["things_id"].toString(),
+                    widget.topThingsto!["things_id"].toString(),
                   );
                 },
                 child: Obx(() {
@@ -362,7 +361,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     Expanded(
                       child: LabelField(
                         align: TextAlign.start,
-                        text: widget.thingsto?["location"],
+                        text: widget.topThingsto?["location"],
                         fontWeight: FontWeight.w400,
                         color: AppColor.hintColor,
                         maxLIne: 2,
@@ -376,7 +375,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                 children: [
                   LabelField(
                     align: TextAlign.start,
-                    text: widget.thingsto?["earn_points"],
+                    text: widget.topThingsto?["earn_points"],
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,
@@ -425,7 +424,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
               ),
               LabelField(
                 align: TextAlign.start,
-                text: widget.thingsto?["description"],
+                text: widget.topThingsto?["description"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
@@ -443,7 +442,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
               ),
               LabelField(
                 align: TextAlign.start,
-                text: widget.thingsto?["sources_links"],
+                text: widget.topThingsto?["sources_links"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: const Color(0xff277CE0),

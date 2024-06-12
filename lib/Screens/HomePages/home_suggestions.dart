@@ -47,6 +47,8 @@ class HomeSuggestions extends StatelessWidget {
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(6),
                           child: Image.network(
+                            width: Get.width * 0.37,
+                            height: Get.height * 0.21,
                             '$baseUrlImage${things['images'][0]['name']}',
                             fit: BoxFit.cover,
                             errorBuilder: (BuildContext context,

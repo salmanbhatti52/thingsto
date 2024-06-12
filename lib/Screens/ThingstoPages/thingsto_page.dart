@@ -32,12 +32,20 @@ class _ThingstoPageState extends State<ThingstoPage> {
   @override
   void initState() {
     super.initState();
+    getUserThings();
+  }
+
+  Future<void> getUserThings() async {
     userID = (prefs.getString('users_customers_id').toString());
     debugPrint("userID $userID");
     thingstoController.getCategory(
       usersCustomersId: userID.toString(),
     ).then((_){
       thingstoController.getThingsto(
+        usersCustomersId: userID.toString(),
+      );
+    }).then((_){
+      thingstoController.getTopThingsto(
         usersCustomersId: userID.toString(),
       );
     });
@@ -291,14 +299,57 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   ),
                   RowText(
                     text: "Top Things to",
-                    onTap: () {
-
+                    onTap: (){
+                      Get.to(
+                            () => ThingsSeeAll(thingsto: thingstoController.topThingsto,),
+                        duration: const Duration(milliseconds: 350),
+                        transition: Transition.rightToLeft,
+                      );
                     },
                   ),
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  const TopThingstoContainer(),
+                  Obx(
+                        () {
+                      if (thingstoController.isLoading.value) {
+                        return Shimmers(
+                          width: Get.width,
+                          height:  Get.height * 0.255,
+                          width1: Get.width * 0.37,
+                          height1: Get.height * 0.08,
+                          length: 6,
+                        );
+                      }
+                      // if (thingstoController.isError.value) {
+                      //   return const Center(
+                      //     child: Padding(
+                      //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                      //       child: LabelField(
+                      //         text: "Things not found",
+                      //         fontSize: 21,
+                      //         color: AppColor.blackColor,
+                      //         interFont: true,
+                      //       ),
+                      //     ),
+                      //   );
+                      // }
+                      if (thingstoController.topThingsto.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Things not found',
+                            style: TextStyle(
+                              color: AppColor.blackColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                        );
+                      }
+                      return TopThingstoContainer(
+                        topThingsto: thingstoController.topThingsto,
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
