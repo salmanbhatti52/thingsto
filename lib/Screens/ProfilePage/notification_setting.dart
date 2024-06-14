@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/update_profile_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
 class NotificationSetting extends StatefulWidget {
-  const NotificationSetting({super.key});
+  Map<dynamic, dynamic> getProfile = {};
+  NotificationSetting({super.key, required this.getProfile});
 
   @override
   State<NotificationSetting> createState() => _NotificationSettingState();
@@ -20,10 +22,16 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
   late AnimationController _emailController;
   late Animation<double> _notificationAnimation;
   late Animation<double> _emailAnimation;
+  UpdateProfileController updateProfileController =
+  Get.put(UpdateProfileController());
 
   @override
   void initState() {
     super.initState();
+    debugPrint(widget.getProfile['notifications']);
+    debugPrint(widget.getProfile['notifications_email']);
+    widget.getProfile['notifications'] == "Yes" ?  _isNotificationChecked = true : _isNotificationChecked = false;
+    widget.getProfile['notifications_email'] == "Yes" ?  _isEmailChecked = true : _isEmailChecked = false;
     _notificationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -35,6 +43,16 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
       vsync: this,
     );
     _emailAnimation = CurvedAnimation(parent: _emailController, curve: Curves.easeInOut);
+    if (_isNotificationChecked) {
+      _notificationController.forward();
+    } else {
+      _notificationController.reverse();
+    }
+    if (_isEmailChecked) {
+      _emailController.forward();
+    } else {
+      _emailController.reverse();
+    }
   }
 
   void _toggleNotificationCheckbox() {
@@ -182,11 +200,21 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
                     SizedBox(
                       height: Get.height * 0.55,
                     ),
-                    LargeButton(
-                      text: "Apply",
-                      onTap: () {
-                        Get.back();
-                      },
+                    Obx(
+                          () => updateProfileController.isLoading.value
+                          ? LargeButton(
+                        text: "Please Wait...",
+                        onTap: () {},
+                      )
+                          : LargeButton(
+                        text: "Apply",
+                        onTap: () {
+                              updateProfileController.updateNotifications(
+                                notifications: _isNotificationChecked ? "Yes" : "No",
+                                notificationsEmail: _isEmailChecked ? "Yes" : "No",
+                              );
+                        },
+                      ),
                     ),
                     SizedBox(
                       height: Get.height * 0.02,

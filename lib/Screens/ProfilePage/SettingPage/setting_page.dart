@@ -69,7 +69,7 @@ class SettingPage extends StatelessWidget {
                         text1: "Change notifications settings",
                         onBack: (){
                           Get.to(
-                                () => const NotificationSetting(),
+                                () => NotificationSetting(getProfile: getProfile,),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );

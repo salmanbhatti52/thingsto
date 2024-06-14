@@ -1,14 +1,39 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
-class ShareApp extends StatelessWidget {
+class ShareApp extends StatefulWidget {
   const ShareApp({super.key});
+
+  @override
+  State<ShareApp> createState() => _ShareAppState();
+}
+
+class _ShareAppState extends State<ShareApp> {
+  getUrls() {
+    shareAndroid = prefs.getString('share_app_android');
+    shareIos = prefs.getString('share_app_ios');
+    if (shareAndroid != null && shareIos != null) {
+      debugPrint("shareAndroid :: $shareAndroid");
+      debugPrint("shareIos :: $shareIos");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUrls();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,42 +65,58 @@ class ShareApp extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
-                const LabelField(
-                  text: "https://thingsto.com/register?ref=1424vvd",
+                LabelField(
+                  text: Platform.isAndroid
+                      ? shareAndroid.toString()
+                      : shareIos.toString(),
                   fontSize: 24,
                 ),
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(
+                            text: Platform.isAndroid
+                                ? shareAndroid.toString()
+                                : shareIos.toString()))
+                        .then(
+                      (_) {
+                        CustomSnackbar.show(
+                          title: "Share App",
+                          message: "Link Copied",
+                        );
+                      },
+                    );
+                  },
                   child: Container(
-                      width: Get.width * 0.5,
-                      height: 52,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColor.primaryColor,
+                    width: Get.width * 0.5,
+                    height: 52,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColor.primaryColor,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Copy Link",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.whiteColor,
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            AppAssets.copyLink,
+                          ),
+                        ],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Copy Link",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.whiteColor,
-                              ),
-                            ),
-                            SvgPicture.asset(
-                              AppAssets.copyLink,
-                            ),
-                          ],
-                        ),
-                      )),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: Get.height * 0.018,

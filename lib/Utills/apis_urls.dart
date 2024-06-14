@@ -24,11 +24,15 @@ String getProfileApiUrl = '${baseUrl}customers_profile';
 
 String updateProfileApiUrl = '${baseUrl}update_profile';
 
+String updateProfileNotificationsApiUrl = '${baseUrl}update_profile_notifications';
+
 String categoriesApiUrl = '${baseUrl}categories';
 
 String categoriesSubApiUrl = '${baseUrl}categories_sub';
 
 String categoriesAllApiUrl = '${baseUrl}categories_all';
+
+String categoriesAllStatsApiUrl = '${baseUrl}categories_all_stats';
 
 String thingsAddApiUrl = '${baseUrl}things_add';
 
@@ -38,4 +42,8 @@ String thingsTopGetApiUrl = '${baseUrl}things_top';
 
 String thingLikeUnlikeApiUrl = '${baseUrl}things_like_unlike';
 
+String thingsValidateApiUrl = '${baseUrl}things_validate';
+
 String thingsFavouritesApiUrl = '${baseUrl}things_favourites';
+
+String thingsSearchApiUrl = '${baseUrl}things_search';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -12,6 +13,7 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/shimmer_effect.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   late LatLng _center;
   late LatLng _currentLocation;
   final ThingstoController thingstoController = Get.put(ThingstoController());
+  final HomeController homeController = Get.put(HomeController());
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -53,6 +56,31 @@ class _HomePageState extends State<HomePage> {
       debugPrint("systemLattitude :: $systemLattitude");
       debugPrint("systemLongitude :: $systemLongitude");
     }
+  }
+
+  String? selectCategory;
+  String? thingName;
+
+  void handleFindThings(String thingNames, String categoryId) {
+    debugPrint("Thing Name: $thingNames, Category ID: $categoryId");
+    thingName = thingNames.toString();
+    selectCategory = categoryId.toString();
+    if (thingName!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          isFind = !isFind;
+        });
+        if (isFind) {
+          homeController.foundedThings(
+            categoriesId: selectCategory.toString(),
+            name: thingName.toString(),
+          );
+        }
+      });
+    } else {
+      CustomSnackbar.show(title: "Error", message: "Please select all fields");
+    }
+    debugPrint("Thing Name: $thingName, isFind: $isFind, Category ID: $selectCategory");
   }
 
   @override
@@ -143,24 +171,68 @@ class _HomePageState extends State<HomePage> {
                   ),
                   isDropDownShow
                       ? FindThings(
-                    onFind: (){
-                      setState(() {
-                        isFind = true;
-                      });
-                    },
+                    onFind: (){},
+                    onFindWithData: handleFindThings,
                   ) : const SizedBox(),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),
                   isFind
-                      ? const Padding(
-                        padding: EdgeInsets.only(bottom: 15.0),
-                        child: FoundedThings(),
+                      ? Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Obx(
+                              () {
+                            if (homeController.isLoading.value) {
+                              return Shimmers(
+                                width: Get.width,
+                                height:  Get.height * 0.555,
+                                width1: Get.width * 0.9,
+                                height1: Get.height * 0.1,
+                                length: 1,
+                              );
+                            }
+                            // if (homeController.errorMsg.value == "error") {
+                            //   return const Center(
+                            //     child: Padding(
+                            //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                            //       child: LabelField(
+                            //         text: "Things not found",
+                            //         fontSize: 21,
+                            //         color: AppColor.blackColor,
+                            //         interFont: true,
+                            //       ),
+                            //     ),
+                            //   );
+                            // }
+                            if (homeController.findingThings.isEmpty) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 28.0),
+                                  child: LabelField(
+                                    text: "Things not found",
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                            return SizedBox(
+                              height: Get.height * 1.07,
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: homeController.findingThings.length,
+                                itemBuilder: (BuildContext context, i) {
+                                  final findingThings = homeController.findingThings[i];
+                                  return FoundedThings(
+                                    foundedThings: findingThings,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       )
                   : const SizedBox(),
-                  // Image.asset(
-                  //   AppAssets.map,
-                  // ),
                   SizedBox(
                     height: Get.height * 0.3,
                     child: GoogleMap(

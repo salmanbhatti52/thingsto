@@ -8,3 +8,5 @@ String? googleApiKey;
 String? oneSignalId;
 String? systemLattitude;
 String? systemLongitude;
+String? shareAndroid;
+String? shareIos;

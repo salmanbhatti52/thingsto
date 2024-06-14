@@ -20,6 +20,8 @@ class AuthController extends GetxController {
   var oneSignalApiKey = ''.obs;
   var systemLattitudes = ''.obs;
   var systemLongitudes = ''.obs;
+  var systemAndroid = ''.obs;
+  var systemIos = ''.obs;
 
   passwordTap() {
     isPasswordVisible.value = !isPasswordVisible.value;
@@ -73,6 +75,24 @@ class AuthController extends GetxController {
             await prefs.setString('system_longitude', systemLongitudes.toString(),);
             systemLongitude = (prefs.getString('system_longitude').toString());
             debugPrint("systemLongitude $systemLongitude");
+            break;
+          }
+        }
+        for (var setting in settings) {
+          if (setting['type'] == 'share_app_android') {
+            systemAndroid(setting['description']);
+            await prefs.setString('share_app_android', systemAndroid.toString(),);
+            shareAndroid = (prefs.getString('share_app_android').toString());
+            debugPrint("shareAndroid $shareAndroid");
+            break;
+          }
+        }
+        for (var setting in settings) {
+          if (setting['type'] == 'share_app_ios') {
+            systemIos(setting['description']);
+            await prefs.setString('share_app_ios', systemIos.toString(),);
+            shareIos = (prefs.getString('share_app_ios').toString());
+            debugPrint("shareIos $shareIos");
             break;
           }
         }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 import 'things_details.dart';
 
 class ThingsValidate extends StatelessWidget {
@@ -11,6 +13,8 @@ class ThingsValidate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThingstoController thingstoController = Get.put(ThingstoController());
+    thingstoController.initializeThings(thingsto["things_validated"]);
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: Column(
@@ -31,12 +35,13 @@ class ThingsValidate extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 55.0),
                     child: ThingsDetails(thingsto: thingsto,),
                   ),
-                  LargeButton(
-                    text: "Validate this Thing",
+                  Obx(() => LargeButton(
+                    text: thingstoController.isValidate.value ?  "Validated" : "Validate this Thing",
                     onTap: () {
-                      Get.back();
+                       thingstoController.validateThings(thingsto["things_id"].toString());
+                          // : CustomSnackbar.show(title: "Error", message: "Already Validated");
                     },
-                  ),
+                  ),),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),

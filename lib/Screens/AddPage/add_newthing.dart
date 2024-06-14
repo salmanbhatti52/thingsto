@@ -30,8 +30,8 @@ class _AddNewThingsState extends State<AddNewThings>
     with SingleTickerProviderStateMixin {
   AddThingsController addThingsController = Get.put(AddThingsController());
 
-  var itemListForCategory = [];
-  var itemListForSubCategory = [];
+  var itemListForCategory = <String>[];
+  var itemListForSubCategory = <String>[];
   var itemListForSelection = [
     "Image",
     "Music",
@@ -70,6 +70,7 @@ class _AddNewThingsState extends State<AddNewThings>
     addThingsController.getAllCategory().then((_) {
       itemListForCategory = addThingsController.categoriesAll
           .map((c) => c['name'].toString())
+          .toSet() // Ensure uniqueness
           .toList();
       debugPrint("itemListForCategory: $itemListForCategory");
     });
@@ -169,10 +170,12 @@ class _AddNewThingsState extends State<AddNewThings>
                             itemListForSubCategory = addThingsController.categoriesAll
                                 .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
                                 .map((c) => c['name'].toString())
+                                .toSet()
                                 .toList();
                             selectSubCategory = null;
                           });
                         },
+                        initialValue: selectCategory,
                       ),
                       const SizedBox(
                         height: 18,

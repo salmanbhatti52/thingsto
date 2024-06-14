@@ -12,8 +12,9 @@ class GetProfileController extends GetxController {
   var isError = false.obs;
   var getProfile = {}.obs;
   var favorites = [].obs;
+  var categoriesStats = [].obs;
 
-  /* Get User Profile To Function */
+  /* Get User Profile Function */
 
   getUserProfile({required String usersCustomersId}) async {
     try {
@@ -42,7 +43,7 @@ class GetProfileController extends GetxController {
     }
   }
 
-  /* Get Things To Function */
+  /* Get Favorites Things Function */
 
   getFavoritesThings() async {
     try {
@@ -68,6 +69,43 @@ class GetProfileController extends GetxController {
       if (favoritesData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         favorites.value = data;
+      } else {
+        debugPrint(favoritesData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* Get Favorites Things Function */
+
+  getCategoriesStats() async {
+    try {
+      isLoading.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(categoriesAllStatsApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var favoritesData = jsonDecode(response.body);
+      debugPrint("favoritesData $favoritesData");
+      if (favoritesData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+        categoriesStats.value = data;
       } else {
         debugPrint(favoritesData['status']);
         isError.value = true;
