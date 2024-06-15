@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -10,6 +11,7 @@ import 'package:thingsto/Screens/ThingstoPages/TopThings/topthingsto_container.d
 import 'package:thingsto/Screens/ThingstoPages/filter_dialog.dart';
 import 'package:thingsto/Screens/ThingstoPages/things_see_all.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/row_text.dart';
@@ -27,6 +29,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
   String selectedCategoryName = '';
   String selectedCategoryId = '';
   final ThingstoController thingstoController = Get.put(ThingstoController());
+  final LanguageController languageController = Get.put(LanguageController());
   final List<Map<String, String>> categoryHistory = [];
 
   @override
@@ -152,10 +155,11 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           text: selectedCategoryName,
                     onTap: (){},
                         )
-                      : RowText(
-                          text: "Categories",
+                      : Obx(() => RowText(
+                    text: languageController.phrases['categories'] ??
+                        "Categories",
                     onTap: (){},
-                        ),
+                  ),),
                   isSelect
                       ? Obx(
                           () {
@@ -283,11 +287,10 @@ class _ThingstoPageState extends State<ThingstoPage> {
                         // }
                         if (thingstoController.thingsto.isEmpty) {
                           return const Center(
-                            child: Text(
-                              'Things not found',
-                              style: TextStyle(
-                                color: AppColor.blackColor,
-                                fontSize: 16,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Things not found',
                               ),
                             ),
                           );
@@ -343,11 +346,10 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       // }
                       if (thingstoController.topThingsto.isEmpty) {
                         return const Center(
-                          child: Text(
-                            'Things not found',
-                            style: TextStyle(
-                              color: AppColor.blackColor,
-                              fontSize: 16,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 28.0),
+                            child: LabelField(
+                              text: 'Top Things not found',
                             ),
                           ),
                         );

@@ -319,11 +319,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         // }
                         if (getProfileController.favorites.isEmpty) {
                           return const Center(
-                            child: Text(
-                              'Things not found',
-                              style: TextStyle(
-                                color: AppColor.blackColor,
-                                fontSize: 16,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Favorites Things not found',
                               ),
                             ),
                           );
@@ -368,7 +367,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (getProfileController.categoriesStats.isEmpty) {
                           return const Center(
                             child: Text(
-                              'Categories not found',
+                              'Summary Stats of Categories not available',
                               style: TextStyle(
                                 color: AppColor.blackColor,
                                 fontSize: 16,

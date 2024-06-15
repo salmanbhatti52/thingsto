@@ -81,10 +81,10 @@ class SettingPage extends StatelessWidget {
                       SettingContainer(
                         image: AppAssets.lang,
                         text: "Language",
-                        text1: "English",
+                        text1: getProfile["language"] ?? "English",
                         onBack: (){
                           Get.to(
-                                () => const LanguageChangePage(),
+                                () => LanguageChangePage(getProfile: getProfile,),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );

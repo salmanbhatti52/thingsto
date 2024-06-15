@@ -6,6 +6,10 @@ String baseUrlImage = 'https://thingsto.fr/portal/public/';
 
 String systemSettingsApiUrl = '${baseUrl}system_settings';
 
+String languagesApiUrl = '${baseUrl}languages';
+
+String languagesPhrasesApiUrl = '${baseUrl}languages_phrases';
+
 String checkReferralCodeApiUrl = '${baseUrl}check_referral_code';
 
 String signUpApiUrl = '${baseUrl}signup';

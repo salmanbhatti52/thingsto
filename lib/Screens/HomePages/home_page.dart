@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:thingsto/Controllers/home_controller.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   late LatLng _currentLocation;
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final HomeController homeController = Get.put(HomeController());
+  final LanguageController languageController = Get.put(LanguageController());
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -141,17 +143,17 @@ class _HomePageState extends State<HomePage> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(
+                  Padding(
+                    padding: const EdgeInsets.only(
                       left: 40.0,
                       right: 40.0,
                       top: 15.0,
                     ),
-                    child: LabelField(
-                      text:
+                    child: Obx(() => LabelField(
+                      text: languageController.phrases['home_you_dont_know_what_to_do_around_you?_let_us_find_you_something_with_your_criteria_;)'] ??
                           "You don’t know what to do around you? Let us find you something with your criteria ;)",
                       fontSize: 18,
-                    ),
+                    ),),
                   ),
                   SizedBox(
                     height: Get.height * 0.025,
@@ -280,11 +282,10 @@ class _HomePageState extends State<HomePage> {
                       // }
                       if (thingstoController.thingsto.isEmpty) {
                         return const Center(
-                          child: Text(
-                            'Things not found',
-                            style: TextStyle(
-                              color: AppColor.blackColor,
-                              fontSize: 16,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 28.0),
+                            child: LabelField(
+                              text: 'Things not found',
                             ),
                           ),
                         );

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class LanguageChangePage extends StatefulWidget {
-  const LanguageChangePage({super.key});
+  Map<dynamic, dynamic> getProfile = {};
+  LanguageChangePage({super.key, required this.getProfile});
 
   @override
   State<LanguageChangePage> createState() => _LanguageChangePageState();
@@ -14,57 +18,34 @@ class LanguageChangePage extends StatefulWidget {
 
 class _LanguageChangePageState extends State<LanguageChangePage> with TickerProviderStateMixin {
 
-  bool _isEnglishChecked = false;
-  bool _isFrenchChecked = false;
-  late AnimationController _englishController;
-  late AnimationController frenchController;
-  late Animation<double> englishAnimation;
-  late Animation<double> frenchAnimation;
-
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  String? _selectedLanguage;
+  final LanguageController languageController = Get.put(LanguageController());
   @override
   void initState() {
     super.initState();
-    _englishController = AnimationController(
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    englishAnimation = CurvedAnimation(parent: _englishController, curve: Curves.easeInOut);
-
-    frenchController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    frenchAnimation = CurvedAnimation(parent: frenchController, curve: Curves.easeInOut);
+    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
   }
 
-  void _toggleEnglishCheckbox() {
+  void _toggleLanguageCheckbox(String language) {
     setState(() {
-      _isEnglishChecked = !_isEnglishChecked;
-      if (_isEnglishChecked) {
-        _englishController.forward();
-      } else {
-        _englishController.reverse();
-      }
-    });
-  }
-
-  void _toggleFrenchCheckbox() {
-    setState(() {
-      _isFrenchChecked = !_isFrenchChecked;
-      if (_isFrenchChecked) {
-        frenchController.forward();
-      } else {
-        frenchController.reverse();
-      }
+      _selectedLanguage = language;
+      _animationController.forward(from: 0);
+      debugPrint("_selectedLanguage $_selectedLanguage");
     });
   }
 
   @override
   void dispose() {
-    _englishController.dispose();
-    frenchController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +71,7 @@ class _LanguageChangePageState extends State<LanguageChangePage> with TickerProv
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: Get.height * 0.07,
+                      height: Get.height * 0.05,
                     ),
                     const LabelField(
                       text: 'Select Language',
@@ -99,93 +80,96 @@ class _LanguageChangePageState extends State<LanguageChangePage> with TickerProv
                     SizedBox(
                       height: Get.height * 0.03,
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleEnglishCheckbox,
-                          child: Container(
-                            width: 26,
-                            height: 23,
-                            decoration: BoxDecoration(
-                              color: AppColor.secondaryColor,
-                              border: Border.all(
-                                color: _isEnglishChecked ? AppColor.primaryColor : AppColor.borderColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: FadeTransition(
-                                opacity: englishAnimation,
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
+                    Obx(() {
+                      if (languageController.isLoading.value) {
+                        return  Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: Get.height * 0.1),
+                            child: SpinKitThreeBounce(
+                              itemBuilder: (
+                                  BuildContext context,
+                                  int i,
+                                  ) {
+                                return DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: AppColor.primaryColor,
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        LabelField(
-                          text: "English",
-                          fontSize: 16,
-                          color: _isEnglishChecked ? AppColor.labelTextColor : AppColor.hintColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ],
-                    ),
+                        );
+                      }
+                      return Column(
+                        children: languageController.language.map((language) {
+                          bool isSelected = _selectedLanguage == language;
+                          return GestureDetector(
+                            onTap: () => _toggleLanguageCheckbox(language),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 26,
+                                    height: 23,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.secondaryColor,
+                                      border: Border.all(
+                                        color: isSelected ? AppColor.primaryColor : AppColor.borderColor,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Center(
+                                      child: FadeTransition(
+                                        opacity: isSelected ? _animation : const AlwaysStoppedAnimation(0),
+                                        child: const Icon(
+                                          Icons.check_rounded,
+                                          size: 20,
+                                          color: AppColor.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  LabelField(
+                                    text: language.capitalizeFirst!,
+                                    fontSize: 16,
+                                    color: isSelected ? AppColor.labelTextColor : AppColor.hintColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }),
                     SizedBox(
-                      height: Get.height * 0.03,
+                      height: Get.height * 0.52,
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleFrenchCheckbox,
-                          child: Container(
-                            width: 26,
-                            height: 23,
-                            decoration: BoxDecoration(
-                              color: AppColor.secondaryColor,
-                              border: Border.all(
-                                color: _isFrenchChecked ? AppColor.primaryColor : AppColor.borderColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: FadeTransition(
-                                opacity: frenchAnimation,
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
-                            ),
+                    Obx(
+                          () => languageController.isLoading1.value
+                          ? LargeButton(
+                        text: "Please Wait...",
+                        onTap: () {},
+                      )
+                          : LargeButton(
+                            text: "Apply",
+                            onTap: () async {
+                              if (_selectedLanguage != null) {
+                                await languageController.languagesPhrase(language: _selectedLanguage!.toString());
+                              } else {
+                                CustomSnackbar.show(
+                                  title: 'Error',
+                                  message: "Please select the language",
+                                );
+                              }
+                            },
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        LabelField(
-                          text: "French",
-                          fontSize: 16,
-                          color: _isFrenchChecked ? AppColor.labelTextColor : AppColor.hintColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.55,
-                    ),
-                    LargeButton(
-                      text: "Apply",
-                      onTap: () {
-                        Get.back();
-                      },
                     ),
                     SizedBox(
                       height: Get.height * 0.02,
