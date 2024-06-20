@@ -255,7 +255,7 @@ class ThingstoController extends GetxController {
 
   /* Validate Things Function */
 
-  Future<void> validateThings(String thingId) async {
+  Future<void> validateThings(String thingId, String things) async {
     try {
       String userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
@@ -272,6 +272,8 @@ class ThingstoController extends GetxController {
       if (validateData['status'] == 'success') {
         // totalLikes.value = validateData['data']['total_likes'];
         isValidate.value = !isValidate.value;
+        things == "thingsto" ? getThingsto(usersCustomersId: userID.toString()) :  getTopThingsto( usersCustomersId: userID.toString());
+        Get.back();
       } else {
         debugPrint(validateData['status']);
       }

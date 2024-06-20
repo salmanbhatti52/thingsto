@@ -8,6 +8,8 @@ String systemSettingsApiUrl = '${baseUrl}system_settings';
 
 String languagesApiUrl = '${baseUrl}languages';
 
+String updateProfileLanguageApiUrl = '${baseUrl}update_profile_language';
+
 String languagesPhrasesApiUrl = '${baseUrl}languages_phrases';
 
 String checkReferralCodeApiUrl = '${baseUrl}check_referral_code';

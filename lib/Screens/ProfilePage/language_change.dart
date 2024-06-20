@@ -161,7 +161,7 @@ class _LanguageChangePageState extends State<LanguageChangePage> with TickerProv
                             text: "Apply",
                             onTap: () async {
                               if (_selectedLanguage != null) {
-                                await languageController.languagesPhrase(language: _selectedLanguage!.toString());
+                                await languageController.updateLanguages(language: _selectedLanguage!.toString());
                               } else {
                                 CustomSnackbar.show(
                                   title: 'Error',

@@ -13,6 +13,7 @@ import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
@@ -314,6 +315,9 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                   thingstoController.likeUnlikeUser(
                     widget.topThingsto!["things_id"].toString(),
                   );
+                  userID = (prefs.getString('users_customers_id').toString());
+                  debugPrint("userID $userID");
+                  thingstoController.getTopThingsto(usersCustomersId: userID.toString());
                 },
                 child: Obx(() {
                   return Row(

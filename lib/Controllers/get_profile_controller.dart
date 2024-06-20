@@ -101,13 +101,13 @@ class GetProfileController extends GetxController {
       final response = await http.post(Uri.parse(categoriesAllStatsApiUrl),
           headers: {'Accept': 'application/json'}, body: data);
 
-      var favoritesData = jsonDecode(response.body);
-      debugPrint("favoritesData $favoritesData");
-      if (favoritesData['status'] == 'success') {
+      var statsData = jsonDecode(response.body);
+      debugPrint("statsData $statsData");
+      if (statsData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categoriesStats.value = data;
       } else {
-        debugPrint(favoritesData['status']);
+        debugPrint(statsData['status']);
         isError.value = true;
       }
     } catch (e) {

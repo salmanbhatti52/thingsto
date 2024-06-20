@@ -37,7 +37,7 @@ class TopThingsValidate extends StatelessWidget {
                   Obx(() => LargeButton(
                     text: thingstoController.isValidate.value ?  "Validated" : "Validate this Thing",
                     onTap: () {
-                      thingstoController.validateThings(topThingsto["things_id"].toString());
+                      thingstoController.validateThings(topThingsto["things_id"].toString(), "topThingsto");
                       // : CustomSnackbar.show(title: "Error", message: "Already Validated");
                     },
                   ),),

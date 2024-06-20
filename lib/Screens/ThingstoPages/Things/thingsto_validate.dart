@@ -9,7 +9,8 @@ import 'things_details.dart';
 
 class ThingsValidate extends StatelessWidget {
   final Map<String, dynamic> thingsto;
-  const ThingsValidate({super.key, required this.thingsto,});
+  final String thingstoName;
+  const ThingsValidate({super.key, required this.thingsto, required this.thingstoName,});
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,12 @@ class ThingsValidate extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 55.0),
-                    child: ThingsDetails(thingsto: thingsto,),
+                    child: ThingsDetails(thingsto: thingsto,thingstoName: thingstoName,),
                   ),
                   Obx(() => LargeButton(
                     text: thingstoController.isValidate.value ?  "Validated" : "Validate this Thing",
                     onTap: () {
-                       thingstoController.validateThings(thingsto["things_id"].toString());
+                       thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto");
                           // : CustomSnackbar.show(title: "Error", message: "Already Validated");
                     },
                   ),),

@@ -84,7 +84,7 @@ class ThingsSeeAll extends StatelessWidget {
                               GestureDetector(
                                 onTap: (){
                                   Get.to(
-                                        () => ThingsValidate(thingsto: things,),
+                                        () => ThingsValidate(thingsto: things, thingstoName: "seeAll",),
                                     duration: const Duration(milliseconds: 350),
                                     transition: Transition.rightToLeft,
                                   );

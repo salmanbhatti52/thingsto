@@ -10,16 +10,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
 class ThingsDetails extends StatefulWidget {
   final Map<String, dynamic>? thingsto;
-  const ThingsDetails({super.key, this.thingsto,});
+  final String thingstoName;
+  const ThingsDetails({super.key, this.thingsto, required this.thingstoName,});
 
   @override
   State<ThingsDetails> createState() => _ThingsDetailsState();
@@ -168,6 +171,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
     });
   }
 
+  final GetProfileController getProfileController = Get.put(GetProfileController());
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> tags = widget.thingsto?["tags"] ?? [];
@@ -315,6 +320,15 @@ class _ThingsDetailsState extends State<ThingsDetails>
                   thingstoController.likeUnlikeUser(
                     widget.thingsto!["things_id"].toString(),
                   );
+                  userID = (prefs.getString('users_customers_id').toString());
+                  debugPrint("userID $userID");
+                  if(widget.thingstoName == "Favorite") {
+                    getProfileController.getFavoritesThings();
+                  } else if(widget.thingstoName == "HomeSide") {
+
+                  } else {
+                    thingstoController.getThingsto(usersCustomersId: userID.toString());
+                  }
                 },
                 child: Obx(() {
                   return Row(

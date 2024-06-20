@@ -329,6 +329,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         }
                         return HomeSuggestions(
                           thingsto: getProfileController.favorites,
+                          thingstoName: "Favorite",
                         );
                       },
                     ),

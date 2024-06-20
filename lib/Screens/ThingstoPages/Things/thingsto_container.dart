@@ -28,7 +28,7 @@ class ThingstoContainer extends StatelessWidget {
             child: GestureDetector(
               onTap: (){
                 Get.to(
-                      () => ThingsValidate(thingsto: things,),
+                      () => ThingsValidate(thingsto: things, thingstoName: "things",),
                   duration: const Duration(milliseconds: 350),
                   transition: Transition.rightToLeft,
                 );

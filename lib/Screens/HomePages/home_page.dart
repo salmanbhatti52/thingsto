@@ -37,18 +37,6 @@ class _HomePageState extends State<HomePage> {
     mapController = controller;
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getName();
-    userID = (prefs.getString('users_customers_id').toString());
-    debugPrint("userID $userID");
-      thingstoController.getThingsto(
-        usersCustomersId: userID.toString(),
-      );
-  }
-
   getName()  {
     surName = prefs.getString('surName');
     systemLattitude = prefs.getString('system_lattitude');
@@ -58,6 +46,22 @@ class _HomePageState extends State<HomePage> {
       debugPrint("systemLattitude :: $systemLattitude");
       debugPrint("systemLongitude :: $systemLongitude");
     }
+  }
+
+  Future<void> getUserThings() async {
+    userID = (prefs.getString('users_customers_id').toString());
+    debugPrint("userID $userID");
+    getName();
+    thingstoController.getThingsto(
+      usersCustomersId: userID.toString(),
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserThings();
   }
 
   String? selectCategory;
@@ -292,6 +296,7 @@ class _HomePageState extends State<HomePage> {
                       }
                       return HomeSuggestions(
                         thingsto: thingstoController.thingsto,
+                        thingstoName: "HomeSide",
                       );
                     },
                   ),
