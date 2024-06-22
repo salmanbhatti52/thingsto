@@ -59,6 +59,25 @@ class _AddNewThingsState extends State<AddNewThings>
   String postCode = "";
   String placesId = "";
 
+  Future<void> getUserThings() async {
+    if (addThingsController.isDataLoadedCategoriesAll.value) {
+      addThingsController.getAllCategory();
+        itemListForCategory = addThingsController.cachedCategoriesAll
+            .map((c) => c['name'].toString())
+            .toSet() // Ensure uniqueness
+            .toList();
+        debugPrint("itemListForCategory: $itemListForCategory");
+    } else {
+      await addThingsController.getAllCategory();
+        itemListForCategory = addThingsController.cachedCategoriesAll
+            .map((c) => c['name'].toString())
+            .toSet() // Ensure uniqueness
+            .toList();
+        debugPrint("itemListForCategory: $itemListForCategory");
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -66,14 +85,7 @@ class _AddNewThingsState extends State<AddNewThings>
     debugPrint("googleApiKey $googleApiKey");
     _placesService.initialize(apiKey: googleApiKey.toString());
     locationController = TextEditingController(text: "");
-
-    addThingsController.getAllCategory().then((_) {
-      itemListForCategory = addThingsController.categoriesAll
-          .map((c) => c['name'].toString())
-          .toSet() // Ensure uniqueness
-          .toList();
-      debugPrint("itemListForCategory: $itemListForCategory");
-    });
+    getUserThings();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -127,7 +139,7 @@ class _AddNewThingsState extends State<AddNewThings>
                   horizontal: Get.width * 0.08,
                 ),
                 child: Obx(() {
-                  return addThingsController.isLoading1.value
+                  return addThingsController.isLoading1.value && addThingsController.cachedCategoriesAll.isEmpty
                       ? Center(
                     child: Padding(
                       padding: EdgeInsets.only(top: Get.height * 0.35),
@@ -163,11 +175,11 @@ class _AddNewThingsState extends State<AddNewThings>
                         onChanged: (value) {
                           setState(() {
                             selectCategory = value;
-                            selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
+                            selectCategoryId = addThingsController.cachedCategoriesAll.firstWhere((c) => c['name'] == value)
                             ['categories_id'].toString();
                             debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
                             // Filter subcategories based on selected category
-                            itemListForSubCategory = addThingsController.categoriesAll
+                            itemListForSubCategory = addThingsController.cachedCategoriesAll
                                 .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
                                 .map((c) => c['name'].toString())
                                 .toSet()
@@ -196,7 +208,7 @@ class _AddNewThingsState extends State<AddNewThings>
                            onChanged: (value) {
                              setState(() {
                                selectSubCategory = value;
-                               selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
+                               selectSubCategoryId = addThingsController.cachedCategoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
                              });
                            },

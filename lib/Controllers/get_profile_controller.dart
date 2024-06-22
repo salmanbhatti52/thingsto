@@ -14,12 +14,18 @@ class GetProfileController extends GetxController {
   var favorites = [].obs;
   var categoriesStats = [].obs;
 
+  var cachedGetProfile = {}.obs;
+  var isDataLoadedGetProfile = false.obs;
+  var cachedFavorites = [].obs;
+  var isDataLoadedFavorites = false.obs;
+  var cachedCategoriesStats = [].obs;
+  var isDataLoadedCategoriesStats = false.obs;
+
   /* Get User Profile Function */
 
   getUserProfile({required String usersCustomersId}) async {
     try {
       isLoading.value = true;
-
       Map<String, String> data = {
         "users_customers_id": usersCustomersId,
       };
@@ -31,6 +37,8 @@ class GetProfileController extends GetxController {
       debugPrint("getProfileData $getProfileData");
       if (getProfileData['status'] == 'success') {
         getProfile.value = getProfileData['data'];
+        cachedGetProfile.value = getProfileData['data'];
+        isDataLoadedGetProfile.value = true;
       } else {
         debugPrint(getProfileData['status']);
         isError.value = true;
@@ -69,6 +77,8 @@ class GetProfileController extends GetxController {
       if (favoritesData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         favorites.value = data;
+        cachedFavorites.value = data;
+        isDataLoadedFavorites.value = true;
       } else {
         debugPrint(favoritesData['status']);
         isError.value = true;
@@ -106,6 +116,8 @@ class GetProfileController extends GetxController {
       if (statsData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categoriesStats.value = data;
+        cachedCategoriesStats.value = data;
+        isDataLoadedCategoriesStats.value = true;
       } else {
         debugPrint(statsData['status']);
         isError.value = true;

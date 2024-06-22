@@ -42,17 +42,23 @@ class _ThingstoPageState extends State<ThingstoPage> {
     thingstoController.findingThings.clear();
     userID = (prefs.getString('users_customers_id').toString());
     debugPrint("userID $userID");
-    thingstoController.getCategory(
-      usersCustomersId: userID.toString(),
-    ).then((_){
-      thingstoController.getThingsto(
-        usersCustomersId: userID.toString(),
-      );
-    }).then((_){
-      thingstoController.getTopThingsto(
-        usersCustomersId: userID.toString(),
-      );
-    });
+    if (thingstoController.isDataLoadedThingsto.value) {
+      // Show cached data and then update in the background
+      thingstoController.getThingsto(usersCustomersId: userID.toString());
+    } else {
+      // Load data from the server
+      await thingstoController.getThingsto(usersCustomersId: userID.toString());
+    }
+    if (thingstoController.isDataLoadedCategories.value) {
+      thingstoController.getCategory(usersCustomersId: userID.toString());
+    } else {
+      await thingstoController.getCategory(usersCustomersId: userID.toString());
+    }
+    if (thingstoController.isDataLoadedTopThingsto.value) {
+      thingstoController.getTopThingsto(usersCustomersId: userID.toString());
+    } else {
+      await thingstoController.getTopThingsto(usersCustomersId: userID.toString());
+    }
   }
 
   void selectCategory(String categoryName, String categoryId) {
@@ -204,7 +210,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                         )
                       : Obx(
                           () {
-                            if (thingstoController.isLoading.value) {
+                            if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty) {
                               return Shimmers(
                                 width: Get.width,
                                 height: Get.height * 0.15,
@@ -226,7 +232,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             //     ),
                             //   );
                             // }
-                            if (thingstoController.categories.isEmpty) {
+                            if (thingstoController.cachedCategories.isEmpty) {
                               return const Center(
                                 child: Text(
                                   'Categories not found',
@@ -238,7 +244,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               );
                             }
                             return CategoryContainer(
-                              categories: thingstoController.categories,
+                              categories: thingstoController.cachedCategories,
                               onSelect: selectCategory,
                             );
                           },
@@ -250,7 +256,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     text: "Things to",
                     onTap: (){
                       Get.to(
-                            () => ThingsSeeAll(thingsto: thingstoController.thingsto,),
+                            () => ThingsSeeAll(thingsto: thingstoController.cachedThingsto,),
                         duration: const Duration(milliseconds: 350),
                         transition: Transition.rightToLeft,
                       );
@@ -263,7 +269,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     return thingstoController.findingThings.isEmpty
                         ? Obx(
                           () {
-                        if (thingstoController.isLoading.value) {
+                        if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
                           return Shimmers(
                             width: Get.width,
                             height:  Get.height * 0.255,
@@ -285,7 +291,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                         //     ),
                         //   );
                         // }
-                        if (thingstoController.thingsto.isEmpty) {
+                        if (thingstoController.cachedThingsto.isEmpty) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
@@ -296,7 +302,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           );
                         }
                         return ThingstoContainer(
-                          thingsto: thingstoController.thingsto,
+                          thingsto: thingstoController.cachedThingsto,
                         );
                       },
                     )
@@ -311,7 +317,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     text: "Top Things to",
                     onTap: (){
                       Get.to(
-                            () => ThingsSeeAll(thingsto: thingstoController.topThingsto,),
+                            () => ThingsSeeAll(thingsto: thingstoController.cachedTopThingsto,),
                         duration: const Duration(milliseconds: 350),
                         transition: Transition.rightToLeft,
                       );
@@ -322,7 +328,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   ),
                   Obx(
                         () {
-                      if (thingstoController.isLoading.value) {
+                      if (thingstoController.isLoading.value && thingstoController.cachedTopThingsto.isEmpty) {
                         return Shimmers(
                           width: Get.width,
                           height:  Get.height * 0.255,
@@ -344,7 +350,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       //     ),
                       //   );
                       // }
-                      if (thingstoController.topThingsto.isEmpty) {
+                      if (thingstoController.cachedTopThingsto.isEmpty) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 28.0),
@@ -355,7 +361,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                         );
                       }
                       return TopThingstoContainer(
-                        topThingsto: thingstoController.topThingsto,
+                        topThingsto: thingstoController.cachedTopThingsto,
                       );
                     },
                   ),

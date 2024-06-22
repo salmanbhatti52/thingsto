@@ -316,14 +316,18 @@ class _ThingsDetailsState extends State<ThingsDetails>
                 fontSize: 20,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   thingstoController.likeUnlikeUser(
                     widget.thingsto!["things_id"].toString(),
                   );
                   userID = (prefs.getString('users_customers_id').toString());
                   debugPrint("userID $userID");
                   if(widget.thingstoName == "Favorite") {
-                    getProfileController.getFavoritesThings();
+                    // if (getProfileController.isDataLoadedFavorites.value) {
+                    //   getProfileController.getFavoritesThings();
+                    // } else {
+                    //   await getProfileController.getFavoritesThings();
+                    // }
                   } else if(widget.thingstoName == "HomeSide") {
 
                   } else {

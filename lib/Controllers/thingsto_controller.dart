@@ -21,6 +21,13 @@ class ThingstoController extends GetxController {
   var topThingsto = [].obs;
   var findingThings = [].obs;
 
+  var cachedCategories = [].obs;
+  var isDataLoadedCategories = false.obs;
+  var cachedThingsto = [].obs;
+  var isDataLoadedThingsto = false.obs;
+  var cachedTopThingsto = [].obs;
+  var isDataLoadedTopThingsto = false.obs;
+
   /* Get Parent Category Function */
 
   getCategory({
@@ -47,6 +54,8 @@ class ThingstoController extends GetxController {
       if (categoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categories.value = data;
+        cachedCategories.value = data;
+        isDataLoadedCategories.value = true;
       } else {
         debugPrint(categoryData['status']);
         isError.value = true;
@@ -120,6 +129,8 @@ class ThingstoController extends GetxController {
       if (thingstoData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         thingsto.value = data;
+        cachedThingsto.value = data;
+        isDataLoadedThingsto.value = true;
       } else {
         debugPrint(thingstoData['status']);
         isError.value = true;
@@ -157,6 +168,8 @@ class ThingstoController extends GetxController {
       if (topThingstoData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         topThingsto.value = data;
+        cachedTopThingsto.value = data;
+        isDataLoadedTopThingsto.value = true;
       } else {
         debugPrint(topThingstoData['status']);
         isError.value = true;

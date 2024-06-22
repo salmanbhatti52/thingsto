@@ -48,10 +48,21 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
     String? userID = prefs.getString('users_customers_id');
     if (userID != null) {
-      getProfileController.getUserProfile(usersCustomersId: userID).then((_){
+      if (getProfileController.isDataLoadedGetProfile.value) {
+        getProfileController.getUserProfile(usersCustomersId: userID.toString());
+      } else {
+        await getProfileController.getUserProfile(usersCustomersId: userID.toString());
+      }
+      if (getProfileController.isDataLoadedFavorites.value) {
         getProfileController.getFavoritesThings();
+      } else {
+        await getProfileController.getFavoritesThings();
+      }
+      if (getProfileController.isDataLoadedCategoriesStats.value) {
         getProfileController.getCategoriesStats();
-      });
+      } else {
+        await getProfileController.getCategoriesStats();
+      }
     }
   }
 
@@ -67,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
             icon2: AppAssets.setting,
             onClick: () {
               Get.to(
-                () => SettingPage(getProfile: getProfileController.getProfile,),
+                () => SettingPage(getProfile: getProfileController.cachedGetProfile,),
                 duration: const Duration(milliseconds: 350),
                 transition: Transition.upToDown,
               );
@@ -85,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: Get.height * 0.02,
                     ),
                     Obx(() {
-                      final profile = getProfileController.getProfile;
+                      final profile = getProfileController.cachedGetProfile;
                       final profilePictureUrl = profile['profile_picture'] ?? '';
                       final userName = "${profile['first_name']} ${profile['last_name']}";
                       return Stack(
@@ -105,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ],
                             ),
-                            child: getProfileController.isLoading.value || getProfileController.getProfile.isNotEmpty
+                            child: getProfileController.isLoading.value || getProfileController.cachedGetProfile.isNotEmpty
                                 ? Padding(
                                     padding: const EdgeInsets.only(
                                         left: 15.0, top: 10, bottom: 10),
@@ -225,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                           ),
-                          getProfileController.isLoading.value || getProfileController.getProfile.isEmpty
+                          getProfileController.isLoading.value || getProfileController.cachedGetProfile.isEmpty
                               ? const SizedBox()
                               : Positioned(
                                   left: Get.width * 0.2,
@@ -295,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Obx(
                           () {
-                        if (getProfileController.isLoading.value) {
+                        if (getProfileController.isLoading.value && getProfileController.cachedFavorites.isEmpty) {
                           return Shimmers(
                             width: Get.width,
                             height:  Get.height * 0.255,
@@ -317,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         //     ),
                         //   );
                         // }
-                        if (getProfileController.favorites.isEmpty) {
+                        if (getProfileController.cachedFavorites.isEmpty) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
@@ -328,7 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         }
                         return HomeSuggestions(
-                          thingsto: getProfileController.favorites,
+                          thingsto: getProfileController.cachedFavorites,
                           thingstoName: "Favorite",
                         );
                       },
@@ -343,7 +354,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Obx(
                           () {
-                        if (    getProfileController.isLoading.value) {
+                        if (getProfileController.isLoading.value && getProfileController.cachedCategoriesStats.isEmpty) {
                           return Shimmers(
                             width: Get.width,
                             height:  Get.height * 0.15,
@@ -365,7 +376,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         //     ),
                         //   );
                         // }
-                        if (getProfileController.categoriesStats.isEmpty) {
+                        if (getProfileController.cachedCategoriesStats.isEmpty) {
                           return const Center(
                             child: Text(
                               'Summary Stats of Categories not available',
@@ -377,7 +388,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         }
                         return SummaryStats(
-                          stats: getProfileController.categoriesStats,
+                          stats: getProfileController.cachedCategoriesStats,
                         );
                       },
                     ),

@@ -23,6 +23,9 @@ class AddThingsController extends GetxController {
   var pickedFile = ''.obs;
   RxList<String> tags = <String>[].obs;
 
+  var cachedCategoriesAll = [].obs;
+  var isDataLoadedCategoriesAll = false.obs;
+
   /* Add Tags  Function */
 
   void addTag(String tag) {
@@ -116,6 +119,8 @@ class AddThingsController extends GetxController {
       if (allCategoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categoriesAll.value = data;
+        cachedCategoriesAll.value = data;
+        isDataLoadedCategoriesAll.value = true;
       } else {
         debugPrint(allCategoryData['status']);
         isError.value = true;

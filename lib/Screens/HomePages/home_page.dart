@@ -52,10 +52,16 @@ class _HomePageState extends State<HomePage> {
     userID = (prefs.getString('users_customers_id').toString());
     debugPrint("userID $userID");
     getName();
-    thingstoController.getThingsto(
-      usersCustomersId: userID.toString(),
-    );
+
+    if (thingstoController.isDataLoadedThingsto.value) {
+      // Show cached data and then update in the background
+      thingstoController.getThingsto(usersCustomersId: userID.toString());
+    } else {
+      // Load data from the server
+      await thingstoController.getThingsto(usersCustomersId: userID.toString());
+    }
   }
+
 
   @override
   void initState() {
@@ -262,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Obx(
                         () {
-                      if (thingstoController.isLoading.value) {
+                      if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
                         return Shimmers(
                           width: Get.width,
                           height:  Get.height * 0.255,
@@ -284,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                       //     ),
                       //   );
                       // }
-                      if (thingstoController.thingsto.isEmpty) {
+                      if (thingstoController.cachedThingsto.isEmpty) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 28.0),
@@ -295,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       }
                       return HomeSuggestions(
-                        thingsto: thingstoController.thingsto,
+                        thingsto: thingstoController.cachedThingsto,
                         thingstoName: "HomeSide",
                       );
                     },
