@@ -128,9 +128,17 @@ class ThingstoController extends GetxController {
       debugPrint("thingstoData $thingstoData");
       if (thingstoData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
+        var filteredData = data.where((thing) {
+          var validaters = thing['things_validated'] as List;
+          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId);
+        }).toList();
         thingsto.value = data;
-        cachedThingsto.value = data;
+        cachedThingsto.value = filteredData;
         isDataLoadedThingsto.value = true;
+
+        // thingsto.value = data;
+        // cachedThingsto.value = data;
+        // isDataLoadedThingsto.value = true;
       } else {
         debugPrint(thingstoData['status']);
         isError.value = true;
@@ -167,9 +175,17 @@ class ThingstoController extends GetxController {
       debugPrint("TopThingstoData $topThingstoData");
       if (topThingstoData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
-        topThingsto.value = data;
-        cachedTopThingsto.value = data;
+        var filteredData = data.where((thing) {
+          var validaters = thing['things_validated'] as List;
+          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId);
+        }).toList();
+        topThingsto.value = filteredData;
+        cachedTopThingsto.value = filteredData;
         isDataLoadedTopThingsto.value = true;
+
+        // topThingsto.value = data;
+        // cachedTopThingsto.value = data;
+        // isDataLoadedTopThingsto.value = true;
       } else {
         debugPrint(topThingstoData['status']);
         isError.value = true;
@@ -221,43 +237,53 @@ class ThingstoController extends GetxController {
     required String country,
     required String city,
     required String distances,
+    required String checkValue1,
+    required String checkValue2,
   }) async {
     try {
       isLoading1.value = true;
       findingThings.clear();
-      await GlobalService.getCurrentPosition();
-      userID = (prefs.getString('users_customers_id').toString());
-      double latitude1 = GlobalService.currentLocation!.latitude;
-      double longitude1 = GlobalService.currentLocation!.longitude;
-      debugPrint("userID $userID");
-      debugPrint('current latitude: $latitude1');
-      debugPrint('current longitude: $longitude1');
-      Map<String, String> data = {
-        "users_customers_id": userID.toString(),
-        "current_longitude":  longitude1.toString(),
-        "current_lattitude": latitude1.toString(),
-        "categories_id": categoriesId.toString(),
-        "city": city.toString(),
-        "country": country.toString(),
-        "distance": distances.toString(),
-      };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(thingsSearchApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
 
-      var searchThingstoData = jsonDecode(response.body);
-      debugPrint("searchThingstoData $searchThingstoData");
-      if (searchThingstoData['status'] == 'success') {
-        var data = jsonDecode(response.body)['data'] as List;
-        findingThings.value = data;
+      if (checkValue1 == "Yes"){
+        findingThings.value = thingsto;
+        Get.back();
+      } else if (checkValue2 == "Yes") {
         Get.back();
       } else {
-        debugPrint(searchThingstoData['status']);
-        var errorMsg = searchThingstoData['message'];
-        CustomSnackbar.show(
-          title: 'Error',
-          message: errorMsg.toString(),
-        );
+        await GlobalService.getCurrentPosition();
+        userID = (prefs.getString('users_customers_id').toString());
+        double latitude1 = GlobalService.currentLocation!.latitude;
+        double longitude1 = GlobalService.currentLocation!.longitude;
+        debugPrint("userID $userID");
+        debugPrint('current latitude: $latitude1');
+        debugPrint('current longitude: $longitude1');
+        Map<String, String> data = {
+          "users_customers_id": userID.toString(),
+          "current_longitude":  longitude1.toString(),
+          "current_lattitude": latitude1.toString(),
+          "categories_id": categoriesId.toString(),
+          "city": city.toString(),
+          "country": country.toString(),
+          "distance": distances.toString(),
+        };
+        debugPrint("data $data");
+        final response = await http.post(Uri.parse(thingsSearchApiUrl),
+            headers: {'Accept': 'application/json'}, body: data);
+
+        var searchThingstoData = jsonDecode(response.body);
+        debugPrint("searchThingstoData $searchThingstoData");
+        if (searchThingstoData['status'] == 'success') {
+          var data = jsonDecode(response.body)['data'] as List;
+          findingThings.value = data;
+          Get.back();
+        } else {
+          debugPrint(searchThingstoData['status']);
+          var errorMsg = searchThingstoData['message'];
+          CustomSnackbar.show(
+            title: 'Error',
+            message: errorMsg.toString(),
+          );
+        }
       }
     } catch (e) {
       debugPrint("Error $e");

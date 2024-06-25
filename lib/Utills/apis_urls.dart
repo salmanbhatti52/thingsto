@@ -26,6 +26,10 @@ String deleteAccountApiUrl = '${baseUrl}delete_account';
 
 String changePasswordApiUrl = '${baseUrl}change_password';
 
+String emailReferralInviteApiUrl = '${baseUrl}email_referral_invite';
+
+String subscribeNewsletterApiUrl = '${baseUrl}subscribe_newsletter';
+
 String getProfileApiUrl = '${baseUrl}customers_profile';
 
 String updateProfileApiUrl = '${baseUrl}update_profile';

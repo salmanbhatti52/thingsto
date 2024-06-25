@@ -7,12 +7,13 @@ import 'package:thingsto/Screens/ProfilePage/SettingPage/setting_container.dart'
 import 'package:thingsto/Screens/ProfilePage/contact_us.dart';
 import 'package:thingsto/Screens/ProfilePage/delete_account.dart';
 import 'package:thingsto/Screens/ProfilePage/edit_profile.dart';
+import 'package:thingsto/Screens/ProfilePage/email_referrals.dart';
 import 'package:thingsto/Screens/ProfilePage/language_change.dart';
 import 'package:thingsto/Screens/ProfilePage/notification_setting.dart';
 import 'package:thingsto/Screens/ProfilePage/share_app.dart';
+import 'package:thingsto/Screens/ProfilePage/subscribe_newsletter.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
-
 import '../password_change.dart';
 
 class SettingPage extends StatelessWidget {
@@ -115,6 +116,36 @@ class SettingPage extends StatelessWidget {
                         onBack: (){
                           Get.to(
                                 () => const ContactPage(),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.subscribe,
+                        text: "Referral",
+                        text1: "Invite email referral",
+                        onBack: (){
+                          Get.to(
+                                () => InviteReferrals(getProfile: getProfile,),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.referral,
+                        text: "Subscribe Newsletter",
+                        text1: "Subscribe To Our Newsletter",
+                        onBack: (){
+                          Get.to(
+                                () => SubscribeNewsLetter(),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );

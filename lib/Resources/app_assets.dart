@@ -64,6 +64,10 @@ class AppAssets {
 
   static const String home = 'assets/images/home.svg';
 
+  static const String referral = 'assets/images/referral.svg';
+
+  static const String subscribe = 'assets/images/subscribe.svg';
+
   static const String tLogo = 'assets/images/tLogo.svg';
 
   static const String add = 'assets/images/add.svg';

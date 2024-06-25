@@ -10,6 +10,7 @@ class CustomTextFormField extends StatelessWidget {
   final String hintText;
   final String suffixImage;
   final bool showSuffix;
+  final bool readOnly;
   final Color? suffixColor;
   final double? width;
   final double? height;
@@ -39,6 +40,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefixTap,
     this.onChanged,
     this.showSuffix = true,
+    this.readOnly = false,
     this.showPrefix = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
@@ -55,6 +57,7 @@ class CustomTextFormField extends StatelessWidget {
         color: AppColor.hintColor,
         fontWeight: FontWeight.w400,
       ),
+        readOnly: readOnly ? true : false,
         obscureText: obscureText,
         textAlign: TextAlign.left,
         validator: validator,
@@ -68,7 +71,11 @@ class CustomTextFormField extends StatelessWidget {
           filled: true,
           contentPadding:  EdgeInsets.symmetric(horizontal: Get.width * 0.05, vertical: 10),
           hintText: hintText,
-          hintStyle: GoogleFonts.poppins(
+          hintStyle: readOnly ? GoogleFonts.poppins(
+            fontSize: 16,
+            color: AppColor.lightBrown,
+            fontWeight: FontWeight.w500,
+          ) : GoogleFonts.poppins(
             fontSize: 14,
             color: AppColor.hintColor,
             fontWeight: FontWeight.w400,

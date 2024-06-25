@@ -66,6 +66,14 @@ class _ThingstoPageState extends State<ThingstoPage> {
       isSelect = true;
       selectedCategoryName = categoryName;
       selectedCategoryId = categoryId;
+      thingstoController.foundedThings(
+        categoriesId: categoryId.toString(),
+        country: "",
+        city: "",
+        distances: "",
+        checkValue1: "No",
+        checkValue2: "No",
+      );
       thingstoController.getChildCategory(
         categoriesId: categoryId,
       );

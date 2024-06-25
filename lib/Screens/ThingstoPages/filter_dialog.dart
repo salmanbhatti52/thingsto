@@ -135,54 +135,6 @@ class _FilterDialogState extends State<FilterDialog> {
                         )
                             : Column(
                           children: [
-                            SizedBox(
-                              height: Get.height * 0.015,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Checkbox(
-                                  side: const BorderSide(color: AppColor.primaryColor, width: 2,),
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  activeColor: AppColor.primaryColor,
-                                  checkColor: AppColor.whiteColor,
-                                  value: checkBoxValue1,
-                                  onChanged: (bool? value) {
-                                    checkBoxValue1 = value!;
-                                    setState(() {});
-                                  },
-                                ),
-                                const LabelField(
-                                  text: 'Show All Items',
-                                  align: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Theme(
-                                  data: ThemeData(
-                                      unselectedWidgetColor: AppColor.primaryColor),
-                                  child: Checkbox(
-                                    side: const BorderSide(color: AppColor.primaryColor, width: 2,),
-                                    materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                    activeColor: AppColor.primaryColor,
-                                    checkColor: AppColor.whiteColor,
-                                    value: checkBoxValue2,
-                                    onChanged: (bool? value) {
-                                      checkBoxValue2 = value!;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                                const LabelField(
-                                  text: 'Show only which are not done',
-                                  align: TextAlign.left,
-                                ),
-                              ],
-                            ),
                             const SizedBox(
                               height: 5,
                             ),
@@ -414,6 +366,56 @@ class _FilterDialogState extends State<FilterDialog> {
                               ),
                             ),
                             SizedBox(
+                              height: Get.height * 0.015,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Checkbox(
+                                  side: const BorderSide(color: AppColor.primaryColor, width: 2,),
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  activeColor: AppColor.primaryColor,
+                                  checkColor: AppColor.whiteColor,
+                                  value: checkBoxValue1,
+                                  onChanged: (bool? value) {
+                                    checkBoxValue1 = value!;
+                                    checkBoxValue2 = !value;
+                                    setState(() {});
+                                  },
+                                ),
+                                const LabelField(
+                                  text: 'Show All Items',
+                                  align: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Theme(
+                                  data: ThemeData(
+                                      unselectedWidgetColor: AppColor.primaryColor),
+                                  child: Checkbox(
+                                    side: const BorderSide(color: AppColor.primaryColor, width: 2,),
+                                    materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                    activeColor: AppColor.primaryColor,
+                                    checkColor: AppColor.whiteColor,
+                                    value: checkBoxValue2,
+                                    onChanged: (bool? value) {
+                                      checkBoxValue2 = value!;
+                                      checkBoxValue1 = !value;
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                                const LabelField(
+                                  text: 'Show only which are not done',
+                                  align: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
                               height: Get.height * 0.02,
                             ),
                           ],
@@ -433,16 +435,18 @@ class _FilterDialogState extends State<FilterDialog> {
                               text: "Save",
                               onTap: () {
                                 if (formKey.currentState!.validate()) {
-                                  if(countryController.text.isNotEmpty && cityController.text.isNotEmpty && selectCategoryId != null){
                                     thingstoController.foundedThings(
                                       categoriesId: selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
                                       country: countryController.text.toString(),
                                       city: cityController.text.toString(),
                                       distances: selectedValue.toString(),
+                                      checkValue1: checkBoxValue1 ? "Yes" : "No",
+                                      checkValue2: checkBoxValue2 ? "Yes" : "No",
                                     );
-                                  } else {
-                                    CustomSnackbar.show(title: "Error", message: "Please select all fields");
-                                  }
+                                  // } else {
+                                  //   Get.back();
+                                    // CustomSnackbar.show(title: "Error", message: "Please select all fields");
+                                  // }
                                 }
                               },
                             ),

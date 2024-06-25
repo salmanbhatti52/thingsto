@@ -109,4 +109,79 @@ class SettingController extends GetxController {
     }
   }
 
+  /* Referral Friend  Function */
+
+  referralFriend({
+    required String emailReferral,
+    required String referralLink,
+  }) async {
+    try {
+      isLoading.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "email_referral":emailReferral.toString(),
+        "referral_link": referralLink.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(emailReferralInviteApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var referralData = jsonDecode(response.body);
+      debugPrint("referralData $referralData");
+      if (referralData['status'] == 'success') {
+        CustomSnackbar.show(
+          title: 'Success',
+          message: referralData['message'],
+        );
+      } else {
+        debugPrint(referralData['message']);
+        CustomSnackbar.show(
+          title: 'Error',
+          message: referralData['message'],
+        );
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* Subscribe News Letter  Function */
+
+  subscribeLetter({
+    required String email,
+  }) async {
+    try {
+      isLoading.value = true;
+      Map<String, String> data = {
+        "email": email.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(subscribeNewsletterApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var subData = jsonDecode(response.body);
+      debugPrint("subData $subData");
+      if (subData['status'] == 'success') {
+        CustomSnackbar.show(
+          title: 'Success',
+          message: subData['message'],
+        );
+      } else {
+        debugPrint(subData['message']);
+        CustomSnackbar.show(
+          title: 'Error',
+          message: subData['message'],
+        );
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }
