@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/auth_controllers.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/Authentications/forgot_password.dart';
@@ -15,12 +16,10 @@ class LoginPage extends StatelessWidget {
      LoginPage({super.key});
 
   final formKey = GlobalKey<FormState>();
-
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
-
   final AuthController authController = Get.put(AuthController());
+  final LanguageController languageController = Get.put(LanguageController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +42,9 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-                const MyText(
-                  text: "Login",
+                Obx(() => MyText(
+                  text: languageController.phrases["login"] ?? "Login",
+                ),
                 ),
                 SizedBox(
                   height: Get.height * 0.05,
@@ -58,26 +58,26 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const LabelField(
-                          text: 'Email',
-                        ),
+                        Obx(() => LabelField(
+                          text: languageController.phrases["email"] ?? "Email",
+                        ),),
                         const SizedBox(
                           height: 8,
                         ),
-                        CustomTextFormField(
+                        Obx(() => CustomTextFormField(
                           controller: emailController,
-                          hintText: "username@gmail.com",
+                          hintText: languageController.phrases["username@gmail.com"] ?? "username@gmail.com",
                           validator: validateEmail,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
-                        ),
+                        ),),
                         const SizedBox(
                           height: 18,
                         ),
-                        const LabelField(
-                          text: 'Password',
-                        ),
+                        Obx(() => LabelField(
+                          text: languageController.phrases["password"] ?? "Password",
+                        ),),
                         const SizedBox(
                           height: 8,
                         ),
@@ -107,18 +107,18 @@ class LoginPage extends StatelessWidget {
                                 transition: Transition.rightToLeft,
                               );
                             },
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                LabelField(
-                                  text: 'Forgot Password?',
+                                Obx(() => LabelField(
+                                  text: languageController.phrases["forgot_password?"] ?? "Forgot Password?",
                                   fontWeight: FontWeight.w400,
                                   color: AppColor.lightBrown,
-                                ),
-                                LabelField(
-                                  text: ' Reset',
+                                ),),
+                                Obx(() => LabelField(
+                                  text: languageController.phrases["reset?"] ?? " Reset",
                                   color: AppColor.primaryColor,
-                                ),
+                                ),),
                               ],
                             ),
                           ),
@@ -137,7 +137,7 @@ class LoginPage extends StatelessWidget {
                     onTap: () {},
                   )
                       : LargeButton(
-                    text: "Login",
+                    text: languageController.phrases["login"] ?? "Login",
                     onTap: () {
                       if (formKey.currentState!.validate()) {
                         authController.login(

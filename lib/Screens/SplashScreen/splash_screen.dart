@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thingsto/Controllers/auth_controllers.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/Authentications/login_page.dart';
@@ -19,6 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   String isLogin = 'false';
 
+  final AuthController authController = Get.put(AuthController());
+  final LanguageController languageController = Get.put(LanguageController());
+
   @override
   void initState() {
     super.initState();
@@ -28,8 +33,13 @@ class _SplashScreenState extends State<SplashScreen> {
   init() async {
     prefs = await SharedPreferences.getInstance();
     isLogin = (prefs.getString('isLogin')) ?? 'false';
-
-    Future.delayed(const Duration(seconds: 2), () async {
+    languages = prefs.getString('language') ?? '';
+    debugPrint("languages: $languages");
+    if (isLogin == "false") {
+      await authController.fetchSystemSettings();
+      await languageController.languagesPhrase(language: languages.toString());
+    }
+    Future.delayed(const Duration(seconds: 1), () async {
       Get.offAll(
             () => isLogin == "true" ? const MyBottomNavigationBar() : LoginPage(),
         duration: const Duration(milliseconds: 350),

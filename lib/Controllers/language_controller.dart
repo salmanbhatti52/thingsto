@@ -104,22 +104,22 @@ class LanguageController extends GetxController {
       debugPrint("languagePhraseData $languagePhraseData");
       if (languagePhraseData['status'] == 'success') {
         phrases.value = Map<String, String>.from(languagePhraseData['data']);
-        CustomSnackbar.show(
-          title: 'Success',
-          message: "Language applied successfully.",
-        );
-
-        Get.off(
-              () => const MyBottomNavigationBar(initialIndex: 0,),
-          duration: const Duration(milliseconds: 350),
-          transition: Transition.downToUp,
-        );
+        // CustomSnackbar.show(
+        //   title: 'Success',
+        //   message: "Language applied successfully.",
+        // );
+        //
+        // Get.off(
+        //       () => const MyBottomNavigationBar(initialIndex: 0,),
+        //   duration: const Duration(milliseconds: 350),
+        //   transition: Transition.downToUp,
+        // );
       } else {
         debugPrint(languagePhraseData['status']);
-        CustomSnackbar.show(
-          title: 'Error',
-          message: "Something wrong",
-        );
+        // CustomSnackbar.show(
+        //   title: 'Error',
+        //   message: "Something wrong",
+        // );
       }
     } catch (e) {
       debugPrint("Error $e");

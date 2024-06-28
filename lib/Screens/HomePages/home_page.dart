@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                       text: languageController.phrases['home_you_dont_know_what_to_do_around_you?_let_us_find_you_something_with_your_criteria_;)'] ??
                           "You don’t know what to do around you? Let us find you something with your criteria ;)",
                       fontSize: 18,
-                    ),),
+                    )),
                   ),
                   SizedBox(
                     height: Get.height * 0.025,

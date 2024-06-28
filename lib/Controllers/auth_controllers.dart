@@ -22,6 +22,7 @@ class AuthController extends GetxController {
   var systemLongitudes = ''.obs;
   var systemAndroid = ''.obs;
   var systemIos = ''.obs;
+  var language = ''.obs;
 
   passwordTap() {
     isPasswordVisible.value = !isPasswordVisible.value;
@@ -33,7 +34,7 @@ class AuthController extends GetxController {
 
   /* User System Setting  Function */
 
-  systemSetting() async {
+  fetchSystemSettings() async {
     try {
       isLoading.value = true;
       final response = await http.get(Uri.parse(systemSettingsApiUrl));
@@ -43,59 +44,108 @@ class AuthController extends GetxController {
       if (systemSettingData['status'] == 'success') {
         final List settings = systemSettingData['data'];
         for (var setting in settings) {
-          if (setting['type'] == 'geo_api_key') {
-            geoApiKey(setting['description']);
-            await prefs.setString('geo_api_key', geoApiKey.toString(),);
-            googleApiKey = (prefs.getString('geo_api_key').toString());
-            debugPrint("googleApiKey $googleApiKey");
-            break;
+          switch (setting['type']) {
+            case 'language':
+              language(setting['description']);
+              await prefs.setString('language', language.toString());
+              languages = prefs.getString('language') ?? '';
+              debugPrint("languages: $languages");
+              break;
+            case 'geo_api_key':
+              geoApiKey(setting['description']);
+              await prefs.setString('geo_api_key', geoApiKey.toString());
+              googleApiKey = prefs.getString('geo_api_key') ?? '';
+              debugPrint("googleApiKey: $googleApiKey");
+              break;
+            case 'onesignal_appId':
+              oneSignalApiKey(setting['description']);
+              await prefs.setString('onesignal_appId', oneSignalApiKey.toString());
+              oneSignalId = prefs.getString('onesignal_appId') ?? '';
+              debugPrint("oneSignalId: $oneSignalId");
+              break;
+            case 'system_lattitude':
+              systemLattitudes(setting['description']);
+              await prefs.setString('system_lattitude', systemLattitudes.toString());
+              systemLattitude = prefs.getString('system_lattitude') ?? '';
+              debugPrint("systemLattitude: $systemLattitude");
+              break;
+            case 'system_longitude':
+              systemLongitudes(setting['description']);
+              await prefs.setString('system_longitude', systemLongitudes.toString());
+              systemLongitude = prefs.getString('system_longitude') ?? '';
+              debugPrint("systemLongitude: $systemLongitude");
+              break;
+            case 'share_app_android':
+              systemAndroid(setting['description']);
+              await prefs.setString('share_app_android', systemAndroid.toString());
+              shareAndroid = prefs.getString('share_app_android') ?? '';
+              debugPrint("shareAndroid: $shareAndroid");
+              break;
+            case 'share_app_ios':
+              systemIos(setting['description']);
+              await prefs.setString('share_app_ios', systemIos.toString());
+              shareIos = prefs.getString('share_app_ios') ?? '';
+              debugPrint("shareIos: $shareAndroid");
+              break;
+            default:
+              debugPrint("Unknown setting type: ${setting['type']}");
+              break;
           }
         }
-        for (var setting in settings) {
-          if (setting['type'] == 'onesignal_appId') {
-            oneSignalApiKey(setting['description']);
-            await prefs.setString('onesignal_appId', oneSignalApiKey.toString(),);
-            oneSignalId = (prefs.getString('onesignal_appId').toString());
-            debugPrint("oneSignalId $oneSignalId");
-            break;
-          }
-        }
-        for (var setting in settings) {
-          if (setting['type'] == 'system_lattitude') {
-            systemLattitudes(setting['description']);
-            await prefs.setString('system_lattitude', systemLattitudes.toString(),);
-            systemLattitude = (prefs.getString('system_lattitude').toString());
-            debugPrint("systemLattitude $systemLattitude");
-            break;
-          }
-        }
-        for (var setting in settings) {
-          if (setting['type'] == 'system_longitude') {
-            systemLongitudes(setting['description']);
-            await prefs.setString('system_longitude', systemLongitudes.toString(),);
-            systemLongitude = (prefs.getString('system_longitude').toString());
-            debugPrint("systemLongitude $systemLongitude");
-            break;
-          }
-        }
-        for (var setting in settings) {
-          if (setting['type'] == 'share_app_android') {
-            systemAndroid(setting['description']);
-            await prefs.setString('share_app_android', systemAndroid.toString(),);
-            shareAndroid = (prefs.getString('share_app_android').toString());
-            debugPrint("shareAndroid $shareAndroid");
-            break;
-          }
-        }
-        for (var setting in settings) {
-          if (setting['type'] == 'share_app_ios') {
-            systemIos(setting['description']);
-            await prefs.setString('share_app_ios', systemIos.toString(),);
-            shareIos = (prefs.getString('share_app_ios').toString());
-            debugPrint("shareIos $shareIos");
-            break;
-          }
-        }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'geo_api_key') {
+        //     geoApiKey(setting['description']);
+        //     await prefs.setString('geo_api_key', geoApiKey.toString(),);
+        //     googleApiKey = (prefs.getString('geo_api_key').toString());
+        //     debugPrint("googleApiKey $googleApiKey");
+        //     break;
+        //   }
+        // }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'onesignal_appId') {
+        //     oneSignalApiKey(setting['description']);
+        //     await prefs.setString('onesignal_appId', oneSignalApiKey.toString(),);
+        //     oneSignalId = (prefs.getString('onesignal_appId').toString());
+        //     debugPrint("oneSignalId $oneSignalId");
+        //     break;
+        //   }
+        // }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'system_lattitude') {
+        //     systemLattitudes(setting['description']);
+        //     await prefs.setString('system_lattitude', systemLattitudes.toString(),);
+        //     systemLattitude = (prefs.getString('system_lattitude').toString());
+        //     debugPrint("systemLattitude $systemLattitude");
+        //     break;
+        //   }
+        // }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'system_longitude') {
+        //     systemLongitudes(setting['description']);
+        //     await prefs.setString('system_longitude', systemLongitudes.toString(),);
+        //     systemLongitude = (prefs.getString('system_longitude').toString());
+        //     debugPrint("systemLongitude $systemLongitude");
+        //     break;
+        //   }
+        // }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'share_app_android') {
+        //     systemAndroid(setting['description']);
+        //     await prefs.setString('share_app_android', systemAndroid.toString(),);
+        //     shareAndroid = (prefs.getString('share_app_android').toString());
+        //     debugPrint("shareAndroid $shareAndroid");
+        //     break;
+        //   }
+        // }
+        // for (var setting in settings) {
+        //   if (setting['type'] == 'share_app_ios') {
+        //     systemIos(setting['description']);
+        //     await prefs.setString('share_app_ios', systemIos.toString(),);
+        //     shareIos = (prefs.getString('share_app_ios').toString());
+        //     debugPrint("shareIos $shareIos");
+        //     break;
+        //   }
+        // }
       } else {
         debugPrint(systemSettingData['status']);
       }
@@ -123,7 +173,7 @@ class AuthController extends GetxController {
       double longitude1 = GlobalService.currentLocation!.longitude;
       debugPrint('current latitude: $latitude1');
       debugPrint('current longitude: $longitude1');
-      systemSetting();
+      fetchSystemSettings();
       Map<String, String> data = {
         "referral_code": referralCode,
       };
@@ -235,7 +285,7 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-      systemSetting();
+      fetchSystemSettings();
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
