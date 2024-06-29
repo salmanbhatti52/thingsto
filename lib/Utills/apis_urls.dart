@@ -46,6 +46,12 @@ String categoriesAllStatsApiUrl = '${baseUrl}categories_all_stats';
 
 String thingsAddApiUrl = '${baseUrl}things_add';
 
+String countriesApiUrl = '${baseUrl}countries';
+
+String statesApiUrl = '${baseUrl}states';
+
+String citiesApiUrl = '${baseUrl}cities';
+
 String thingsGetApiUrl = '${baseUrl}things';
 
 String thingsTopGetApiUrl = '${baseUrl}things_top';

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,6 +19,7 @@ import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/shimmer_effect.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class AddNewThings extends StatefulWidget {
@@ -32,6 +35,9 @@ class _AddNewThingsState extends State<AddNewThings>
 
   var itemListForCategory = <String>[];
   var itemListForSubCategory = <String>[];
+  var itemListForCountries = <String>[];
+  var itemListForStates = <String>[];
+  var itemListForCities = <String>[];
   var itemListForSelection = [
     "Image",
     "Music",
@@ -41,6 +47,12 @@ class _AddNewThingsState extends State<AddNewThings>
   String? selectSubCategory;
   String? selectCategoryId;
   String? selectSubCategoryId;
+  String? selectCountry;
+  String? selectStates;
+  String? selectCity;
+  String? selectCountryId;
+  String? selectStatesId;
+  String? selectCityId;
   final formKey = GlobalKey<FormState>();
   final thingNameController = TextEditingController();
   final pointsController = TextEditingController();
@@ -60,21 +72,18 @@ class _AddNewThingsState extends State<AddNewThings>
   String placesId = "";
 
   Future<void> getUserThings() async {
-    if (addThingsController.isDataLoadedCategoriesAll.value) {
-      addThingsController.getAllCategory();
-        itemListForCategory = addThingsController.cachedCategoriesAll
+    await addThingsController.getAllCategory();
+        itemListForCategory = addThingsController.categoriesAll
             .map((c) => c['name'].toString())
             .toSet() // Ensure uniqueness
             .toList();
         debugPrint("itemListForCategory: $itemListForCategory");
-    } else {
-      await addThingsController.getAllCategory();
-        itemListForCategory = addThingsController.cachedCategoriesAll
+    await addThingsController.getAllCountries();
+        itemListForCountries = addThingsController.allCountries
             .map((c) => c['name'].toString())
             .toSet() // Ensure uniqueness
             .toList();
-        debugPrint("itemListForCategory: $itemListForCategory");
-    }
+        debugPrint("itemListForCountries: $itemListForCountries");
   }
 
 
@@ -139,7 +148,7 @@ class _AddNewThingsState extends State<AddNewThings>
                   horizontal: Get.width * 0.08,
                 ),
                 child: Obx(() {
-                  return addThingsController.isLoading1.value && addThingsController.cachedCategoriesAll.isEmpty
+                  return addThingsController.isLoading1.value
                       ? Center(
                     child: Padding(
                       padding: EdgeInsets.only(top: Get.height * 0.35),
@@ -175,11 +184,11 @@ class _AddNewThingsState extends State<AddNewThings>
                         onChanged: (value) {
                           setState(() {
                             selectCategory = value;
-                            selectCategoryId = addThingsController.cachedCategoriesAll.firstWhere((c) => c['name'] == value)
+                            selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
                             ['categories_id'].toString();
                             debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
                             // Filter subcategories based on selected category
-                            itemListForSubCategory = addThingsController.cachedCategoriesAll
+                            itemListForSubCategory = addThingsController.categoriesAll
                                 .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
                                 .map((c) => c['name'].toString())
                                 .toSet()
@@ -208,7 +217,7 @@ class _AddNewThingsState extends State<AddNewThings>
                            onChanged: (value) {
                              setState(() {
                                selectSubCategory = value;
-                               selectSubCategoryId = addThingsController.cachedCategoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
+                               selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
                              });
                            },
@@ -252,6 +261,120 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
+                      const LabelField(
+                        text: 'Country',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      CustomDropdown(
+                        itemList: itemListForCountries,
+                        hintText: "Select Country",
+                        onChanged: (value) {
+                          setState(() {
+                            selectCountry = value;
+                            selectCountryId = addThingsController.allCountries.firstWhere((c) => c['name'] == value)
+                            ['countries_id'].toString();
+                            debugPrint("selectCountry: $selectCountry, selectCountryId: $selectCountryId");
+                            // Filter subcategories based on selected country
+                            addThingsController.getAllStates(countryId: selectCountryId.toString());
+                            addThingsController.allStates.addListener(() {
+                              setState(() {
+                                selectStates = null;
+                                selectCity = null;
+                                itemListForStates = addThingsController.allStates.value
+                                    .map((c) => c['name'].toString())
+                                    .toSet() // Ensure uniqueness
+                                    .toList();
+                                debugPrint("itemListForStates: $itemListForStates");
+                              });
+                            });
+                          });
+                        },
+                        initialValue: selectCountry,
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      if(itemListForStates.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const LabelField(
+                              text: 'States',
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Obx(()  {
+                              return addThingsController.isStateLoading.value
+                                  ? Shimmers2(
+                                width: Get.width,
+                                height: 60,
+                              ) : CustomDropdown(
+                                itemList: itemListForStates,
+                                hintText: "Select States",
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectStates = value;
+                                    selectStatesId = addThingsController.allStates.value.firstWhere((c) => c['name'] == value)
+                                    ['states_id'].toString();
+                                    debugPrint("selectStats: $selectStates, selectStataId: $selectStatesId");
+                                    // Filter subcategories based on selected states
+                                    addThingsController.getAllCities(stateId: selectStatesId.toString());
+                                    addThingsController.allCities.addListener(() {
+                                      setState(() {
+                                        selectCity = null;
+                                        itemListForCities = addThingsController.allCities.value
+                                            .map((c) => c['name'].toString())
+                                            .toSet() // Ensure uniqueness
+                                            .toList();
+                                        debugPrint("itemListForCities: $itemListForCities");
+                                      });
+                                    });
+                                  });
+                                },
+                                initialValue: selectStates,
+                              );
+                            }),
+                            const SizedBox(
+                              height: 18,
+                            ),
+                          ],
+                        ),
+                      if(itemListForCountries.isNotEmpty && itemListForStates.isNotEmpty && itemListForCities.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const LabelField(
+                              text: 'City',
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Obx(() {
+                              return addThingsController.isCityLoading.value
+                                  ? Shimmers2(
+                                width: Get.width,
+                                height: 60,
+                              ) : CustomDropdown(
+                                itemList: itemListForCities,
+                                hintText: "Select City",
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectCity = value;
+                                    selectCityId = addThingsController.allCities.value.firstWhere((c) => c['name'] == value)['cities_id'].toString();
+                                    debugPrint("selectCity: $selectCity, selectCityId: $selectCityId");
+                                  });
+                                },
+                                initialValue: selectCity,
+                              );
+                            }),
+                            const SizedBox(
+                              height: 18,
+                            ),
+                          ],
+                        ),
                       const LabelField(
                         text: 'Location',
                       ),
@@ -579,37 +702,90 @@ class _AddNewThingsState extends State<AddNewThings>
                           ),
                         ),
                         height: Get.height * 0.085,
-                        child: TextField(
-                          maxLines: null,
-                          controller: linkController,
-                          textAlign: TextAlign.left,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: AppColor.hintColor,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          keyboardType: TextInputType.text,
-                          cursorColor: AppColor.hintColor,
-                          decoration: InputDecoration(
-                            fillColor: AppColor.secondaryColor,
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.only(
-                              top: 0.0,
-                              left: 12,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                maxLines: null,
+                                controller: linkController,
+                                textAlign: TextAlign.left,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: AppColor.hintColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                keyboardType: TextInputType.text,
+                                cursorColor: AppColor.hintColor,
+                                decoration: InputDecoration(
+                                  fillColor: AppColor.secondaryColor,
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  contentPadding: const EdgeInsets.only(
+                                    top: 0.0,
+                                    left: 12,
+                                  ),
+                                  hintText: "https://www.siteaddress.com",
+                                  hintStyle: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppColor.hintColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
                             ),
-                            hintText: "https://www.siteaddress.com",
-                            hintStyle: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: AppColor.hintColor,
-                              fontWeight: FontWeight.w400,
+                                  Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: GestureDetector(
+                                onTap:(){
+                                  if (linkController.text.isEmpty) {
+                                    return CustomSnackbar.show(title: "Error", message: "Please add link before adding");
+                                  } else {
+                                    addThingsController.addLink(linkController.text);
+                                    linkController.clear();
+                                    }
+                                  },
+                                child: const Icon(
+                                  Icons.check_circle_outline_rounded,
+                                  color: AppColor.primaryColor,
+                                  size: 30,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          ],
+                        )
                       ),
+                      Obx(() {
+                        return addThingsController.links.isNotEmpty
+                            ? Column(
+                          children: [
+                            SizedBox(
+                              height: 150,
+                              child: ListView.builder(
+                                itemCount: addThingsController.links.length,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 5),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: LabelField(align: TextAlign.left, text: addThingsController.links[index], color: AppColor.whiteColor,),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                            :  const SizedBox();
+                      }),
                       const SizedBox(
                         height: 18,
                       ),
+
                       const LabelField(
                         text: 'Tags',
                       ),
@@ -741,15 +917,13 @@ class _AddNewThingsState extends State<AddNewThings>
                                     categoriesId: selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
                                     name: thingNameController.text.toString(),
                                     earnPoints: pointsController.text.toString(),
-                                    location: locationController.text.tr,
+                                    location: locationController.text.toString(),
                                     longitude: longitude.toString(),
                                     lattitude: latitude.toString(),
-                                    country: country.toString(),
+                                    countryId: selectCountryId.toString(),
                                     placeId: placesId.toString(),
-                                    state: state.toString(),
-                                    city: city.toString(),
-                                    postCode: postCode,
-                                    sourcesLinks: linkController.text.toString(),
+                                    stateId: selectStatesId.toString(),
+                                    cityId: selectCityId.toString(),
                                     confirmModerator: _isChecked ? "1" : "0",
                                     description: descController.text.toString(),
                                   );

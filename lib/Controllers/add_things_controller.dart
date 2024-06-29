@@ -15,22 +15,35 @@ import 'package:thingsto/Widgets/snackbar.dart';
 class AddThingsController extends GetxController {
   var isLoading1 = false.obs;
   var isLoading = false.obs;
+  var isStateLoading = false.obs;
+  var isCityLoading = false.obs;
   var isError = false.obs;
   var categoriesAll = [].obs;
+  var allCountries = [].obs;
+  // var allStates = [].obs;
+  // var allCities = [].obs;
   final ImagePicker _picker = ImagePicker();
   var imageFiles = <XFile>[].obs;
   var base64Images = <String>[].obs;
   var pickedFile = ''.obs;
   RxList<String> tags = <String>[].obs;
-
-  var cachedCategoriesAll = [].obs;
-  var isDataLoadedCategoriesAll = false.obs;
+  RxList<String> links = <String>[].obs;
+  ValueNotifier<List<Map<String, dynamic>>> allStates = ValueNotifier([]);
+  ValueNotifier<List<Map<String, dynamic>>> allCities = ValueNotifier([]);
 
   /* Add Tags  Function */
 
   void addTag(String tag) {
     if (tag.isNotEmpty) {
       tags.add(tag);
+    }
+  }
+
+  /* Add Links  Function */
+
+  void addLink(String link) {
+    if (link.isNotEmpty) {
+      links.add(link);
     }
   }
 
@@ -92,7 +105,6 @@ class AddThingsController extends GetxController {
     }
   }
 
-
   /* Get All Category  Function */
 
   getAllCategory() async {
@@ -119,8 +131,6 @@ class AddThingsController extends GetxController {
       if (allCategoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         categoriesAll.value = data;
-        cachedCategoriesAll.value = data;
-        isDataLoadedCategoriesAll.value = true;
       } else {
         debugPrint(allCategoryData['status']);
         isError.value = true;
@@ -129,6 +139,121 @@ class AddThingsController extends GetxController {
       debugPrint("Error $e");
     } finally {
       isLoading1.value = false;
+    }
+  }
+
+  /* Get All Countries  Function */
+
+  getAllCountries() async {
+    try {
+      isLoading1.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(countriesApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var allCountriesData = jsonDecode(response.body);
+      debugPrint("allCountriesData $allCountriesData");
+      if (allCountriesData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+        allCountries.value = data;
+      } else {
+        debugPrint(allCountriesData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
+    }
+  }
+
+  /* Get All States  Function */
+
+  Future<void> getAllStates({
+    required String countryId,
+  }) async {
+    try {
+      isStateLoading.value = true;
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      Map<String, String> data = {
+        "countries_id": countryId.toString(),
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(statesApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var allStatesData = jsonDecode(response.body);
+      debugPrint("allStatesData $allStatesData");
+      if (allStatesData['status'] == 'success') {
+        var data = (allStatesData['data'] as List)
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+        allStates.value = data;
+      } else {
+        debugPrint(allStatesData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isStateLoading.value = false;
+    }
+  }
+
+  /* Get All Cities  Function */
+
+  getAllCities({
+    required String stateId,
+}) async {
+    try {
+      isCityLoading.value = true;
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      Map<String, String> data = {
+        "states_id": stateId.toString(),
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(citiesApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var allCitiesData = jsonDecode(response.body);
+      debugPrint("allCitiesData $allCitiesData");
+      if (allCitiesData['status'] == 'success') {
+        var data = (allCitiesData['data'] as List)
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+        allCities.value = data;
+      } else {
+        debugPrint(allCitiesData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isCityLoading.value = false;
     }
   }
 
@@ -141,12 +266,10 @@ class AddThingsController extends GetxController {
     required String location,
     required String longitude,
     required String lattitude,
-    required String country,
-    required String state,
-    required String city,
+    required String countryId,
+    required String stateId,
+    required String cityId,
     required String placeId,
-    required String postCode,
-    required String sourcesLinks,
     required String confirmModerator,
     required String description,
   }) async {
@@ -213,11 +336,10 @@ class AddThingsController extends GetxController {
         "longitude": longitude.toString(),
         "lattitude": lattitude.toString(),
         "google_place_id": placeId.toString(),
-        "country": country.toString(),
-        "state": state.toString(),
-        "city": city.toString(),
-        "post_code": postCode.isEmpty ? "59300" : postCode.toString(),
-        "sources_links": sourcesLinks.toString(),
+        "countries_id": countryId.toString(),
+        "states_id": stateId.toString(),
+        "cities_id": cityId.toString(),
+        "sources_links": links,
         "confirm_by_moderator": confirmModerator.toString(),
         "description": description.toString(),
         "tags": tags,
