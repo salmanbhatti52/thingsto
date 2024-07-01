@@ -59,8 +59,8 @@ class _FoundedThingsState extends State<FoundedThings>
   @override
   void initState() {
     super.initState();
-    if (widget.foundedThings != null && widget.foundedThings!.containsKey('images')) {
-      var media = widget.foundedThings!['images'];
+    if (widget.foundedThings.containsKey('images')) {
+      var media = widget.foundedThings['images'];
       if (media is List) {
         for (var item in media) {
           if (item is Map<String, dynamic> && item.containsKey('name')) {
@@ -170,11 +170,12 @@ class _FoundedThingsState extends State<FoundedThings>
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> tags = widget.foundedThings?["tags"] ?? [];
-    double latitude = double.parse(widget.foundedThings?["lattitude"]);
-    double longitude = double.parse(widget.foundedThings?["longitude"]);
-    thingstoController.totalLikes.value = int.parse(widget.foundedThings!["total_likes"].toString());
-    thingstoController.initializeLikes(widget.foundedThings?["likes"]);
+    List<dynamic> tags = widget.foundedThings["tags"] ?? [];
+    List<dynamic> source = widget.foundedThings["sources"] ?? [];
+    double latitude = double.parse(widget.foundedThings["lattitude"]);
+    double longitude = double.parse(widget.foundedThings["longitude"]);
+    thingstoController.totalLikes.value = int.parse(widget.foundedThings["total_likes"].toString());
+    thingstoController.initializeLikes(widget.foundedThings["likes"]);
     _center = LatLng(latitude, longitude);
     _currentLocation = LatLng(latitude, longitude);
     List<Widget> mediaSliders = listOfMedia.map((item) {
@@ -306,13 +307,13 @@ class _FoundedThingsState extends State<FoundedThings>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               LabelField(
-                text: widget.foundedThings?["name"],
+                text: widget.foundedThings["name"],
                 fontSize: 20,
               ),
               GestureDetector(
                 onTap: () {
                   thingstoController.likeUnlikeUser(
-                    widget.foundedThings!["things_id"].toString(),
+                    widget.foundedThings["things_id"].toString(),
                   );
                 },
                 child: Obx(() {
@@ -361,7 +362,7 @@ class _FoundedThingsState extends State<FoundedThings>
                     Expanded(
                       child: LabelField(
                         align: TextAlign.start,
-                        text: widget.foundedThings?["location"],
+                        text: widget.foundedThings["location"],
                         fontWeight: FontWeight.w400,
                         color: AppColor.hintColor,
                         maxLIne: 2,
@@ -374,7 +375,7 @@ class _FoundedThingsState extends State<FoundedThings>
                 children: [
                   LabelField(
                     align: TextAlign.start,
-                    text: widget.foundedThings?["earn_points"],
+                    text: widget.foundedThings["earn_points"],
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,
@@ -423,7 +424,7 @@ class _FoundedThingsState extends State<FoundedThings>
               ),
               LabelField(
                 align: TextAlign.start,
-                text: widget.foundedThings?["description"],
+                text: widget.foundedThings["description"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
@@ -439,13 +440,31 @@ class _FoundedThingsState extends State<FoundedThings>
               SizedBox(
                 height: Get.height * 0.015,
               ),
-              LabelField(
-                align: TextAlign.start,
-                text: widget.foundedThings?["sources_links"],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: const Color(0xff277CE0),
-                maxLIne: 1,
+              // LabelField(
+              //   align: TextAlign.start,
+              //   text: widget.foundedThings?["sources_links"],
+              //   fontSize: 14,
+              //   fontWeight: FontWeight.w400,
+              //   color: const Color(0xff277CE0),
+              //   maxLIne: 1,
+              // ),
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: source.map<Widget>((sources) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: LabelField(
+                        text: sources["name"],
+                        align: TextAlign.start,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xff277CE0),
+                        maxLIne: 1,
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(
                 height: Get.height * 0.015,

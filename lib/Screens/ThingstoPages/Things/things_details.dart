@@ -176,6 +176,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
   @override
   Widget build(BuildContext context) {
     List<dynamic> tags = widget.thingsto?["tags"] ?? [];
+    List<dynamic> source = widget.thingsto?["sources"] ?? [];
     double latitude = double.parse(widget.thingsto?["lattitude"]);
     double longitude = double.parse(widget.thingsto?["longitude"]);
     thingstoController.totalLikes.value = int.parse(widget.thingsto!["total_likes"].toString());
@@ -459,14 +460,54 @@ class _ThingsDetailsState extends State<ThingsDetails>
               SizedBox(
                 height: Get.height * 0.015,
               ),
-              LabelField(
-                align: TextAlign.start,
-                text: widget.thingsto?["sources_links"],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: const Color(0xff277CE0),
-                maxLIne: 1,
+              // LabelField(
+              //   align: TextAlign.start,
+              //   text: widget.thingsto?["sources_links"],
+              //   fontSize: 14,
+              //   fontWeight: FontWeight.w400,
+              //   color: const Color(0xff277CE0),
+              //   maxLIne: 1,
+              // ),
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: source.map<Widget>((sources) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: LabelField(
+                        text: sources["name"],
+                        align: TextAlign.start,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xff277CE0),
+                        maxLIne: 1,
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.vertical,
+              //   child: Column(
+              //     children: source.map<Widget>((sources) {
+              //       final textLength = sources["name"].length;
+              //       final buttonWidth = textLength * 8.0 + 40;
+              //       return Padding(
+              //         padding: const EdgeInsets.only(bottom: 8.0),
+              //         child: LargeButton(
+              //           text: sources["name"],
+              //           textColor: const Color(0xff277CE0),
+              //           maxLIne: 1,
+              //           onTap: () {},
+              //           width: buttonWidth,
+              //           height: 26,
+              //           fontSize: 12,
+              //           radius: 20,
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
               SizedBox(
                 height: Get.height * 0.015,
               ),

@@ -6,13 +6,17 @@ import 'dart:convert';
 
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class GetProfileController extends GetxController {
   var isLoading = false.obs;
+  var isLoading1 = false.obs;
   var isError = false.obs;
   var getProfile = {}.obs;
   var favorites = [].obs;
   var categoriesStats = [].obs;
+  var getTitles = [].obs;
+  var getBadges = [].obs;
 
   var cachedGetProfile = {}.obs;
   var isDataLoadedGetProfile = false.obs;
@@ -126,6 +130,148 @@ class GetProfileController extends GetxController {
       debugPrint("Error $e");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /* Get Title Function */
+
+  getTitle() async {
+    try {
+      isLoading1.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(getUserTitlesApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var titleData = jsonDecode(response.body);
+      debugPrint("titleData $titleData");
+      if (titleData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+        getTitles.value = data.map((item) => item['titles'] as Map<String, dynamic>).toList();
+      } else {
+        debugPrint(titleData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
+    }
+  }
+
+  /* Get Badges Function */
+
+  getBadge() async {
+    try {
+      isLoading1.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(getUserBadgesApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var badgesData = jsonDecode(response.body);
+      debugPrint("badgesData $badgesData");
+      if (badgesData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+        getBadges.value = data.map((item) => item['badges'] as Map<String, dynamic>).toList();
+      } else {
+        debugPrint(badgesData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
+    }
+  }
+
+  /* Update Title Function */
+
+  updateTitle({
+    required String titleId,
+}) async {
+    try {
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "titles_id": titleId.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(updateTitleApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var titleData = jsonDecode(response.body);
+      debugPrint("titleData $titleData");
+      if (titleData['status'] == 'success') {
+        getUserProfile(usersCustomersId: userID.toString());
+        CustomSnackbar.show(
+          title: 'Success',
+          message: "Title update successfully",
+        );
+        // var data = jsonDecode(response.body)['data'] as List;
+        // getTitles.value = data.map((item) => item['titles'] as Map<String, dynamic>).toList();
+      } else {
+        debugPrint(titleData['status']);
+        CustomSnackbar.show(
+          title: 'Error',
+          message: "This title is already active.",
+        );
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      // isLoading1.value = false;
+    }
+  }
+
+  /* Update Badges Function */
+
+  updateBadge({
+    required String badgeId,
+  }) async {
+    try {
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "badges_id": badgeId.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(updateBadgeApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var titleData = jsonDecode(response.body);
+      debugPrint("titleData $titleData");
+      if (titleData['status'] == 'success') {
+        getUserProfile(usersCustomersId: userID.toString());
+        CustomSnackbar.show(
+          title: 'Success',
+          message: " Badge update successfully",
+        );
+        // var data = jsonDecode(response.body)['data'] as List;
+        // getTitles.value = data.map((item) => item['titles'] as Map<String, dynamic>).toList();
+      } else {
+        debugPrint(titleData['status']);
+        CustomSnackbar.show(
+          title: 'Error',
+          message: "This badge is already active.",
+        );
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      // isLoading1.value = false;
     }
   }
 

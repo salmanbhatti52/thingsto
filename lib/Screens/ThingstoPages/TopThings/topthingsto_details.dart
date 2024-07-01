@@ -171,6 +171,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
   @override
   Widget build(BuildContext context) {
     List<dynamic> tags = widget.topThingsto?["tags"] ?? [];
+    List<dynamic> source = widget.topThingsto?["sources"] ?? [];
     double latitude = double.parse(widget.topThingsto?["lattitude"]);
     double longitude = double.parse(widget.topThingsto?["longitude"]);
     thingstoController.totalLikes.value = int.parse(widget.topThingsto!["total_likes"].toString());
@@ -444,13 +445,31 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
               SizedBox(
                 height: Get.height * 0.015,
               ),
-              LabelField(
-                align: TextAlign.start,
-                text: widget.topThingsto?["sources_links"],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: const Color(0xff277CE0),
-                maxLIne: 1,
+              // LabelField(
+              //   align: TextAlign.start,
+              //   text: widget.topThingsto?["sources_links"],
+              //   fontSize: 14,
+              //   fontWeight: FontWeight.w400,
+              //   color: const Color(0xff277CE0),
+              //   maxLIne: 1,
+              // ),
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: source.map<Widget>((sources) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: LabelField(
+                        text: sources["name"],
+                        align: TextAlign.start,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xff277CE0),
+                        maxLIne: 1,
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(
                 height: Get.height * 0.015,

@@ -37,9 +37,12 @@ class ThingsValidate extends StatelessWidget {
                     child: ThingsDetails(thingsto: thingsto,thingstoName: thingstoName,),
                   ),
                   Obx(() => LargeButton(
-                    text: thingstoController.isValidate.value ?  "Validated" : "Validate this Thing",
+                    text: thingstoController.isValidate.value ?  "Validated thing"
+                        : thingsto["confirm_by_moderator"] == "Yes"
+                        ? "Validate thing, send to moderator" : "Validate this thing",
                     onTap: () {
-                       thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto");
+                      // thingsto["confirm_by_moderator"] == "No" ?
+                      thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto");
                           // : CustomSnackbar.show(title: "Error", message: "Already Validated");
                     },
                   ),),

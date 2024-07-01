@@ -22,19 +22,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<String> itemListForTitle = [
-    "Title1",
-    "Title2",
-    "Title3",
-  ];
-  List<String> itemListForBadge = [
-    "Badge1",
-    "Badge2",
-    "Badge3",
-  ];
+
+  var itemListForTitle = <String>[];
+  var itemListForBadge = <String>[];
 
   String? selectTitle;
   String? selectBadge;
+  String? selectTitleId;
+  String? selectBadgeId;
 
   final GetProfileController getProfileController = Get.put(GetProfileController());
 
@@ -42,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     getUserProfile();
+    getUserTB();
   }
 
   Future<void> getUserProfile() async {
@@ -64,6 +60,21 @@ class _ProfilePageState extends State<ProfilePage> {
         await getProfileController.getCategoriesStats();
       }
     }
+  }
+
+  Future<void> getUserTB() async {
+      await getProfileController.getTitle();
+      itemListForTitle = getProfileController.getTitles
+          .map((c) => c['name'].toString())
+          .toSet() // Ensure uniqueness
+          .toList();
+      debugPrint("itemListForTitle: $itemListForTitle");
+      await getProfileController.getBadge();
+      itemListForBadge = getProfileController.getBadges
+          .map((c) => c['name'].toString())
+          .toSet() // Ensure uniqueness
+          .toList();
+      debugPrint("itemListForBadge: $itemListForBadge");
   }
 
   @override
@@ -99,6 +110,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       final profile = getProfileController.cachedGetProfile;
                       final profilePictureUrl = profile['profile_picture'] ?? '';
                       final userName = "${profile['first_name']} ${profile['last_name']}";
+                      final activeTitle = "${profile['active_title']}";
+                      final activeBadge = "${profile['active_badge']}";
                       return Stack(
                         children: [
                           Container(
@@ -116,115 +129,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ],
                             ),
-                            child: getProfileController.isLoading.value || getProfileController.cachedGetProfile.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, top: 10, bottom: 10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: getProfileController.isLoading.value
-                                              ? const Shimmers2(
-                                                  width: 80,
-                                                  height: 95,
-                                                )
-                                              : profilePictureUrl.isNotEmpty && profilePictureUrl != null
-                                                  ? Image.network(
-                                                      '$baseUrlImage$profilePictureUrl',
-                                                      fit: BoxFit.cover,
-                                                      width: 80,
-                                                      height: 95,
-                                                      loadingBuilder: (BuildContext context, Widget child,
-                                                          ImageChunkEvent? loadingProgress) {
-                                                        if (loadingProgress ==
-                                                            null) {
-                                                          return child;
-                                                        } else {
-                                                          return SizedBox(
-                                                            width: 80,
-                                                            height: 95,
-                                                            child: Center(
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                color: AppColor.primaryColor,
-                                                                value: loadingProgress.expectedTotalBytes !=
-                                                                        null
-                                                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                                    : null,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
-                                                    )
-                                                  : Image.network(
-                                                      AppAssets.dummyPic,
-                                                      fit: BoxFit.fill,
-                                                      width: 80,
-                                                      height: 95,
-                                                    ),
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * 0.06,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 8.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              getProfileController.isLoading.value
-                                                  ? const Shimmers2(
-                                                      width: 80,
-                                                      height: 20,
-                                                    )
-                                                  : LabelField(
-                                                      text: userName,
-                                                      fontSize: 16,
-                                                    ),
-                                              getProfileController.isLoading.value
-                                                  ? const Shimmers2(
-                                                      width: 100,
-                                                      height: 20,
-                                                    )
-                                                  : const LabelField(
-                                                      text: "Sunday Traveler",
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
-                                                      color: AppColor.lightBrown,
-                                                    ),
-                                              getProfileController.isLoading.value
-                                                  ? const Shimmers2(
-                                                      width: 80,
-                                                      height: 20,
-                                                    )
-                                                  : Row(
-                                                      children: [
-                                                        const LabelField(
-                                                          align: TextAlign.start,
-                                                          text: "240",
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.w400,
-                                                          color: AppColor.lightBrown,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        SvgPicture.asset(
-                                                          AppAssets.logo,
-                                                          width: 20,
-                                                        ),
-                                                      ],
-                                                    ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                : const Center(
+                            child: getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                ? const Center(
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 40.0),
                                       child: LabelField(
@@ -234,29 +140,170 @@ class _ProfilePageState extends State<ProfilePage> {
                                         interFont: true,
                                       ),
                                     ),
+                                  )
+                                : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, top: 10, bottom: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                        ? const Shimmers2(
+                                      width: 80,
+                                      height: 95,
+                                    )
+                                        : profilePictureUrl.isNotEmpty && profilePictureUrl != null
+                                        ? Image.network(
+                                      '$baseUrlImage$profilePictureUrl',
+                                      fit: BoxFit.cover,
+                                      width: 80,
+                                      height: 95,
+                                      loadingBuilder: (BuildContext context, Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress ==
+                                            null) {
+                                          return child;
+                                        } else {
+                                          return SizedBox(
+                                            width: 80,
+                                            height: 95,
+                                            child: Center(
+                                              child:
+                                              CircularProgressIndicator(
+                                                color: AppColor.primaryColor,
+                                                value: loadingProgress.expectedTotalBytes !=
+                                                    null
+                                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    )
+                                        : Image.network(
+                                      AppAssets.dummyPic,
+                                      fit: BoxFit.fill,
+                                      width: 80,
+                                      height: 95,
+                                    ),
                                   ),
+                                  SizedBox(
+                                    width: Get.width * 0.06,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                            ? const Shimmers2(
+                                          width: 80,
+                                          height: 20,
+                                        )
+                                            : LabelField(
+                                          text: userName,
+                                          fontSize: 16,
+                                        ),
+                                        getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                            ? const Shimmers2(
+                                          width: 100,
+                                          height: 20,
+                                        )
+                                            : LabelField(
+                                          text: activeTitle,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColor.lightBrown,
+                                        ),
+                                        getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                            ? const Shimmers2(
+                                          width: 80,
+                                          height: 20,
+                                        )
+                                            : Row(
+                                          children: [
+                                            const LabelField(
+                                              align: TextAlign.start,
+                                              text: "240",
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.lightBrown,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            SvgPicture.asset(
+                                              AppAssets.logo,
+                                              width: 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
-                          getProfileController.isLoading.value || getProfileController.cachedGetProfile.isEmpty
+                          getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
                               ? const SizedBox()
-                              : Positioned(
-                                  left: Get.width * 0.2,
-                                  bottom: 5,
-                                  child: Container(
-                                    width: 34,
-                                    height: 34,
-                                    decoration: BoxDecoration(
-                                      color: AppColor.whiteColor,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        width: 1,
-                                        color: const Color(0xffFEE400),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: SvgPicture.asset(AppAssets.cup),
-                                    ),
-                                  ),
+                              : activeBadge == "None" ? const SizedBox() : Positioned(
+                            left: Get.width * 0.2,
+                            bottom: 5,
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                color: AppColor.whiteColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  width: 1,
+                                  color: const Color(0xffFEE400),
                                 ),
+                              ),
+                              child: Center(
+                                child: activeBadge.isNotEmpty
+                                    ? Image.network(
+                                  '$baseUrlImage$activeBadge',
+                                  fit: BoxFit.contain,
+                                  width: 25,
+                                  height: 25,
+                                  loadingBuilder: (BuildContext context, Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress ==
+                                        null) {
+                                      return child;
+                                    } else {
+                                      return SizedBox(
+                                        width: 34,
+                                        height: 34,
+                                        child: Center(
+                                          child:
+                                          CircularProgressIndicator(
+                                            color: AppColor.primaryColor,
+                                            value: loadingProgress.expectedTotalBytes !=
+                                                null
+                                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                )
+                                    : Image.network(
+                                  AppAssets.dummyPic,
+                                  fit: BoxFit.fill,
+                                  width: 34,
+                                  height: 34,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       );
                     }),
@@ -269,14 +316,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(
                       height: 10,
                     ),
-                    CustomDropdown(
-                      itemList: itemListForTitle,
-                      hintText: "Select Title",
-                      onChanged: (value) {
-                        selectTitle = value;
-                        debugPrint("selectTitle: $selectTitle");
-                      },
-                    ),
+                    // itemListForTitle.isEmpty ? "No active title found.." :
+                    Obx(() {
+                      return getProfileController.isLoading1.value
+                          ? Shimmers2(
+                        width: Get.width,
+                        height: 60,
+                      ) : CustomDropdown(
+                        itemList: itemListForTitle,
+                        hintText: itemListForTitle.isEmpty ? "No active title found.." : "Select Title",
+                        onChanged: (value) {
+                          setState(() {
+                            selectTitle = value;
+                            selectTitleId = getProfileController.getTitles.firstWhere((c) => c['name'] == value)
+                            ['titles_id'].toString();
+                            debugPrint("selectTitle: $selectTitle, selectTitleId: $selectTitleId");
+                            getProfileController.updateTitle(titleId: selectTitleId.toString());
+                          });
+                        },
+                        initialValue: selectTitle,
+                      );
+                    }
+                     ),
                     const SizedBox(
                       height: 18,
                     ),
@@ -286,14 +347,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(
                       height: 10,
                     ),
-                    CustomDropdown(
-                      itemList: itemListForBadge,
-                      hintText: "Select Badge",
-                      onChanged: (value) {
-                        selectBadge = value;
-                        debugPrint("SelectBadge: $selectBadge");
-                      },
-                    ),
+                    Obx(() {
+                      return getProfileController.isLoading1.value
+                          ? Shimmers2(
+                        width: Get.width,
+                        height: 60,
+                      ) : CustomDropdown(
+                        itemList: itemListForBadge,
+                        hintText: itemListForBadge.isEmpty ? "No active badge found.." : "Select Badge",
+                        onChanged: (value) {
+                          setState(() {
+                            selectBadge = value;
+                            selectBadgeId = getProfileController.getBadges.firstWhere((c) => c['name'] == value)
+                            ['badges_id'].toString();
+                            debugPrint("selectBadge: $selectBadge, selectBadgeId: $selectBadgeId");
+                            getProfileController.updateBadge(badgeId: selectBadgeId.toString());
+                          });
+                        },
+                        initialValue: selectBadge,
+                      );
+                    }),
                     SizedBox(
                       height: Get.height * 0.03,
                     ),

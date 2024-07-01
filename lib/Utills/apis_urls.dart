@@ -32,6 +32,14 @@ String subscribeNewsletterApiUrl = '${baseUrl}subscribe_newsletter';
 
 String getProfileApiUrl = '${baseUrl}customers_profile';
 
+String getUserTitlesApiUrl = '${baseUrl}get_user_titles';
+
+String updateTitleApiUrl = '${baseUrl}update_active_title';
+
+String getUserBadgesApiUrl = '${baseUrl}get_user_badges';
+
+String updateBadgeApiUrl = '${baseUrl}update_active_badge';
+
 String updateProfileApiUrl = '${baseUrl}update_profile';
 
 String updateProfileNotificationsApiUrl = '${baseUrl}update_profile_notifications';
