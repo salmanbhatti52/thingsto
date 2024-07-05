@@ -5,7 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
@@ -19,6 +21,7 @@ class AddThingsController extends GetxController {
   var isCityLoading = false.obs;
   var isError = false.obs;
   var categoriesAll = [].obs;
+  var categoriesP0 = [].obs;
   var allCountries = [].obs;
   // var allStates = [].obs;
   // var allCities = [].obs;
@@ -30,6 +33,8 @@ class AddThingsController extends GetxController {
   RxList<String> links = <String>[].obs;
   ValueNotifier<List<Map<String, dynamic>>> allStates = ValueNotifier([]);
   ValueNotifier<List<Map<String, dynamic>>> allCities = ValueNotifier([]);
+  Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
+  RxString base64Image = RxString("");
 
   /* Add Tags  Function */
 
@@ -45,6 +50,58 @@ class AddThingsController extends GetxController {
     if (link.isNotEmpty) {
       links.add(link);
     }
+  }
+
+  /* Get thumbnail  Function */
+
+  Future<void> imagePick() async {
+    final picker = ImagePicker();
+    XFile? pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedImage != null) {
+      await cropImage(pickedImage.path);
+    }
+  }
+
+  Future<void> cropImage(String imagePath) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      maxWidth: 1800,
+      maxHeight: 1800,
+      cropStyle: CropStyle.rectangle,
+      uiSettings: [
+        AndroidUiSettings(
+          initAspectRatio: CropAspectRatioPreset.ratio4x3,
+          toolbarTitle: 'Upload',
+          toolbarColor: AppColor.primaryColor,
+          backgroundColor: AppColor.secondaryColor,
+          showCropGrid: false,
+          toolbarWidgetColor: AppColor.whiteColor,
+          hideBottomControls: true,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(
+          showActivitySheetOnDone: false,
+          resetAspectRatioEnabled: false,
+          title: 'Cropper',
+          hidesNavigationBar: true,
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      imageFile.value = croppedFile;
+      await convertToBase64(croppedFile);
+    }
+  }
+
+  Future<void> convertToBase64(CroppedFile croppedFile) async {
+    List<int> imageBytes = await croppedFile.readAsBytes();
+    String base64String = base64Encode(imageBytes);
+    base64Image.value = base64String;
+    debugPrint("base64Image ${base64Image.value}");
   }
 
   /* Get Image  Function */
@@ -130,6 +187,8 @@ class AddThingsController extends GetxController {
       debugPrint("allCategoryData $allCategoryData");
       if (allCategoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
+        var filteredData = data.where((category) => category['parent_id'] == 0).toList();
+        categoriesP0.value = filteredData;
         categoriesAll.value = data;
       } else {
         debugPrint(allCategoryData['status']);
@@ -291,6 +350,19 @@ class AddThingsController extends GetxController {
       //   imagesMap[i.toString()] = base64Images[i];
       // }
 
+      List<Map<String, String>> singleImagesList = [];
+
+      if (base64Image.isNotEmpty) {
+        String base64Img = base64Image.toString();
+        String mediaType = 'Image';
+        String extension = 'jpg';
+        singleImagesList.add({
+          'base64_data': base64Img,
+          'media_type': mediaType,
+          'extension': extension,
+        });
+      }
+
       List<Map<String, String>> imagesList = [];
 
       String base64Audio = '';
@@ -339,11 +411,12 @@ class AddThingsController extends GetxController {
         "countries_id": countryId.toString(),
         "states_id": stateId.toString(),
         "cities_id": cityId.toString(),
-        "sources_links": links,
+        "sources": links,
         "confirm_by_moderator": confirmModerator.toString(),
         "description": description.toString(),
         "tags": tags,
         "images": imagesList,
+        "thumbnail_images": singleImagesList,
       };
 
       debugPrint("data $data");

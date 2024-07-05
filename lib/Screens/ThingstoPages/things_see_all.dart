@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
@@ -11,9 +12,30 @@ import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 
-class ThingsSeeAll extends StatelessWidget {
+class ThingsSeeAll extends StatefulWidget {
   final List thingsto;
   const ThingsSeeAll({super.key, required this.thingsto,});
+
+  @override
+  State<ThingsSeeAll> createState() => _ThingsSeeAllState();
+}
+
+class _ThingsSeeAllState extends State<ThingsSeeAll> {
+
+  final ThingstoController thingstoController = Get.put(ThingstoController());
+
+  void filterThings(String query) {
+    final filteredThings = widget.thingsto.where((thing) {
+      final thingName = thing['name'].toString().toLowerCase();
+      final input = query.toLowerCase();
+      return thingName.contains(input);
+    }).toList();
+
+    setState(() {
+      thingstoController.findingThings.assignAll(filteredThings);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +60,16 @@ class ThingsSeeAll extends StatelessWidget {
                 children: [
                   CustomTextFormField(
                     controller: TextEditingController(),
-                    hintText: "Search for a thing on a",
+                    hintText: "Search for a thing",
                     // validator: validateEmail,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.done,
                     suffixImage: AppAssets.filter,
                     showPrefix: true,
                     prefixColor: AppColor.labelTextColor,
+                    onChanged: (value) {
+                      filterThings(value);
+                    },
                     suffixTap: () {
                       showDialog(
                         context: context,
@@ -74,9 +99,9 @@ class ThingsSeeAll extends StatelessWidget {
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                       ),
-                      itemCount: thingsto.length,
+                      itemCount: thingstoController.findingThings.isNotEmpty ? thingstoController.findingThings.length : widget.thingsto.length,
                       itemBuilder: (BuildContext context, int i) {
-                        final things = thingsto[i];
+                        final things = thingstoController.findingThings.isNotEmpty ? thingstoController.findingThings[i] : widget.thingsto[i];
                         return Padding(
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Column(
@@ -91,7 +116,7 @@ class ThingsSeeAll extends StatelessWidget {
                                 },
                                 child: Container(
                                   width: Get.width * 0.45,
-                                  height: Get.height * 0.27,
+                                  height: Get.height * 0.26,
                                   decoration: BoxDecoration(
                                     color: AppColor.whiteColor,
                                     borderRadius: BorderRadius.circular(16),
@@ -113,7 +138,7 @@ class ThingsSeeAll extends StatelessWidget {
                                           borderRadius: BorderRadius.circular(5),
                                           child: things['images'][0]['media_type'] == "Image"
                                               ? Image.network(
-                                            '$baseUrlImage${things['images'][0]['name']}',
+                                            '$baseUrlImage${things['thumbnail']}',
                                             width: Get.width,
                                             height: Get.height * 0.13,
                                             fit: BoxFit.fill,

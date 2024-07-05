@@ -395,7 +395,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                 children: [
                   LabelField(
                     align: TextAlign.start,
-                    text: widget.thingsto?["earn_points"],
+                    text:  widget.thingsto!["earn_points"].toString(),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,

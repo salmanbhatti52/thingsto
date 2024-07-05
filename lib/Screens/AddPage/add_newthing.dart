@@ -33,6 +33,7 @@ class _AddNewThingsState extends State<AddNewThings>
 
   var itemListForCategory = <String>[];
   var itemListForSubCategory = <String>[];
+  var itemListForThirdCategory = <String>[];
   var itemListForCountries = <String>[];
   var itemListForStates = <String>[];
   var itemListForCities = <String>[];
@@ -43,8 +44,10 @@ class _AddNewThingsState extends State<AddNewThings>
   String? selectFile;
   String? selectCategory;
   String? selectSubCategory;
+  String? selectThirdCategory;
   String? selectCategoryId;
   String? selectSubCategoryId;
+  String? selectThirdCategoryId;
   String? selectCountry;
   String? selectStates;
   String? selectCity;
@@ -71,7 +74,7 @@ class _AddNewThingsState extends State<AddNewThings>
 
   Future<void> getUserThings() async {
     await addThingsController.getAllCategory();
-        itemListForCategory = addThingsController.categoriesAll
+        itemListForCategory = addThingsController.categoriesP0
             .map((c) => c['name'].toString())
             .toSet() // Ensure uniqueness
             .toList();
@@ -217,6 +220,13 @@ class _AddNewThingsState extends State<AddNewThings>
                                selectSubCategory = value;
                                selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
+                               // Filter subcategories based on selected category
+                               itemListForThirdCategory = addThingsController.categoriesAll
+                                   .where((c) => c['parent_id'] == int.parse(selectSubCategoryId!))
+                                   .map((c) => c['name'].toString())
+                                   .toSet()
+                                   .toList();
+                               selectThirdCategory = null;
                              });
                            },
                            initialValue: selectSubCategory,
@@ -226,6 +236,33 @@ class _AddNewThingsState extends State<AddNewThings>
                          ),
                        ],
                      ),
+                      if(itemListForThirdCategory.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const LabelField(
+                              text: 'Sub child category',
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            CustomDropdown(
+                              itemList: itemListForThirdCategory,
+                              hintText: "Select Sub child category",
+                              onChanged: (value) {
+                                setState(() {
+                                  selectThirdCategory = value;
+                                  selectThirdCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
+                                  debugPrint("selectThirdCategory: $selectThirdCategory, selectThirdCategoryId: $selectThirdCategoryId");
+                                });
+                              },
+                              initialValue: selectThirdCategory,
+                            ),
+                            const SizedBox(
+                              height: 18,
+                            ),
+                          ],
+                        ),
                       const LabelField(
                         text: 'Thing Name',
                       ),
@@ -535,6 +572,58 @@ class _AddNewThingsState extends State<AddNewThings>
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'Thumbnail',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Obx(() {
+                        return  addThingsController.imageFile.value == null
+                            ? GestureDetector(
+                          onTap: addThingsController.imagePick,
+                          child: DottedBorder(
+                            color: AppColor.primaryColor,
+                            strokeWidth: 1,
+                            radius: const Radius.circular(10),
+                            borderType: BorderType.RRect,
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height * 0.163,
+                              color: AppColor.secondaryColor,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(AppAssets.upload),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const LabelField(
+                                      text: "Add thumbnail",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColor.hintColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                            : ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(addThingsController.imageFile.value!.path,),
+                                fit: BoxFit.cover,
+                                width: Get.width,
+                                height: Get.height * 0.2,
+                              ),
+                            );
+                      }),
                       const SizedBox(
                         height: 18,
                       ),
@@ -912,7 +1001,7 @@ class _AddNewThingsState extends State<AddNewThings>
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
                                   addThingsController.addThings(
-                                    categoriesId: selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                    categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
                                     name: thingNameController.text.toString(),
                                     earnPoints: pointsController.text.toString(),
                                     location: locationController.text.toString(),

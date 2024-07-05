@@ -73,11 +73,11 @@ class _HomePageState extends State<HomePage> {
   String? selectCategory;
   String? thingName;
 
-  void handleFindThings(String thingNames, String categoryId) {
-    debugPrint("Thing Name: $thingNames, Category ID: $categoryId");
-    thingName = thingNames.toString();
+  void handleFindThings(String categoryId) {
+    debugPrint("Category ID: $categoryId");
+    // thingName = thingNames.toString();
     selectCategory = categoryId.toString();
-    if (thingName!.isNotEmpty) {
+    if (selectCategory!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           isFind = !isFind;
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
         if (isFind) {
           homeController.foundedThings(
             categoriesId: selectCategory.toString(),
-            name: thingName.toString(),
+            // name: thingName.toString(),
           );
         }
       });

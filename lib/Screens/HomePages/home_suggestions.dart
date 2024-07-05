@@ -63,7 +63,7 @@ class HomeSuggestions extends StatelessWidget {
                           child: Image.network(
                             width: Get.width * 0.37,
                             height: Get.height * 0.21,
-                            '$baseUrlImage${things['images'][0]['name']}',
+                            '$baseUrlImage${things['thumbnail']}',
                             fit: BoxFit.cover,
                             errorBuilder: (BuildContext context,
                                 Object exception, StackTrace? stackTrace) {

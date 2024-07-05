@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
@@ -20,6 +24,9 @@ class ThingstoController extends GetxController {
   var isValidate = false.obs;
   var topThingsto = [].obs;
   var findingThings = [].obs;
+  Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
+  RxString base64Image = RxString("");
+  var moderateCheck = false.obs;
 
   var cachedCategories = [].obs;
   var isDataLoadedCategories = false.obs;
@@ -130,9 +137,10 @@ class ThingstoController extends GetxController {
         var data = jsonDecode(response.body)['data'] as List;
         var filteredData = data.where((thing) {
           var validaters = thing['things_validated'] as List;
-          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId);
+          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId && validator['status'].toString() == "Validate");
         }).toList();
         thingsto.value = data;
+        findingThings.clear();
         cachedThingsto.value = filteredData;
         isDataLoadedThingsto.value = true;
 
@@ -177,7 +185,7 @@ class ThingstoController extends GetxController {
         var data = jsonDecode(response.body)['data'] as List;
         var filteredData = data.where((thing) {
           var validaters = thing['things_validated'] as List;
-          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId);
+          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId && validator['status'].toString() == "Validate");
         }).toList();
         topThingsto.value = filteredData;
         cachedTopThingsto.value = filteredData;
@@ -244,8 +252,10 @@ class ThingstoController extends GetxController {
       isLoading1.value = true;
       findingThings.clear();
 
-      if (checkValue1 == "Yes"){
+      if (checkValue1 == "Yes") {
         findingThings.value = thingsto;
+        debugPrint("findingThings $findingThings");
+        debugPrint("thingsto $thingsto");
         Get.back();
       } else if (checkValue2 == "Yes") {
         Get.back();
@@ -294,8 +304,59 @@ class ThingstoController extends GetxController {
 
   /* Validate Things Function */
 
+  Future<void> imagePick() async {
+    final picker = ImagePicker();
+    XFile? pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedImage != null) {
+      await cropImage(pickedImage.path);
+    }
+  }
+
+  Future<void> cropImage(String imagePath) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      maxWidth: 1800,
+      maxHeight: 1800,
+      cropStyle: CropStyle.rectangle,
+      uiSettings: [
+        AndroidUiSettings(
+          initAspectRatio: CropAspectRatioPreset.ratio4x3,
+          toolbarTitle: 'Upload',
+          toolbarColor: AppColor.primaryColor,
+          backgroundColor: AppColor.secondaryColor,
+          showCropGrid: false,
+          toolbarWidgetColor: AppColor.whiteColor,
+          hideBottomControls: true,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(
+          showActivitySheetOnDone: false,
+          resetAspectRatioEnabled: false,
+          title: 'Cropper',
+          hidesNavigationBar: true,
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      imageFile.value = croppedFile;
+      await convertToBase64(croppedFile);
+    }
+  }
+
+  Future<void> convertToBase64(CroppedFile croppedFile) async {
+    List<int> imageBytes = await croppedFile.readAsBytes();
+    String base64String = base64Encode(imageBytes);
+    base64Image.value = base64String;
+    debugPrint("base64Image ${base64Image.value}");
+  }
+
   Future<void> validateThings(String thingId, String things) async {
     try {
+      isLoading1.value = true;
       String userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       Map<String, String> data = {
@@ -318,6 +379,69 @@ class ThingstoController extends GetxController {
       }
     } catch (e) {
       debugPrint("Error $e");
+    } finally {
+  isLoading1.value = false;
+  }
+  }
+
+  Future<void> validateThingsWithProof(String thingId, String things, String proof) async {
+    try {
+      isLoading1.value = true;
+      var headersList = {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(thingsValidateApiUrl);
+
+      String userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+
+      List<Map<String, String>> imagesList = [];
+
+      if (proof.isNotEmpty) {
+        String base64Image = proof;
+        String mediaType = 'Image';
+        String extension = 'jpg';
+        imagesList.add({
+          'base64_data': base64Image,
+          'media_type': mediaType,
+          'extension': extension,
+        });
+      }
+
+      var data = {
+        "validaters_id": userID,
+        "things_id": thingId,
+        "proof" : imagesList,
+      };
+      debugPrint("data $data");
+      var req = http.Request('POST', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(data);
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+      var validateData = jsonDecode(resBody);
+      debugPrint("validateData $validateData");
+      if (validateData['status'] == 'success') {
+        Get.back();
+        imageFile.value = null;
+        moderateCheck.value = false;
+        // totalLikes.value = validateData['data']['total_likes'];
+        // isValidate.value = !isValidate.value;
+        things == "thingsto" ? getThingsto(usersCustomersId: userID.toString()) :  getTopThingsto( usersCustomersId: userID.toString());
+        // Get.back();
+        // Get.off(
+        //       () => const MyBottomNavigationBar(initialIndex: 2,),
+        //   duration: const Duration(milliseconds: 350),
+        //   transition: Transition.downToUp,
+        // );
+      } else {
+        debugPrint(validateData['status']);
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
     }
   }
 

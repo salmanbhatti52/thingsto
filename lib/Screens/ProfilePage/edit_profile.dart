@@ -137,14 +137,14 @@ class _EditProfileState extends State<EditProfile> {
                         height: Get.height * 0.025,
                       ),
                       const LabelField(
-                        text: 'Surname',
+                        text: 'Pseudo',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: surNameController,
-                        hintText: "Surname here",
+                        hintText: "Pseudo here",
                         // validator: validateEmail,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,

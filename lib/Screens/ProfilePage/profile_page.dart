@@ -109,9 +109,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     Obx(() {
                       final profile = getProfileController.cachedGetProfile;
                       final profilePictureUrl = profile['profile_picture'] ?? '';
-                      final userName = "${profile['first_name']} ${profile['last_name']}";
+                      final userName = "${profile['sur_name']}";
+                      // final userName = "${profile['first_name']} ${profile['last_name']}";
                       final activeTitle = "${profile['active_title']}";
                       final activeBadge = "${profile['active_badge']}";
+                      final totalPoints = "${profile['total_points']}";
                       return Stack(
                         children: [
                           Container(
@@ -226,9 +228,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         )
                                             : Row(
                                           children: [
-                                            const LabelField(
+                                            LabelField(
                                               align: TextAlign.start,
-                                              text: "240",
+                                              text: totalPoints != "0" ? totalPoints : "0",
                                               fontSize: 18,
                                               fontWeight: FontWeight.w400,
                                               color: AppColor.lightBrown,

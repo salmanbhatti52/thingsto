@@ -28,6 +28,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
   bool isSelect = false;
   String selectedCategoryName = '';
   String selectedCategoryId = '';
+  final TextEditingController searchController = TextEditingController();
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final LanguageController languageController = Get.put(LanguageController());
   final List<Map<String, String>> categoryHistory = [];
@@ -102,6 +103,19 @@ class _ThingstoPageState extends State<ThingstoPage> {
     });
   }
 
+  void filterThings(String query) {
+    final filteredThings = thingstoController.cachedThingsto.where((thing) {
+      final thingName = thing['name'].toString().toLowerCase();
+      final input = query.toLowerCase();
+      return thingName.contains(input);
+    }).toList();
+
+    setState(() {
+      thingstoController.findingThings.assignAll(filteredThings);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,13 +148,16 @@ class _ThingstoPageState extends State<ThingstoPage> {
             child: Column(
               children: [
                 CustomTextFormField(
-                  controller: TextEditingController(),
-                  hintText: "Search for a thing on a",
+                  controller: searchController,
+                  hintText: "Search for a thing",
                   // validator: validateEmail,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   suffixImage: AppAssets.filter,
                   showPrefix: true,
+                  onChanged: (value) {
+                    filterThings(value);
+                  },
                   prefixColor: AppColor.labelTextColor,
                   suffixTap: () {
                     showDialog(
@@ -168,11 +185,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       ? RowText(
                           text: selectedCategoryName,
                     onTap: (){},
+                    seeTrue: false,
                         )
                       : Obx(() => RowText(
                     text: languageController.phrases['categories'] ??
                         "Categories",
                     onTap: (){},
+                    seeTrue: false,
                   ),),
                   isSelect
                       ? Obx(
@@ -262,6 +281,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   ),
                   RowText(
                     text: "Things to",
+                    seeTrue: true,
                     onTap: (){
                       Get.to(
                             () => ThingsSeeAll(thingsto: thingstoController.cachedThingsto,),
@@ -323,6 +343,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   ),
                   RowText(
                     text: "Top Things to",
+                    seeTrue: true,
                     onTap: (){
                       Get.to(
                             () => ThingsSeeAll(thingsto: thingstoController.cachedTopThingsto,),

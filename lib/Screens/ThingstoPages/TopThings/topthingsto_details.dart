@@ -380,7 +380,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                 children: [
                   LabelField(
                     align: TextAlign.start,
-                    text: widget.topThingsto?["earn_points"],
+                    text:  widget.topThingsto!["earn_points"].toString(),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,

@@ -6,7 +6,8 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 class RowText extends StatelessWidget {
   final String text;
   final Function onTap;
-  const RowText({super.key, required this.text, required this.onTap,});
+  bool seeTrue = true;
+  RowText({super.key, required this.text, required this.onTap, required this.seeTrue});
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +26,13 @@ class RowText extends StatelessWidget {
             onTap: () {
               onTap();
             },
-            child: const LabelField(
+            child: seeTrue ? const LabelField(
               text: "See all",
               fontWeight: FontWeight.w500,
               fontSize: 15,
               color: AppColor.primaryColor,
               interFont: true,
-            ),
+            ) : const SizedBox(),
           ),
         ],
       ),

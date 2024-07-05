@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
@@ -16,6 +22,14 @@ class ThingsValidate extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThingstoController thingstoController = Get.put(ThingstoController());
     thingstoController.initializeThings(thingsto["things_validated"]);
+    List thingsValidated = [];
+    bool showValidateButton = false;
+    if (thingsto["things_validated"] != null) {
+      thingsValidated = thingsto["things_validated"];
+      if(thingsValidated.isNotEmpty) {
+        showValidateButton = thingsValidated.any((validation) => validation['status'] == 'Pending');
+      }
+    }
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: Column(
@@ -25,6 +39,10 @@ class ThingsValidate extends StatelessWidget {
             bottomPad: 15,
             onBack: () {
               Get.back();
+              thingstoController.moderateCheck.value = false;
+              thingstoController.imageFile.value = null;
+              debugPrint("${thingstoController.moderateCheck.value}");
+              debugPrint("${thingstoController.imageFile.value}");
             },
           ),
           Expanded(
@@ -33,19 +51,88 @@ class ThingsValidate extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 55.0),
+                    padding: const EdgeInsets.only(bottom: 25.0),
                     child: ThingsDetails(thingsto: thingsto,thingstoName: thingstoName,),
                   ),
-                  Obx(() => LargeButton(
-                    text: thingstoController.isValidate.value ?  "Validated thing"
-                        : thingsto["confirm_by_moderator"] == "Yes"
-                        ? "Validate thing, send to moderator" : "Validate this thing",
+                  Obx(() {
+                    return thingstoController.moderateCheck.value
+                        ? thingstoController.imageFile.value == null
+                    ? GestureDetector(
+                      onTap: thingstoController.imagePick,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                        child: DottedBorder(
+                          color: AppColor.primaryColor,
+                          strokeWidth: 1,
+                          radius: const Radius.circular(10),
+                          borderType: BorderType.RRect,
+                          child: Container(
+                            width: Get.width,
+                            height: Get.height * 0.2,
+                            color: AppColor.secondaryColor,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(AppAssets.upload),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const LabelField(
+                                    text: "Add Photo/Proof of your thing",
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColor.hintColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    : Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          File(thingstoController.imageFile.value!.path,),
+                          fit: BoxFit.cover,
+                          width: Get.width,
+                          height: Get.height * 0.2,
+                        ),
+                      ),
+                    ):  const SizedBox();
+                  }),
+                  thingsto["confirm_by_moderator"] == "No"
+                      ? Obx(() => LargeButton(
+                    text: thingstoController.isValidate.value
+                        ?  "Validated thing"
+                        : "Validate this thing",
+                    containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                     onTap: () {
-                      // thingsto["confirm_by_moderator"] == "No" ?
                       thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto");
-                          // : CustomSnackbar.show(title: "Error", message: "Already Validated");
                     },
-                  ),),
+                  ),)
+                 :  showValidateButton
+                      ? LargeButton(
+                    text: "Things being moderated",
+                    containerColor: const Color(0xffC4A484),
+                    onTap: () {},
+                  )
+                      : LargeButton(
+                    text: "Validate thing, send to moderation",
+                    onTap: () {
+                      thingstoController.moderateCheck.value = true;
+                      if (thingstoController.imageFile.value != null) {
+                        thingstoController.validateThingsWithProof(
+                          thingsto["things_id"].toString(), "thingsto",
+                          thingstoController.base64Image.value.toString(),);
+                      } else {
+                        CustomSnackbar.show(title: "",
+                            message: "Add Photo Proof of your thing");
+                      }
+                    }),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),

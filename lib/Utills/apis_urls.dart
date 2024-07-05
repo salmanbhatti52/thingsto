@@ -6,6 +6,8 @@ String baseUrlImage = 'https://thingsto.fr/portal/public/';
 
 String systemSettingsApiUrl = '${baseUrl}system_settings';
 
+String citiesAllApiUrl = '${baseUrl}cities_all';
+
 String languagesApiUrl = '${baseUrl}languages';
 
 String updateProfileLanguageApiUrl = '${baseUrl}update_profile_language';

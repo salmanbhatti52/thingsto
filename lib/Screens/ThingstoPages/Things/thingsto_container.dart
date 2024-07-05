@@ -57,7 +57,7 @@ class ThingstoContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         child: things['images'][0]['media_type'] == "Image"
                             ? Image.network(
-                            '$baseUrlImage${things['images'][0]['name']}',
+                            '$baseUrlImage${things['thumbnail']}',
                           width: Get.width,
                           height: Get.height * 0.13,
                           fit: BoxFit.fill,
@@ -132,7 +132,9 @@ class ThingstoContainer extends StatelessWidget {
                                 align: TextAlign.left,
                               ),
                               const SizedBox(height: 3,),
-                              LargeButton(
+                              things['tags'] != null &&
+                                  things['tags'].isNotEmpty
+                                  ? LargeButton(
                                 text: things['tags'][0]['name'],
                                 fontWeight: FontWeight.w500,
                                 maxLIne: 1,
@@ -141,7 +143,8 @@ class ThingstoContainer extends StatelessWidget {
                                 height: 20,
                                 radius: 5,
                                 onTap: () {},
-                              ),
+                              )
+                                  : const SizedBox(),
                             ],
                           ),
                         ),

@@ -55,7 +55,7 @@ class TopThingstoContainer extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                             child: topThings['images'][0]['media_type'] == "Image"
                                 ? Image.network(
-                              '$baseUrlImage${topThings['images'][0]['name']}',
+                              '$baseUrlImage${topThings['thumbnail']}',
                               width: Get.width,
                               height: Get.height * 0.13,
                               fit: BoxFit.fill,

@@ -375,7 +375,7 @@ class _FoundedThingsState extends State<FoundedThings>
                 children: [
                   LabelField(
                     align: TextAlign.start,
-                    text: widget.foundedThings["earn_points"],
+                    text:  widget.foundedThings["earn_points"].toString(),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,
