@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
@@ -24,10 +25,19 @@ class ThingsValidate extends StatelessWidget {
     thingstoController.initializeThings(thingsto["things_validated"]);
     List thingsValidated = [];
     bool showValidateButton = false;
+    bool showValidate = false;
     if (thingsto["things_validated"] != null) {
       thingsValidated = thingsto["things_validated"];
       if(thingsValidated.isNotEmpty) {
-        showValidateButton = thingsValidated.any((validation) => validation['status'] == 'Pending');
+        String userID = (prefs.getString('users_customers_id').toString());
+        debugPrint("userID $userID");
+        if(thingsValidated.any((validates) => validates['validaters_id'] == int.parse(userID) && validates['status'] == "Validate")) {
+          showValidate = thingsValidated.any((validation) => validation['status'] == 'Validate');
+          debugPrint("showValidate $showValidate");
+        } else {
+          showValidateButton = thingsValidated.any((validation) => validation['status'] == 'Pending');
+          debugPrint("showValidateButton $showValidateButton");
+        }
       }
     }
     return Scaffold(
@@ -107,32 +117,37 @@ class ThingsValidate extends StatelessWidget {
                   thingsto["confirm_by_moderator"] == "No"
                       ? Obx(() => LargeButton(
                     text: thingstoController.isValidate.value
-                        ?  "Validated thing"
-                        : "Validate this thing",
+                        ?  thingstoController.isLoading1.value ? "Please Wait..." : "Validated thing"
+                        : thingstoController.isLoading1.value ? "Please Wait..." : "Validate this thing",
                     containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                     onTap: () {
-                      thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto");
+                      !thingstoController.isValidate.value ?  thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto") : null;
                     },
                   ),)
-                 :  showValidateButton
+                 :  showValidate
+                      ? LargeButton(
+                    text: "Validated thing",
+                    containerColor: const Color(0xffC4A484),
+                    onTap: () {},
+                  ) :  showValidateButton
                       ? LargeButton(
                     text: "Things being moderated",
                     containerColor: const Color(0xffC4A484),
                     onTap: () {},
                   )
-                      : LargeButton(
-                    text: "Validate thing, send to moderation",
-                    onTap: () {
-                      thingstoController.moderateCheck.value = true;
-                      if (thingstoController.imageFile.value != null) {
-                        thingstoController.validateThingsWithProof(
-                          thingsto["things_id"].toString(), "thingsto",
-                          thingstoController.base64Image.value.toString(),);
-                      } else {
-                        CustomSnackbar.show(title: "",
-                            message: "Add Photo Proof of your thing");
-                      }
-                    }),
+                      : Obx(() => LargeButton(
+                      text: thingstoController.isLoading1.value ? "Please Wait..." : "Validate thing, send to moderation",
+                      onTap: () {
+                        thingstoController.moderateCheck.value = true;
+                        if (thingstoController.imageFile.value != null) {
+                          thingstoController.validateThingsWithProof(
+                            thingsto["things_id"].toString(), "thingsto",
+                            thingstoController.base64Image.value.toString(),);
+                        } else {
+                          CustomSnackbar.show(title: "",
+                              message: "Add Photo Proof of your thing");
+                        }
+                      }),),
                   SizedBox(
                     height: Get.height * 0.022,
                   ),

@@ -113,17 +113,19 @@ class ThingstoController extends GetxController {
   /* Get Things To Function */
 
   getThingsto({
-    required String usersCustomersId,
+    required String checkValue,
   }) async {
     try {
       isLoading.value = true;
       await GlobalService.getCurrentPosition();
+      userID = (prefs.getString('users_customers_id').toString());
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint("userID $userID");
       debugPrint('current latitude: $latitude1');
       debugPrint('current longitude: $longitude1');
       Map<String, String> data = {
-        "users_customers_id": usersCustomersId,
+        "users_customers_id": userID.toString(),
         "current_longitude":  longitude1.toString(),
         "current_lattitude": latitude1.toString(),
       };
@@ -137,10 +139,15 @@ class ThingstoController extends GetxController {
         var data = jsonDecode(response.body)['data'] as List;
         var filteredData = data.where((thing) {
           var validaters = thing['things_validated'] as List;
-          return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId && validator['status'].toString() == "Validate");
+          return !validaters.any((validator) => validator['validaters_id'].toString() == userID.toString() && validator['status'].toString() == "Validate");
         }).toList();
-        thingsto.value = data;
-        findingThings.clear();
+        if(checkValue == "Yes"){
+          thingsto.value = data;
+            findingThings.value = thingsto;
+            debugPrint("findingThings $findingThings");
+            debugPrint("thingsto $thingsto");
+            Get.back();
+  }
         cachedThingsto.value = filteredData;
         isDataLoadedThingsto.value = true;
 
@@ -245,19 +252,13 @@ class ThingstoController extends GetxController {
     required String country,
     required String city,
     required String distances,
-    required String checkValue1,
     required String checkValue2,
   }) async {
     try {
       isLoading1.value = true;
       findingThings.clear();
 
-      if (checkValue1 == "Yes") {
-        findingThings.value = thingsto;
-        debugPrint("findingThings $findingThings");
-        debugPrint("thingsto $thingsto");
-        Get.back();
-      } else if (checkValue2 == "Yes") {
+      if (checkValue2 == "Yes") {
         Get.back();
       } else {
         await GlobalService.getCurrentPosition();
@@ -372,8 +373,9 @@ class ThingstoController extends GetxController {
       if (validateData['status'] == 'success') {
         // totalLikes.value = validateData['data']['total_likes'];
         isValidate.value = !isValidate.value;
-        things == "thingsto" ? getThingsto(usersCustomersId: userID.toString()) :  getTopThingsto( usersCustomersId: userID.toString());
+        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto( usersCustomersId: userID.toString());
         Get.back();
+        CustomSnackbar.show(title: "Success", message: "Things Validated");
       } else {
         debugPrint(validateData['status']);
       }
@@ -423,13 +425,13 @@ class ThingstoController extends GetxController {
       var validateData = jsonDecode(resBody);
       debugPrint("validateData $validateData");
       if (validateData['status'] == 'success') {
-        Get.back();
         imageFile.value = null;
         moderateCheck.value = false;
         // totalLikes.value = validateData['data']['total_likes'];
         // isValidate.value = !isValidate.value;
-        things == "thingsto" ? getThingsto(usersCustomersId: userID.toString()) :  getTopThingsto( usersCustomersId: userID.toString());
-        // Get.back();
+        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto( usersCustomersId: userID.toString());
+        Get.back();
+        CustomSnackbar.show(title: "Success", message: "Things send to Validation");
         // Get.off(
         //       () => const MyBottomNavigationBar(initialIndex: 2,),
         //   duration: const Duration(milliseconds: 350),

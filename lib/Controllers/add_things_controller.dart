@@ -433,6 +433,8 @@ class AddThingsController extends GetxController {
           title: 'Success',
           message: message.toString(),
         );
+        imageFile.value == null;
+        imageFiles == null;
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 3,),
           duration: const Duration(milliseconds: 350),

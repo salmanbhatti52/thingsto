@@ -45,10 +45,10 @@ class _ThingstoPageState extends State<ThingstoPage> {
     debugPrint("userID $userID");
     if (thingstoController.isDataLoadedThingsto.value) {
       // Show cached data and then update in the background
-      thingstoController.getThingsto(usersCustomersId: userID.toString());
+      thingstoController.getThingsto(checkValue: "No");
     } else {
       // Load data from the server
-      await thingstoController.getThingsto(usersCustomersId: userID.toString());
+      await thingstoController.getThingsto(checkValue: "No");
     }
     if (thingstoController.isDataLoadedCategories.value) {
       thingstoController.getCategory(usersCustomersId: userID.toString());
@@ -72,7 +72,6 @@ class _ThingstoPageState extends State<ThingstoPage> {
         country: "",
         city: "",
         distances: "",
-        checkValue1: "No",
         checkValue2: "No",
       );
       thingstoController.getChildCategory(

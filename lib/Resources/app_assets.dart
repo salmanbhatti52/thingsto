@@ -1,6 +1,6 @@
 class AppAssets {
   static const String dummyPic =
-      'https://amoremio.lared.lat/uploads/placeholder.jpg';
+      'https://thingsto.fr/portal/public/uploads/placeholder/default_dp.jpeg';
 
   static const String logo = 'assets/images/logo.svg';
 

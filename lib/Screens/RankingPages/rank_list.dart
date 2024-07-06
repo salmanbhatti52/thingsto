@@ -3,10 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
 class RankUserList extends StatelessWidget {
-  const RankUserList({super.key});
+  final List rankUser;
+  const RankUserList({super.key,  required this.rankUser,});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +17,9 @@ class RankUserList extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         physics: const ScrollPhysics(),
-        itemCount: 7,
+        itemCount: rankUser.length,
         itemBuilder: (BuildContext context, i) {
+          final rank = rankUser[i];
           return Stack(
             children: [
               Container(
@@ -43,10 +46,11 @@ class RankUserList extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ClipRRect(
+                      rank['profile_picture'] != null
+                      ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          "https://img.freepik.com/free-photo/3d-rendering-cartoon-like-boy_23-2150797566.jpg?size=626&ext=jpg",
+                          '$baseUrlImage${rank["profile_picture"]}',
                           fit: BoxFit.fill,
                           width: 84,
                           height: 84,
@@ -72,13 +76,43 @@ class RankUserList extends StatelessWidget {
                             }
                           },
                         ),
+                      )
+                      : ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          AppAssets.dummyPic,
+                          fit: BoxFit.fill,
+                          width: 84,
+                          height: 84,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return SizedBox(
+                                width: 84,
+                                height: 84,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor.primaryColor,
+                                    value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const LabelField(
-                            text: "Janifer",
+                          LabelField(
+                            text: "${rank['first_name']} ${rank['last_name']}",
                             fontSize: 19,
                             color: Color(0xff080C2F),
                             interFont: true,
@@ -100,8 +134,8 @@ class RankUserList extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              const LabelField(
-                                text: "50000 ",
+                              LabelField(
+                                text: "${rank['total_points']}" ,
                                 fontSize: 15,
                                 color: AppColor.primaryColor,
                                 interFont: true,

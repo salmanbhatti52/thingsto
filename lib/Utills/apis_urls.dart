@@ -34,6 +34,8 @@ String subscribeNewsletterApiUrl = '${baseUrl}subscribe_newsletter';
 
 String getProfileApiUrl = '${baseUrl}customers_profile';
 
+String getRankUsersApiUrl = '${baseUrl}users_list';
+
 String getUserTitlesApiUrl = '${baseUrl}get_user_titles';
 
 String updateTitleApiUrl = '${baseUrl}update_active_title';

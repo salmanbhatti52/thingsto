@@ -460,7 +460,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           );
                         }),
                         Obx(
-                              () => thingstoController.isLoading1.value
+                              () => thingstoController.isLoading1.value || thingstoController.isLoading.value
                               ? LargeButton(
                                 width: Get.width * 0.25,
                                 height : Get.height * 0.05,
@@ -473,14 +473,27 @@ class _FilterDialogState extends State<FilterDialog> {
                                 text: "Save",
                                 onTap: () {
                                   if (formKey.currentState!.validate()) {
+                                    if(checkBoxValue1){
+                                      thingstoController.getThingsto(
+                                        checkValue: checkBoxValue1 ? "Yes" : "No",
+                                      );
+                                    } else {
                                       thingstoController.foundedThings(
-                                        categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                        country: countryController.text.toString(),
+                                        categoriesId: selectThirdCategoryId !=
+                                            null ? selectThirdCategoryId
+                                            .toString() : selectSubCategoryId !=
+                                            null ? selectSubCategoryId
+                                            .toString() : selectCategoryId
+                                            .toString(),
+                                        country: countryController.text
+                                            .toString(),
                                         city: cityController.text.toString(),
                                         distances: selectedValue.toString(),
-                                        checkValue1: checkBoxValue1 ? "Yes" : "No",
-                                        checkValue2: checkBoxValue2 ? "Yes" : "No",
+                                        checkValue2: checkBoxValue2
+                                            ? "Yes"
+                                            : "No",
                                       );
+                                    }
                                     // } else {
                                     //   Get.back();
                                       // CustomSnackbar.show(title: "Error", message: "Please select all fields");

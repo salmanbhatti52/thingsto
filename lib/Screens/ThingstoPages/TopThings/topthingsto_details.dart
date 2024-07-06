@@ -16,6 +16,8 @@ import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TopThingsDetails extends StatefulWidget {
   final Map<String, dynamic>? topThingsto;
@@ -459,13 +461,28 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                   children: source.map<Widget>((sources) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: LabelField(
-                        text: sources["name"],
-                        align: TextAlign.start,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xff277CE0),
-                        maxLIne: 1,
+                      child: GestureDetector(
+                        onTap : () async {
+                          final String urlStr = sources["name"];
+                          // Ensure the URL is valid
+                          if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                            final Uri url = Uri.parse(urlStr);
+                            if (!await launchUrl(url)) {
+                              throw Exception('Could not launch $url');
+                            }
+                          } else {
+                            // throw Exception('Invalid URL: $urlStr');
+                            CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
+                          }
+                        },
+                        child: LabelField(
+                          text: sources["name"],
+                          align: TextAlign.start,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xff277CE0),
+                          maxLIne: 1,
+                        ),
                       ),
                     );
                   }).toList(),

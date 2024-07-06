@@ -22,6 +22,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+    </array>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to upload audio files.</string>
 	<key>NSCameraUsageDescription</key>
