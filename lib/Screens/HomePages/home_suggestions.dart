@@ -70,9 +70,12 @@ class HomeSuggestions extends StatelessWidget {
                               return Center(
                                 child: Padding(
                                   padding: const EdgeInsets.only(bottom: 25.0),
-                                  child: SvgPicture.asset(
-                                    AppAssets.music,
-                                  ),
+                                  child: Image.network(
+                                    AppAssets.dummyPic,
+                                    width: Get.width * 0.37,
+                                    height: Get.height * 0.21,
+                                    fit: BoxFit.cover,
+                                    ),
                                 ),
                               );
                             },

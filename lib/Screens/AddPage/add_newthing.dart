@@ -454,6 +454,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 debugPrint('current longitude: $longitude1');
                               });
                             },
+                            showSuffix: false,
                             obscureText: false,
                             keyboardType: TextInputType.visiblePassword,
                             textInputAction: TextInputAction.next,
@@ -499,7 +500,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                         }
                                         setState(() {
                                           latitudeLongitude = LatLng(latitude, longitude);
-                                          locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText!}";
+                                          locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText ?? ""} ";
                                           _autoCompleteResult.clear();
                                         });
                                         latitude = placeDetails.lat!;
@@ -824,10 +825,14 @@ class _AddNewThingsState extends State<AddNewThings>
                               padding: const EdgeInsets.only(right: 8.0),
                               child: GestureDetector(
                                 onTap:(){
-                                  if (linkController.text.isEmpty) {
+                                  String link = linkController.text.trim();
+                                  if (link.isEmpty) {
                                     return CustomSnackbar.show(title: "Error", message: "Please add link before adding");
                                   } else {
-                                    addThingsController.addLink(linkController.text);
+                                    if (!link.startsWith('https://')) {
+                                      link = 'https://$link';
+                                    }
+                                    addThingsController.addLink(link);
                                     linkController.clear();
                                     }
                                   },

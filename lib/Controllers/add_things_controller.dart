@@ -318,6 +318,19 @@ class AddThingsController extends GetxController {
 
   /* Add Things Function */
 
+  void resetState() {
+    var data2 = {
+      imageFiles.clear(),
+      base64Images.clear(),
+      base64Image.value = '',
+      imageFile.value = null,
+      tags.clear(),
+      links.clear(),
+      pickedFile.value == '',
+    };
+    debugPrint(" data $data2");
+  }
+
   addThings({
     required String categoriesId,
     required String name,
@@ -428,13 +441,12 @@ class AddThingsController extends GetxController {
       var addThingsData = jsonDecode(resBody);
       debugPrint("addThingsData $addThingsData");
       if (addThingsData['status'] == 'success') {
+        resetState();
         var message = addThingsData['message'];
         CustomSnackbar.show(
           title: 'Success',
           message: message.toString(),
         );
-        imageFile.value == null;
-        imageFiles == null;
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 3,),
           duration: const Duration(milliseconds: 350),

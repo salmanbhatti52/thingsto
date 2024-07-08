@@ -62,8 +62,11 @@ class ThingstoContainer extends StatelessWidget {
                           height: Get.height * 0.13,
                           fit: BoxFit.fill,
                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            return SvgPicture.asset(
-                                AppAssets.music,
+                            return Image.network(
+                              AppAssets.dummyPic,
+                              width: Get.width,
+                              height: Get.height * 0.13,
+                              fit: BoxFit.fill,
                             );
                           },
                           loadingBuilder:
@@ -123,7 +126,7 @@ class ThingstoContainer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               LabelField(
-                                text: things['location'],
+                                text: things['location'] ?? "",
                                 fontWeight: FontWeight.w500,
                                 fontSize: 11,
                                 color: AppColor.primaryColor,

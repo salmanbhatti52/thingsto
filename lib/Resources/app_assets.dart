@@ -76,7 +76,11 @@ class AppAssets {
 
   static const String dummy = 'assets/images/dummy.svg';
 
-  static const String award = 'assets/images/award.svg';
+  static const String award1 = 'assets/images/award.svg';
+
+  static const String award2 = 'assets/images/award2.svg';
+
+  static const String award3 = 'assets/images/award3.svg';
 
   static const String cup = 'assets/images/cup.svg';
 

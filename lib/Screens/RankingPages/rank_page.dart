@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/add_things_controller.dart';
 import 'package:thingsto/Controllers/ranking_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -17,10 +18,13 @@ class RankPage extends StatefulWidget {
 }
 
 class _RankPageState extends State<RankPage> {
-  List<String> itemListForCategory = ["First", "Second", "Third"];
-  String? selectCategory;
 
   RankingController rankingController = Get.put(RankingController());
+  AddThingsController addThingsController = Get.put(AddThingsController());
+
+  var itemListForCategory = <String>[];
+  String? selectCategory;
+  String? selectCategoryId;
 
   Future<void> getRankUser() async {
     if (rankingController.isRank.value) {
@@ -29,6 +33,17 @@ class _RankPageState extends State<RankPage> {
       // Load data from the server
       rankingController.getRankUser(filter: "all", categoryId: "",);
     }
+  }
+
+  Future<void> fetchCategories() async {
+    await addThingsController.getAllCategory();
+    setState(() {
+      itemListForCategory = addThingsController.categoriesP0
+          .map((c) => c['name'].toString())
+          .toSet() // Ensure uniqueness
+          .toList();
+      debugPrint("itemListForCategory: $itemListForCategory");
+    });
   }
 
   @override
@@ -67,11 +82,24 @@ class _RankPageState extends State<RankPage> {
                 ),
                 CustomDropdown(
                   itemList: itemListForCategory,
-                  hintText: "All Categories",
+                  hintText: "Select Category",
+                  onTap: fetchCategories,
                   onChanged: (value) {
-                    selectCategory = value;
-                    debugPrint("Categories: $selectCategory");
+                    setState(() {
+                      selectCategory = value;
+                      selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
+                      ['categories_id'].toString();
+                      debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
+                      // Filter subcategories based on selected category
+                      // itemListForSubCategory = addThingsController.categoriesAll
+                      //     .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
+                      //     .map((c) => c['name'].toString())
+                      //     .toSet()
+                      //     .toList();
+                      // selectSubCategory = null;
+                    });
                   },
+                  initialValue: selectCategory,
                 ),
                 Obx(
                       () {
