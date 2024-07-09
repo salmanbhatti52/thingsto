@@ -492,6 +492,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                         checkValue2: checkBoxValue2
                                             ? "Yes"
                                             : "No",
+                                        backValue: "Yes",
                                       );
                                     }
                                     // } else {

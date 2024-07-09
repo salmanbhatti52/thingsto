@@ -57,7 +57,7 @@ class HomeSuggestions extends StatelessWidget {
               // ),
               child: Stack(
                 children: [
-                  things['images'][0]['media_type'] == "Image"
+                  things['thumbnail'] !=null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(6),
                           child: Image.network(
@@ -168,7 +168,7 @@ class HomeSuggestions extends StatelessWidget {
                                           width: Get.width * 0.25,
                                           child: LabelField(
                                             align: TextAlign.start,
-                                            text: things['location'],
+                                            text: things['location'] ?? "",
                                             fontSize: 10,
                                             fontWeight: FontWeight.w400,
                                             color: AppColor.secondaryColor,

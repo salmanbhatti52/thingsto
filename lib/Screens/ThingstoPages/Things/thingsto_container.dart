@@ -55,7 +55,7 @@ class ThingstoContainer extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: things['images'][0]['media_type'] == "Image"
+                        child: things['thumbnail'] !=null
                             ? Image.network(
                             '$baseUrlImage${things['thumbnail']}',
                           width: Get.width,

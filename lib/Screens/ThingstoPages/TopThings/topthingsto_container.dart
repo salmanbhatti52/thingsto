@@ -53,7 +53,7 @@ class TopThingstoContainer extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(5),
-                            child: topThings['images'][0]['media_type'] == "Image"
+                            child: topThings['thumbnail'] !=null
                                 ? Image.network(
                               '$baseUrlImage${topThings['thumbnail']}',
                               width: Get.width,
@@ -124,7 +124,7 @@ class TopThingstoContainer extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   LabelField(
-                                    text: topThings['location'],
+                                    text: topThings['location'] ?? "",
                                     fontWeight: FontWeight.w500,
                                     fontSize: 11,
                                     color: AppColor.primaryColor,

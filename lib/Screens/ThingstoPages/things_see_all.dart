@@ -136,7 +136,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(5),
-                                          child: things['images'][0]['media_type'] == "Image"
+                                          child: things['thumbnail'] !=null
                                               ? Image.network(
                                             '$baseUrlImage${things['thumbnail']}',
                                             width: Get.width,
@@ -242,7 +242,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 LabelField(
-                                                  text: things['location'],
+                                                  text: things['location'] ?? "",
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 11,
                                                   color: AppColor.primaryColor,
@@ -251,7 +251,9 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                   align: TextAlign.left,
                                                 ),
                                                 const SizedBox(height: 3,),
-                                                LargeButton(
+                                                things['tags'] != null &&
+                                                    things['tags'].isNotEmpty
+                                                    ?  LargeButton(
                                                   text: things['tags'][0]['name'],
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 9,
@@ -260,7 +262,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                   height: 20,
                                                   radius: 5,
                                                   onTap: () {},
-                                                ),
+                                                ) : const SizedBox(),
                                               ],
                                             ),
                                           ),

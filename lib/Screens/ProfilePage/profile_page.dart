@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 40.0),
                                       child: LabelField(
-                                        text: "Something Wrong",
+                                        text: "",
                                         fontSize: 21,
                                         color: AppColor.blackColor,
                                         interFont: true,

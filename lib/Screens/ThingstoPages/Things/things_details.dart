@@ -179,8 +179,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
   Widget build(BuildContext context) {
     List<dynamic> tags = widget.thingsto?["tags"] ?? [];
     List<dynamic> source = widget.thingsto?["sources"] ?? [];
-    double latitude = double.parse(widget.thingsto?["lattitude"]);
-    double longitude = double.parse(widget.thingsto?["longitude"]);
+    double latitude = widget.thingsto?["lattitude"] != null ? double.parse(widget.thingsto?["lattitude"]) : 0;
+    double longitude = widget.thingsto?["longitude"] !=null ?  double.parse(widget.thingsto?["longitude"]) : 0;
     thingstoController.totalLikes.value = int.parse(widget.thingsto!["total_likes"].toString());
     thingstoController.initializeLikes(widget.thingsto?["likes"]);
     _center = LatLng(latitude, longitude);
@@ -383,7 +383,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     Expanded(
                       child: LabelField(
                         align: TextAlign.start,
-                        text: widget.thingsto?["location"],
+                        text: widget.thingsto?["location"] ?? "",
                         fontWeight: FontWeight.w400,
                         color: AppColor.hintColor,
                         maxLIne: 2,
@@ -480,15 +480,13 @@ class _ThingsDetailsState extends State<ThingsDetails>
                       child: GestureDetector(
                         onTap : () async {
                           final String urlStr = sources["name"];
-                          // Ensure the URL is valid
-                          if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                          // if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
                             final Uri url = Uri.parse(urlStr);
                             if (!await launchUrl(url)) {
                               throw Exception('Could not launch $url');
-                            }
-                          } else {
-                            // throw Exception('Invalid URL: $urlStr');
-                            CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
+                            } else {
+                            throw Exception('Invalid URL: $urlStr');
+                            // CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
                           }
                         },
                         child: LabelField(

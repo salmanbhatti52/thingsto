@@ -73,6 +73,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
         city: "",
         distances: "",
         checkValue2: "No",
+        backValue: "No"
       );
       thingstoController.getChildCategory(
         categoriesId: categoryId,
@@ -82,6 +83,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
   }
 
   void goBack() {
+    thingstoController.hasRunFoundedThings.value = false;
     setState(() {
       if (categoryHistory.isNotEmpty) {
         categoryHistory.removeLast();
@@ -293,57 +295,108 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     height: Get.height * 0.02,
                   ),
                   Obx(() {
-                    return thingstoController.findingThings.isEmpty
-                        ? Obx(
-                          () {
-                        if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
-                          return Shimmers(
-                            width: Get.width,
-                            height:  Get.height * 0.255,
-                            width1: Get.width * 0.37,
-                            height1: Get.height * 0.08,
-                            length: 6,
-                          );
-                        }
-                        // if (thingstoController.isError.value) {
-                        //   return const Center(
-                        //     child: Padding(
-                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                        //       child: LabelField(
-                        //         text: "Things not found",
-                        //         fontSize: 21,
-                        //         color: AppColor.blackColor,
-                        //         interFont: true,
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
-                        if (thingstoController.cachedThingsto.isEmpty) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 28.0),
-                              child: LabelField(
-                                text: 'Things not found',
-                              ),
+                    if (thingstoController.isLoading1.value) {
+                      return Shimmers(
+                        width: Get.width,
+                        height: Get.height * 0.255,
+                        width1: Get.width * 0.37,
+                        height1: Get.height * 0.08,
+                        length: 6,
+                      );
+                    }
+                    if (thingstoController.hasRunFoundedThings.value) {
+                      if (thingstoController.findingThings.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 28.0),
+                            child: LabelField(
+                              text: 'Things not found',
                             ),
-                          );
-                        }
+                          ),
+                        );
+                      } else {
+                        return ThingstoContainer(
+                          thingsto: thingstoController.findingThings,
+                        );
+                      }
+                    } else {
+                      if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                        return Shimmers(
+                          width: Get.width,
+                          height:  Get.height * 0.255,
+                          width1: Get.width * 0.37,
+                          height1: Get.height * 0.08,
+                          length: 6,
+                        );
+                      }
+                      if (thingstoController.cachedThingsto.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 28.0),
+                            child: LabelField(
+                              text: 'Things not found',
+                            ),
+                          ),
+                        );
+                      } else {
                         return ThingstoContainer(
                           thingsto: thingstoController.cachedThingsto,
                         );
-                      },
-                    )
-                    : ThingstoContainer(
-                          thingsto: thingstoController.findingThings,
-                    );
+                      }
+                    }
                   }),
+                  // Obx(() {
+                  //   return thingstoController.findingThings.isEmpty
+                  //       ? Obx(
+                  //         () {
+                  //       if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                  //         return Shimmers(
+                  //           width: Get.width,
+                  //           height:  Get.height * 0.255,
+                  //           width1: Get.width * 0.37,
+                  //           height1: Get.height * 0.08,
+                  //           length: 6,
+                  //         );
+                  //       }
+                  //       // if (thingstoController.isError.value) {
+                  //       //   return const Center(
+                  //       //     child: Padding(
+                  //       //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                  //       //       child: LabelField(
+                  //       //         text: "Things not found",
+                  //       //         fontSize: 21,
+                  //       //         color: AppColor.blackColor,
+                  //       //         interFont: true,
+                  //       //       ),
+                  //       //     ),
+                  //       //   );
+                  //       // }
+                  //       if (thingstoController.cachedThingsto.isEmpty) {
+                  //         return const Center(
+                  //           child: Padding(
+                  //             padding: EdgeInsets.symmetric(vertical: 28.0),
+                  //             child: LabelField(
+                  //               text: 'Things not found',
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }
+                  //       return ThingstoContainer(
+                  //         thingsto: thingstoController.cachedThingsto,
+                  //       );
+                  //     },
+                  //   )
+                  //   : ThingstoContainer(
+                  //         thingsto: thingstoController.findingThings,
+                  //   );
+                  // }),
                   SizedBox(
                     height: Get.height * 0.03,
                   ),
                   RowText(
                     text: "Top Things to",
                     seeTrue: true,
-                    onTap: (){
+                    onTap: () {
                       Get.to(
                             () => ThingsSeeAll(thingsto: thingstoController.cachedTopThingsto,),
                         duration: const Duration(milliseconds: 350),
@@ -354,8 +407,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  Obx(
-                        () {
+                  Obx(() {
                       if (thingstoController.isLoading.value && thingstoController.cachedTopThingsto.isEmpty) {
                         return Shimmers(
                           width: Get.width,

@@ -24,6 +24,7 @@ class ThingstoController extends GetxController {
   var isValidate = false.obs;
   var topThingsto = [].obs;
   var findingThings = [].obs;
+  var hasRunFoundedThings = false.obs;
   Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
   RxString base64Image = RxString("");
   var moderateCheck = false.obs;
@@ -117,6 +118,7 @@ class ThingstoController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      hasRunFoundedThings.value = false;
       await GlobalService.getCurrentPosition();
       userID = (prefs.getString('users_customers_id').toString());
       double latitude1 = GlobalService.currentLocation!.latitude;
@@ -253,11 +255,11 @@ class ThingstoController extends GetxController {
     required String city,
     required String distances,
     required String checkValue2,
+    required String backValue,
   }) async {
     try {
       isLoading1.value = true;
       findingThings.clear();
-
       if (checkValue2 == "Yes") {
         Get.back();
       } else {
@@ -283,10 +285,11 @@ class ThingstoController extends GetxController {
 
         var searchThingstoData = jsonDecode(response.body);
         debugPrint("searchThingstoData $searchThingstoData");
+        hasRunFoundedThings.value = true;
         if (searchThingstoData['status'] == 'success') {
           var data = jsonDecode(response.body)['data'] as List;
           findingThings.value = data;
-          Get.back();
+          backValue == "Yes" ? Get.back() : null;
         } else {
           debugPrint(searchThingstoData['status']);
           var errorMsg = searchThingstoData['message'];
