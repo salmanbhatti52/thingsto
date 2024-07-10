@@ -67,25 +67,27 @@ class _FindThingsState extends State<FindThings> {
                     const SizedBox(
                       height: 18,
                     ),
-                  if (homeController.isLoading.value && controller.text.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: Get.height * 0.04),
-                        child: SpinKitThreeBounce(
-                          itemBuilder: (
-                              BuildContext context,
-                              int i,
-                              ) {
-                            return DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: AppColor.primaryColor,
-                              ),
-                            );
-                          },
+                  Obx(() =>
+                     homeController.isLoading.value && controller.text.isEmpty ?
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: Get.height * 0.04),
+                          child: SpinKitThreeBounce(
+                            itemBuilder: (
+                                BuildContext context,
+                                int i,
+                                ) {
+                              return DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: AppColor.primaryColor,
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ),
+                      ) : const SizedBox.shrink(),
+                  ),
                   if(controller.text.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,11 +99,13 @@ class _FindThingsState extends State<FindThings> {
                               itemCount: homeController.filteredCities.length,
                               itemBuilder: (context, index) {
                                 var city = homeController.filteredCities[index];
-                                return GestureDetector(onTap: (){
+                                return GestureDetector(
+                                    onTap: (){
                                   setState(() {
                                     selectCity = city['name'];
                                     selectCityId = city['cities_id'].toString();
                                     controller.text = city['name'];
+                                    FocusManager.instance.primaryFocus?.unfocus();
                                   });
                                 },child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
@@ -136,6 +140,7 @@ class _FindThingsState extends State<FindThings> {
                 if (widget.onFindWithData != null && widget.onFind != null) {
                   widget.onFind!();
                   widget.onFindWithData!(selectCityId!);
+                  controller.clear();
                 }
               } else {
                 CustomSnackbar.show(title: "Error", message: "Please select all fields");

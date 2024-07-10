@@ -270,6 +270,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         if (!widget.itemList.contains(_selectedItem)) {
           _selectedItem = null;
         }
+        _filteredItemList = widget.itemList;
       });
     }
   }

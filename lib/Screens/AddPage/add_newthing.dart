@@ -195,6 +195,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 .toSet()
                                 .toList();
                             selectSubCategory = null;
+                            selectThirdCategory = null;
                           });
                         },
                         initialValue: selectCategory,

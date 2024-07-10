@@ -464,15 +464,13 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                       child: GestureDetector(
                         onTap : () async {
                           final String urlStr = sources["name"];
-                          // Ensure the URL is valid
-                          if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
-                            final Uri url = Uri.parse(urlStr);
-                            if (!await launchUrl(url)) {
-                              throw Exception('Could not launch $url');
-                            }
+                          // if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                          final Uri url = Uri.parse(urlStr);
+                          if (!await launchUrl(url)) {
+                            throw Exception('Could not launch $url');
                           } else {
-                            // throw Exception('Invalid URL: $urlStr');
-                            CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
+                            throw Exception('Invalid URL: $urlStr');
+                            // CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
                           }
                         },
                         child: LabelField(

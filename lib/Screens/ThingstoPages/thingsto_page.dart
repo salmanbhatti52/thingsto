@@ -110,7 +110,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
       final input = query.toLowerCase();
       return thingName.contains(input);
     }).toList();
-
+    thingstoController.hasRunFoundedThings.value = true;
     setState(() {
       thingstoController.findingThings.assignAll(filteredThings);
     });
@@ -283,7 +283,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   RowText(
                     text: "Things to",
                     seeTrue: true,
-                    onTap: (){
+                    onTap: () {
                       Get.to(
                             () => ThingsSeeAll(thingsto: thingstoController.cachedThingsto,),
                         duration: const Duration(milliseconds: 350),
