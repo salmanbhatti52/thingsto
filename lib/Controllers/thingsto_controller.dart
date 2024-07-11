@@ -256,6 +256,7 @@ class ThingstoController extends GetxController {
     required String distances,
     required String checkValue2,
     required String backValue,
+    required String categoryThings,
   }) async {
     try {
       isLoading1.value = true;
@@ -279,9 +280,13 @@ class ThingstoController extends GetxController {
           "country": country.toString(),
           "distance": distances.toString(),
         };
-        debugPrint("data $data");
-        final response = await http.post(Uri.parse(thingsSearchApiUrl),
-            headers: {'Accept': 'application/json'}, body: data);
+        Map<String, String> categoryData = {
+          "users_customers_id": userID.toString(),
+          "categories_id": categoriesId.toString(),
+        };
+        categoryThings == "Yes" ? debugPrint("categoryData $categoryData") : debugPrint("data $data");
+        final response = await http.post(Uri.parse(categoryThings == "Yes" ? thingsByCategoryApiUrl : thingsSearchApiUrl),
+            headers: {'Accept': 'application/json'}, body: categoryThings == "Yes" ? categoryData : data);
 
         var searchThingstoData = jsonDecode(response.body);
         debugPrint("searchThingstoData $searchThingstoData");
@@ -294,7 +299,7 @@ class ThingstoController extends GetxController {
           debugPrint(searchThingstoData['status']);
           var errorMsg = searchThingstoData['message'];
           CustomSnackbar.show(
-            title: 'Error',
+            title: '',
             message: errorMsg.toString(),
           );
         }

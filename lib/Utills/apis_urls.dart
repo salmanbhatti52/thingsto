@@ -75,3 +75,5 @@ String thingsValidateApiUrl = '${baseUrl}things_validate';
 String thingsFavouritesApiUrl = '${baseUrl}things_favourites';
 
 String thingsSearchApiUrl = '${baseUrl}things_search';
+
+String thingsByCategoryApiUrl = '${baseUrl}things_by_category';

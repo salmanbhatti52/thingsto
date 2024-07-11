@@ -51,6 +51,7 @@ class _RankPageState extends State<RankPage> {
     // TODO: implement initState
     super.initState();
     getRankUser();
+    fetchCategories();
   }
 
 
@@ -80,29 +81,27 @@ class _RankPageState extends State<RankPage> {
                 SizedBox(
                   height: Get.height * 0.01,
                 ),
-                CustomDropdown(
-                  itemList: itemListForCategory,
-                  hintText: "Select Category",
-                  onTap: fetchCategories,
-                  onChanged: (value) {
-                    setState(() {
-                      selectCategory = value;
-                      selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
-                      ['categories_id'].toString();
-                      debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
-                      // Filter subcategories based on selected category
-                      // itemListForSubCategory = addThingsController.categoriesAll
-                      //     .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
-                      //     .map((c) => c['name'].toString())
-                      //     .toSet()
-                      //     .toList();
-                      // selectSubCategory = null;
-                    });
-                  },
-                  initialValue: selectCategory,
-                ),
-                Obx(
-                      () {
+                Obx(() {
+                  return addThingsController.isLoading1.value
+                      ? Shimmers2(
+                    width: Get.width,
+                    height: 50,
+                  ) : CustomDropdown(
+                    itemList: itemListForCategory,
+                    hintText: "Select Category",
+                    onChanged: (value) {
+                      setState(() {
+                        selectCategory = value;
+                        selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
+                        ['categories_id'].toString();
+                        debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
+                        rankingController.getRankUser(filter: "category", categoryId: selectCategoryId.toString());
+                      });
+                    },
+                    initialValue: selectCategory,
+                  );
+                }),
+                Obx(() {
                     if (rankingController.isLoading.value && rankingController.cachedRankUser.isEmpty) {
                       return Column(
                         children: [

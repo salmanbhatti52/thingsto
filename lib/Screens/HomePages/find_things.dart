@@ -55,6 +55,7 @@ class _FindThingsState extends State<FindThings> {
                     showSuffix: false,
                     onChanged: (value) {
                       setState(() {
+                        selectCityId = null;
                         homeController.getAllCities(city: controller.text.toString());
                         homeController.filteredCities.value = homeController.allCities
                             .where((city) =>
@@ -63,13 +64,11 @@ class _FindThingsState extends State<FindThings> {
                       });
                     },
                   ),
-                  if(controller.text.isEmpty)
-                    const SizedBox(
-                      height: 18,
-                    ),
-                  Obx(() =>
-                     homeController.isLoading.value && controller.text.isEmpty ?
-                      Center(
+                  if (controller.text.isEmpty) const SizedBox(height: 18),
+                  if (selectCityId != null) const SizedBox(height: 18),
+                  Obx(() {
+                    if(homeController.isLoading.value && controller.text.isNotEmpty) {
+                      return Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: Get.height * 0.04),
                           child: SpinKitThreeBounce(
@@ -86,45 +85,45 @@ class _FindThingsState extends State<FindThings> {
                             },
                           ),
                         ),
-                      ) : const SizedBox.shrink(),
-                  ),
-                  if(controller.text.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 100,
-                          child: Obx(() {
-                            return ListView.builder(
-                              itemCount: homeController.filteredCities.length,
-                              itemBuilder: (context, index) {
-                                var city = homeController.filteredCities[index];
-                                return GestureDetector(
-                                    onTap: (){
-                                  setState(() {
-                                    selectCity = city['name'];
-                                    selectCityId = city['cities_id'].toString();
-                                    controller.text = city['name'];
-                                    FocusManager.instance.primaryFocus?.unfocus();
-                                  });
-                                },child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                                  child: LabelField(
-                                    text: city['name'],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15,
-                                    align: TextAlign.left,
-                                  ),
-                                ));
-                              },
-                            );
-                          }),
-                        ),
-                        const SizedBox(
-                          height: 18,
-                        ),
-                      ],
-                    ),
+                      );
+                    } else if(controller.text.isNotEmpty && selectCityId == null) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            child: Obx(() {
+                              return ListView.builder(
+                                itemCount: homeController.filteredCities.length,
+                                itemBuilder: (context, index) {
+                                  var city = homeController.filteredCities[index];
+                                  return GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                          selectCity = city['name'];
+                                          selectCityId = city['cities_id'].toString();
+                                          controller.text = city['name'];
+                                          FocusManager.instance.primaryFocus?.unfocus();
+                                        });
+                                      },child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                                    child: LabelField(
+                                      text: city['name'],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15,
+                                      align: TextAlign.left,
+                                    ),
+                                  ));
+                                },
+                              );
+                            }),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  }),
                 ],
               ),
           ),
@@ -140,7 +139,11 @@ class _FindThingsState extends State<FindThings> {
                 if (widget.onFindWithData != null && widget.onFind != null) {
                   widget.onFind!();
                   widget.onFindWithData!(selectCityId!);
-                  controller.clear();
+                  if (isFind) {
+                    controller.clear();
+                    selectCityId = null;
+                    selectCity = null;
+                  }
                 }
               } else {
                 CustomSnackbar.show(title: "Error", message: "Please select all fields");

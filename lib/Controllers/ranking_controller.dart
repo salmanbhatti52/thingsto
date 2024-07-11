@@ -17,7 +17,7 @@ class RankingController extends GetxController {
 
   getRankUser({
     required String filter,
-    required String categoryId,
+    String? categoryId,
   }) async {
     try {
       isLoading.value = true;
@@ -26,8 +26,10 @@ class RankingController extends GetxController {
       Map<String, String> data = {
         "users_customers_id":  userID.toString(),
         "filter": filter.toString(),
-        "categories_id": categoryId.toString(),
       };
+      if (categoryId != null && categoryId.isNotEmpty) {
+        data["categories_id"] = categoryId;
+      }
       debugPrint("data $data");
       final response = await http.post(Uri.parse(getRankUsersApiUrl),
           headers: {'Accept': 'application/json'}, body: data);

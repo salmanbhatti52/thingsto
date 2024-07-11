@@ -73,7 +73,8 @@ class _ThingstoPageState extends State<ThingstoPage> {
         city: "",
         distances: "",
         checkValue2: "No",
-        backValue: "No"
+        backValue: "No",
+        categoryThings: "Yes",
       );
       thingstoController.getChildCategory(
         categoriesId: categoryId,

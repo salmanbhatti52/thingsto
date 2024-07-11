@@ -493,6 +493,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                             ? "Yes"
                                             : "No",
                                         backValue: "Yes",
+                                        categoryThings: "No"
                                       );
                                     }
                                     // } else {
