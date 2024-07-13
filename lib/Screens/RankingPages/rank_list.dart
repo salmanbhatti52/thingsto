@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/ranking_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
@@ -15,6 +16,7 @@ class RankUserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rankingController = Get.find<RankingController>();
     return SizedBox(
       height: Get.height * 0.65,
       child: ListView.builder(
@@ -161,28 +163,48 @@ class RankUserList extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 7.0),
-                        child: i == 0
-                            ? SvgPicture.asset(AppAssets.award1)
-                            : i == 1
+                        child: Obx(() {
+                          if (!rankingController.isFiltered.value) {
+                            return i == 0
+                                ? SvgPicture.asset(AppAssets.award1)
+                                : i == 1
                                 ? SvgPicture.asset(AppAssets.award2)
                                 : i == 2
-                                    ? SvgPicture.asset(AppAssets.award3)
-                                    : Container(
-                                        width: 31,
-                                        height: 31,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xffFAC6A5),
-                                          borderRadius:
-                                              BorderRadius.circular(22),
-                                        ),
-                                        child: Center(
-                                          child: LabelField(
-                                            text: '${i + 1}',
-                                            fontSize: 20,
-                                            color: AppColor.whiteColor,
-                                          ),
-                                        ),
-                                      ),
+                                ? SvgPicture.asset(AppAssets.award3)
+                                : Container(
+                              width: 31,
+                              height: 31,
+                              decoration: BoxDecoration(
+                                color: const Color(0xffFAC6A5),
+                                borderRadius:
+                                BorderRadius.circular(22),
+                              ),
+                              child: Center(
+                                child: LabelField(
+                                  text: '${i + 1}',
+                                  fontSize: 20,
+                                  color: AppColor.whiteColor,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container(
+                              width: 31,
+                              height: 31,
+                              decoration: BoxDecoration(
+                                color: const Color(0xffFAC6A5),
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              child: Center(
+                                child: LabelField(
+                                  text: '${i + 1}',
+                                  fontSize: 20,
+                                  color: AppColor.whiteColor,
+                                ),
+                              ),
+                            );
+                          }
+                        }),
                       ),
                     ],
                   ),

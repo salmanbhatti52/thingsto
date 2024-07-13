@@ -12,6 +12,7 @@ class RankingController extends GetxController {
 
   var cachedRankUser = [].obs;
   var isRank = false.obs;
+  var isFiltered = false.obs;
 
   /* Get Rank User Function */
 
@@ -21,6 +22,8 @@ class RankingController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      cachedRankUser.clear();
+      isFiltered.value = filter == "category";
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userId $userID");
       Map<String, String> data = {

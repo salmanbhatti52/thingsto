@@ -74,9 +74,30 @@ class _RankPageState extends State<RankPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const LabelField(
-                  text: "Rank by",
-                  fontSize: 14,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const LabelField(
+                      text: "Rank by",
+                      fontSize: 14,
+                    ),
+                    Obx(() {
+                      if (rankingController.isFiltered.value) {
+                        return GestureDetector(
+                          onTap: () {
+                            getRankUser();
+                            selectCategory = null;
+                          },
+                          child: const LabelField(
+                            text: "Clear filter",
+                            fontSize: 14,
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    })
+                  ],
                 ),
                 SizedBox(
                   height: Get.height * 0.01,
@@ -143,11 +164,12 @@ class _RankPageState extends State<RankPage> {
                     //   );
                     // }
                     if (rankingController.cachedRankUser.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 28.0),
-                          child: LabelField(
-                            text: 'Things not found',
+                          padding: EdgeInsets.only(top: Get.height * 0.3,),
+                          child: const LabelField(
+                            text: 'Ranking not found',
+                            fontSize: 18,
                           ),
                         ),
                       );
