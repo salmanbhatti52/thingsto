@@ -4,6 +4,7 @@ import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/NotificationPage/notification_page.dart';
 import 'package:thingsto/Screens/ThingstoPages/Categories/category_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/Categories/category_details.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_container.dart';
@@ -137,10 +138,17 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   //   });
                   // },
                 )
-              : const HomeBar(
+              : HomeBar(
                   title: "Thingsto",
                   titleTrue: true,
                   icon2: AppAssets.notify,
+                  onClick: (){
+                   Get.to(
+                    () => const NotificationsScreen(),
+                     duration: const Duration(milliseconds: 350),
+                     transition: Transition.upToDown,
+                    );
+                  },
                 ),
           SizedBox(
             height: Get.height * 0.02,
@@ -176,280 +184,285 @@ class _ThingstoPageState extends State<ThingstoPage> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: Get.height * 0.02,
-                  ),
-                  isSelect
-                      ? RowText(
-                          text: selectedCategoryName,
-                    onTap: (){},
-                    seeTrue: false,
-                        )
-                      : Obx(() => RowText(
-                    text: languageController.phrases['categories'] ??
-                        "Categories",
-                    onTap: (){},
-                    seeTrue: false,
-                  ),),
-                  isSelect
-                      ? Obx(
-                          () {
-                            if (thingstoController.isSubLoading.value) {
-                              return Shimmers(
-                                width: Get.width,
-                                height: Get.height * 0.15,
-                                width1: Get.width * 0.18,
-                                height1: Get.height * 0.08,
-                                length: 6,
-                              );
-                            }
-                            // if (categoryController.isSubError.value) {
-                            //   return const Center(
-                            //     child: Padding(
-                            //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                            //       child: LabelField(
-                            //         text: "Subcategories not found",
-                            //         fontSize: 21,
-                            //         color: AppColor.blackColor,
-                            //         interFont: true,
-                            //       ),
-                            //     ),
-                            //   );
-                            // }
-                            if (thingstoController.subcategories.isEmpty) {
-                              return const Center(
-                                child: Text(
-                                  'Subcategories not found',
-                                  style: TextStyle(
-                                    color: AppColor.blackColor,
-                                    fontSize: 16,
+            child: RefreshIndicator(
+              color: AppColor.primaryColor,
+              backgroundColor: AppColor.borderColor,
+              onRefresh: getUserThings,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                    isSelect
+                        ? RowText(
+                            text: selectedCategoryName,
+                      onTap: (){},
+                      seeTrue: false,
+                          )
+                        : Obx(() => RowText(
+                      text: languageController.phrases['categories'] ??
+                          "Categories",
+                      onTap: (){},
+                      seeTrue: false,
+                    ),),
+                    isSelect
+                        ? Obx(
+                            () {
+                              if (thingstoController.isSubLoading.value) {
+                                return Shimmers(
+                                  width: Get.width,
+                                  height: Get.height * 0.15,
+                                  width1: Get.width * 0.18,
+                                  height1: Get.height * 0.08,
+                                  length: 6,
+                                );
+                              }
+                              // if (categoryController.isSubError.value) {
+                              //   return const Center(
+                              //     child: Padding(
+                              //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                              //       child: LabelField(
+                              //         text: "Subcategories not found",
+                              //         fontSize: 21,
+                              //         color: AppColor.blackColor,
+                              //         interFont: true,
+                              //       ),
+                              //     ),
+                              //   );
+                              // }
+                              if (thingstoController.subcategories.isEmpty) {
+                                return const Center(
+                                  child: Text(
+                                    'Subcategories not found',
+                                    style: TextStyle(
+                                      color: AppColor.blackColor,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
+                                );
+                              }
+                              return CategoryDetails(
+                                subcategories: thingstoController.subcategories,
+                                onSelect: selectCategory,
                               );
-                            }
-                            return CategoryDetails(
-                              subcategories: thingstoController.subcategories,
-                              onSelect: selectCategory,
-                            );
-                          },
-                        )
-                      : Obx(
-                          () {
-                            if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty) {
-                              return Shimmers(
-                                width: Get.width,
-                                height: Get.height * 0.15,
-                                width1: Get.width * 0.18,
-                                height1: Get.height * 0.08,
-                                length: 6,
-                              );
-                            }
-                            // if (thingstoController.isError.value) {
-                            //   return const Center(
-                            //     child: Padding(
-                            //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                            //       child: LabelField(
-                            //         text: "Categories not found",
-                            //         fontSize: 21,
-                            //         color: AppColor.blackColor,
-                            //         interFont: true,
-                            //       ),
-                            //     ),
-                            //   );
-                            // }
-                            if (thingstoController.cachedCategories.isEmpty) {
-                              return const Center(
-                                child: Text(
-                                  'Categories not found',
-                                  style: TextStyle(
-                                    color: AppColor.blackColor,
-                                    fontSize: 16,
+                            },
+                          )
+                        : Obx(
+                            () {
+                              if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty) {
+                                return Shimmers(
+                                  width: Get.width,
+                                  height: Get.height * 0.15,
+                                  width1: Get.width * 0.18,
+                                  height1: Get.height * 0.08,
+                                  length: 6,
+                                );
+                              }
+                              // if (thingstoController.isError.value) {
+                              //   return const Center(
+                              //     child: Padding(
+                              //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                              //       child: LabelField(
+                              //         text: "Categories not found",
+                              //         fontSize: 21,
+                              //         color: AppColor.blackColor,
+                              //         interFont: true,
+                              //       ),
+                              //     ),
+                              //   );
+                              // }
+                              if (thingstoController.cachedCategories.isEmpty) {
+                                return const Center(
+                                  child: Text(
+                                    'Categories not found',
+                                    style: TextStyle(
+                                      color: AppColor.blackColor,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
+                                );
+                              }
+                              return CategoryContainer(
+                                categories: thingstoController.cachedCategories,
+                                onSelect: selectCategory,
                               );
-                            }
-                            return CategoryContainer(
-                              categories: thingstoController.cachedCategories,
-                              onSelect: selectCategory,
-                            );
-                          },
-                        ),
-                  SizedBox(
-                    height: Get.height * 0.01,
-                  ),
-                  RowText(
-                    text: "Things to",
-                    seeTrue: true,
-                    onTap: () {
-                      Get.to(
-                            () => ThingsSeeAll(thingsto: thingstoController.cachedThingsto,),
-                        duration: const Duration(milliseconds: 350),
-                        transition: Transition.rightToLeft,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.02,
-                  ),
-                  Obx(() {
-                    if (thingstoController.isLoading1.value) {
-                      return Shimmers(
-                        width: Get.width,
-                        height: Get.height * 0.255,
-                        width1: Get.width * 0.37,
-                        height1: Get.height * 0.08,
-                        length: 6,
-                      );
-                    }
-                    if (thingstoController.hasRunFoundedThings.value) {
-                      if (thingstoController.findingThings.isEmpty) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 28.0),
-                            child: LabelField(
-                              text: 'Things not found',
-                            ),
+                            },
                           ),
+                    SizedBox(
+                      height: Get.height * 0.01,
+                    ),
+                    RowText(
+                      text: "Things to",
+                      seeTrue: true,
+                      onTap: () {
+                        Get.to(
+                              () => ThingsSeeAll(thingsto: thingstoController.cachedThingsto,),
+                          duration: const Duration(milliseconds: 350),
+                          transition: Transition.rightToLeft,
                         );
-                      } else {
-                        return ThingstoContainer(
-                          thingsto: thingstoController.findingThings,
-                        );
-                      }
-                    } else {
-                      if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                      },
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                    Obx(() {
+                      if (thingstoController.isLoading1.value) {
                         return Shimmers(
                           width: Get.width,
-                          height:  Get.height * 0.255,
+                          height: Get.height * 0.255,
                           width1: Get.width * 0.37,
                           height1: Get.height * 0.08,
                           length: 6,
                         );
                       }
-                      if (thingstoController.cachedThingsto.isEmpty) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 28.0),
-                            child: LabelField(
-                              text: 'Things not found',
+                      if (thingstoController.hasRunFoundedThings.value) {
+                        if (thingstoController.findingThings.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Things not found',
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          return ThingstoContainer(
+                            thingsto: thingstoController.findingThings,
+                          );
+                        }
                       } else {
-                        return ThingstoContainer(
-                          thingsto: thingstoController.cachedThingsto,
-                        );
-                      }
-                    }
-                  }),
-                  // Obx(() {
-                  //   return thingstoController.findingThings.isEmpty
-                  //       ? Obx(
-                  //         () {
-                  //       if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
-                  //         return Shimmers(
-                  //           width: Get.width,
-                  //           height:  Get.height * 0.255,
-                  //           width1: Get.width * 0.37,
-                  //           height1: Get.height * 0.08,
-                  //           length: 6,
-                  //         );
-                  //       }
-                  //       // if (thingstoController.isError.value) {
-                  //       //   return const Center(
-                  //       //     child: Padding(
-                  //       //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                  //       //       child: LabelField(
-                  //       //         text: "Things not found",
-                  //       //         fontSize: 21,
-                  //       //         color: AppColor.blackColor,
-                  //       //         interFont: true,
-                  //       //       ),
-                  //       //     ),
-                  //       //   );
-                  //       // }
-                  //       if (thingstoController.cachedThingsto.isEmpty) {
-                  //         return const Center(
-                  //           child: Padding(
-                  //             padding: EdgeInsets.symmetric(vertical: 28.0),
-                  //             child: LabelField(
-                  //               text: 'Things not found',
-                  //             ),
-                  //           ),
-                  //         );
-                  //       }
-                  //       return ThingstoContainer(
-                  //         thingsto: thingstoController.cachedThingsto,
-                  //       );
-                  //     },
-                  //   )
-                  //   : ThingstoContainer(
-                  //         thingsto: thingstoController.findingThings,
-                  //   );
-                  // }),
-                  SizedBox(
-                    height: Get.height * 0.03,
-                  ),
-                  RowText(
-                    text: "Top Things to",
-                    seeTrue: true,
-                    onTap: () {
-                      Get.to(
-                            () => ThingsSeeAll(thingsto: thingstoController.cachedTopThingsto,),
-                        duration: const Duration(milliseconds: 350),
-                        transition: Transition.rightToLeft,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.02,
-                  ),
-                  Obx(() {
-                      if (thingstoController.isLoading.value && thingstoController.cachedTopThingsto.isEmpty) {
-                        return Shimmers(
-                          width: Get.width,
-                          height:  Get.height * 0.255,
-                          width1: Get.width * 0.37,
-                          height1: Get.height * 0.08,
-                          length: 6,
-                        );
-                      }
-                      // if (thingstoController.isError.value) {
-                      //   return const Center(
-                      //     child: Padding(
-                      //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                      //       child: LabelField(
-                      //         text: "Things not found",
-                      //         fontSize: 21,
-                      //         color: AppColor.blackColor,
-                      //         interFont: true,
-                      //       ),
-                      //     ),
-                      //   );
-                      // }
-                      if (thingstoController.cachedTopThingsto.isEmpty) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 28.0),
-                            child: LabelField(
-                              text: 'Top Things not found',
+                        if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                          return Shimmers(
+                            width: Get.width,
+                            height:  Get.height * 0.255,
+                            width1: Get.width * 0.37,
+                            height1: Get.height * 0.08,
+                            length: 6,
+                          );
+                        }
+                        if (thingstoController.cachedThingsto.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Things not found',
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          return ThingstoContainer(
+                            thingsto: thingstoController.cachedThingsto,
+                          );
+                        }
                       }
-                      return TopThingstoContainer(
-                        topThingsto: thingstoController.cachedTopThingsto,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.02,
-                  ),
-                ],
+                    }),
+                    // Obx(() {
+                    //   return thingstoController.findingThings.isEmpty
+                    //       ? Obx(
+                    //         () {
+                    //       if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                    //         return Shimmers(
+                    //           width: Get.width,
+                    //           height:  Get.height * 0.255,
+                    //           width1: Get.width * 0.37,
+                    //           height1: Get.height * 0.08,
+                    //           length: 6,
+                    //         );
+                    //       }
+                    //       // if (thingstoController.isError.value) {
+                    //       //   return const Center(
+                    //       //     child: Padding(
+                    //       //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                    //       //       child: LabelField(
+                    //       //         text: "Things not found",
+                    //       //         fontSize: 21,
+                    //       //         color: AppColor.blackColor,
+                    //       //         interFont: true,
+                    //       //       ),
+                    //       //     ),
+                    //       //   );
+                    //       // }
+                    //       if (thingstoController.cachedThingsto.isEmpty) {
+                    //         return const Center(
+                    //           child: Padding(
+                    //             padding: EdgeInsets.symmetric(vertical: 28.0),
+                    //             child: LabelField(
+                    //               text: 'Things not found',
+                    //             ),
+                    //           ),
+                    //         );
+                    //       }
+                    //       return ThingstoContainer(
+                    //         thingsto: thingstoController.cachedThingsto,
+                    //       );
+                    //     },
+                    //   )
+                    //   : ThingstoContainer(
+                    //         thingsto: thingstoController.findingThings,
+                    //   );
+                    // }),
+                    SizedBox(
+                      height: Get.height * 0.03,
+                    ),
+                    RowText(
+                      text: "Top Things to",
+                      seeTrue: true,
+                      onTap: () {
+                        Get.to(
+                              () => ThingsSeeAll(thingsto: thingstoController.cachedTopThingsto,),
+                          duration: const Duration(milliseconds: 350),
+                          transition: Transition.rightToLeft,
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                    Obx(() {
+                        if (thingstoController.isLoading.value && thingstoController.cachedTopThingsto.isEmpty) {
+                          return Shimmers(
+                            width: Get.width,
+                            height:  Get.height * 0.255,
+                            width1: Get.width * 0.37,
+                            height1: Get.height * 0.08,
+                            length: 6,
+                          );
+                        }
+                        // if (thingstoController.isError.value) {
+                        //   return const Center(
+                        //     child: Padding(
+                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                        //       child: LabelField(
+                        //         text: "Things not found",
+                        //         fontSize: 21,
+                        //         color: AppColor.blackColor,
+                        //         interFont: true,
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
+                        if (thingstoController.cachedTopThingsto.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Top Things not found',
+                              ),
+                            ),
+                          );
+                        }
+                        return TopThingstoContainer(
+                          topThingsto: thingstoController.cachedTopThingsto,
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

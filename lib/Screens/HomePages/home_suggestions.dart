@@ -149,6 +149,7 @@ class HomeSuggestions extends StatelessWidget {
                                     LabelField(
                                       text: things['name'],
                                       fontSize: 12,
+                                      maxLIne: 2,
                                       color: AppColor.whiteColor,
                                     ),
                                     const SizedBox(

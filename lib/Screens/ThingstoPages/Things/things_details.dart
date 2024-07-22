@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -314,9 +315,12 @@ class _ThingsDetailsState extends State<ThingsDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LabelField(
-                text: widget.thingsto?["name"],
-                fontSize: 20,
+              Expanded(
+                child: LabelField(
+                  text: widget.thingsto?["name"],
+                  fontSize: 20,
+                  align: TextAlign.left,
+                ),
               ),
               GestureDetector(
                 onTap: () async {

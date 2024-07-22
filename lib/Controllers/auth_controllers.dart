@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:thingsto/Screens/Authentications/login_page.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
@@ -185,8 +186,12 @@ class AuthController extends GetxController {
       debugPrint("referralData $referralData");
       if (referralData['status'] == 'success') {
         var referralId = referralData['data']["referral_users_customers_id"];
-        oneSignalId = (prefs.getString('onesignal_appId').toString());
-        debugPrint("oneSignalId $oneSignalId");
+        // oneSignalId = (prefs.getString('onesignal_appId').toString());
+        // debugPrint("oneSignalId $oneSignalId");
+        String? tokenId;
+          final status = await OneSignal.shared.getDeviceState();
+          tokenId = status?.userId;
+        debugPrint("OneSignal User ID: $tokenId ");
         register(
           referralUsersCustomersId: referralId.toString(),
           surName: firstName,
@@ -194,7 +199,7 @@ class AuthController extends GetxController {
           lastName: lastName,
           email: email,
           password: password,
-          oneSignalId: oneSignalId.toString(),
+          oneSignalId: tokenId.toString(),
           currentLongitude: longitude1.toString(),
           currentLatitude: latitude1.toString(),
         );
@@ -291,12 +296,16 @@ class AuthController extends GetxController {
       double longitude1 = GlobalService.currentLocation!.longitude;
       debugPrint('current latitude: $latitude1');
       debugPrint('current longitude: $longitude1');
-      oneSignalId = (prefs.getString('onesignal_appId').toString());
-      debugPrint("oneSignalId $oneSignalId");
+      // oneSignalId = (prefs.getString('onesignal_appId').toString());
+      // debugPrint("oneSignalId $oneSignalId");
+      String? tokenId;
+        final status = await OneSignal.shared.getDeviceState();
+        tokenId = status?.userId;
+      debugPrint("OneSignal User ID: $tokenId ");
       Map<String, String> data = {
         "email": email,
         "password": password,
-        "one_signal_id": oneSignalId.toString(),
+        "one_signal_id": tokenId.toString(),
         "current_longitude": longitude1.toString(),
         "current_lattitude": latitude1.toString(),
       };

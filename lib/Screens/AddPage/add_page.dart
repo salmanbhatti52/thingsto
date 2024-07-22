@@ -5,6 +5,7 @@ import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/AddPage/add_newthing.dart';
 import 'package:thingsto/Screens/AddPage/help_dialog.dart';
+import 'package:thingsto/Screens/NotificationPage/notification_page.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import '../../Widgets/large_Button.dart';
@@ -19,10 +20,17 @@ class AddPage extends StatelessWidget {
       backgroundColor: AppColor.whiteColor,
       body: Column(
         children: [
-          const HomeBar(
+          HomeBar(
             title: "Add Things",
             titleTrue: true,
             icon2: AppAssets.notify,
+            onClick: (){
+              Get.to(
+                    () => const NotificationsScreen(),
+                duration: const Duration(milliseconds: 350),
+                transition: Transition.upToDown,
+              );
+            },
           ),
           SizedBox(
             height: Get.height * 0.015,

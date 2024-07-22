@@ -36,7 +36,7 @@ class AddThingsController extends GetxController {
   Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
   RxString base64Image = RxString("");
 
-  /* Add Tags  Function */
+  /* Add and Delete Tags  Function */
 
   void addTag(String tag) {
     if (tag.isNotEmpty) {
@@ -44,11 +44,23 @@ class AddThingsController extends GetxController {
     }
   }
 
-  /* Add Links  Function */
+  void deleteTag(int index) {
+    if (index >= 0 && index < tags.length) {
+      tags.removeAt(index);
+    }
+  }
+
+  /* Add and Delete Links  Function */
 
   void addLink(String link) {
     if (link.isNotEmpty) {
       links.add(link);
+    }
+  }
+
+  void deleteLink(int index) {
+    if (index >= 0 && index < links.length) {
+      links.removeAt(index);
     }
   }
 

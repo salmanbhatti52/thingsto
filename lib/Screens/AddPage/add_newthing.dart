@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -555,7 +556,8 @@ class _AddNewThingsState extends State<AddNewThings>
                             color: AppColor.hintColor,
                             fontWeight: FontWeight.w400,
                           ),
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
                           cursorColor: AppColor.hintColor,
                           decoration: InputDecoration(
                             fillColor: AppColor.secondaryColor,
@@ -865,7 +867,21 @@ class _AddNewThingsState extends State<AddNewThings>
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: LabelField(align: TextAlign.left, text: addThingsController.links[index], color: AppColor.whiteColor,),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          LabelField(align: TextAlign.left, text: addThingsController.links[index], color: AppColor.whiteColor,),
+                                          GestureDetector(
+                                            onTap: () {
+                                              addThingsController.deleteLink(index);
+                                            },
+                                            child: const Icon(
+                                                Icons.close,
+                                                color: AppColor.whiteColor,
+                                              ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -939,7 +955,23 @@ class _AddNewThingsState extends State<AddNewThings>
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: LabelField(text: addThingsController.tags[index], color: AppColor.whiteColor,),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            LabelField(text: addThingsController.tags[index], color: AppColor.whiteColor,),
+                                            const SizedBox(width: 10,),
+                                            GestureDetector(
+                                              onTap: () {
+                                                addThingsController.deleteTag(index);
+                                              },
+                                              child: const Icon(
+                                                Icons.close,
+                                                size: 15,
+                                                color: AppColor.whiteColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );

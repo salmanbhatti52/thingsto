@@ -77,3 +77,7 @@ String thingsFavouritesApiUrl = '${baseUrl}things_favourites';
 String thingsSearchApiUrl = '${baseUrl}things_search';
 
 String thingsByCategoryApiUrl = '${baseUrl}things_by_category';
+
+String notificationsApiUrl = '${baseUrl}notifications';
+
+String notificationsUnreadApiUrl = '${baseUrl}notifications_unread';

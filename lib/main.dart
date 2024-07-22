@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/SplashScreen/splash_screen.dart';
@@ -10,6 +11,8 @@ import 'Utills/const.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+  OneSignal.shared.setAppId("60c86bbb-36cd-406a-b336-2a88bbd68402");
   prefs = await SharedPreferences.getInstance();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

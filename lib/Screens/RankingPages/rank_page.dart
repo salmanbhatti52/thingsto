@@ -4,6 +4,7 @@ import 'package:thingsto/Controllers/add_things_controller.dart';
 import 'package:thingsto/Controllers/ranking_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/NotificationPage/notification_page.dart';
 import 'package:thingsto/Screens/RankingPages/rank_list.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
@@ -61,10 +62,17 @@ class _RankPageState extends State<RankPage> {
       backgroundColor: AppColor.whiteColor,
       body: Column(
         children: [
-          const HomeBar(
+          HomeBar(
             title: "Ranking",
             titleTrue: true,
             icon2: AppAssets.notify,
+            onClick: (){
+              Get.to(
+                    () => const NotificationsScreen(),
+                duration: const Duration(milliseconds: 350),
+                transition: Transition.upToDown,
+              );
+            },
           ),
           SizedBox(
             height: Get.height * 0.02,
