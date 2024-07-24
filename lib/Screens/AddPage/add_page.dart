@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/notifications_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/AddPage/add_newthing.dart';
@@ -11,8 +12,23 @@ import 'package:thingsto/Widgets/app_bar.dart';
 import '../../Widgets/large_Button.dart';
 
 
-class AddPage extends StatelessWidget {
+class AddPage extends StatefulWidget {
   const AddPage({super.key});
+
+  @override
+  State<AddPage> createState() => _AddPageState();
+}
+
+class _AddPageState extends State<AddPage> {
+
+  final NotificationsController notificationsController = Get.put(NotificationsController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notificationsController.getNotificationsAlert();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +36,11 @@ class AddPage extends StatelessWidget {
       backgroundColor: AppColor.whiteColor,
       body: Column(
         children: [
-          HomeBar(
+          Obx(() => HomeBar(
             title: "Add Things",
             titleTrue: true,
             icon2: AppAssets.notify,
+            hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
             onClick: (){
               Get.to(
                     () => const NotificationsScreen(),
@@ -31,7 +48,7 @@ class AddPage extends StatelessWidget {
                 transition: Transition.upToDown,
               );
             },
-          ),
+          ),),
           SizedBox(
             height: Get.height * 0.015,
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
+import 'package:thingsto/Controllers/notifications_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -32,12 +33,14 @@ class _ThingstoPageState extends State<ThingstoPage> {
   final TextEditingController searchController = TextEditingController();
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final LanguageController languageController = Get.put(LanguageController());
+  final NotificationsController notificationsController = Get.put(NotificationsController());
   final List<Map<String, String>> categoryHistory = [];
 
   @override
   void initState() {
     super.initState();
     getUserThings();
+    notificationsController.getNotificationsAlert();
   }
 
   Future<void> getUserThings() async {
@@ -138,18 +141,19 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   //   });
                   // },
                 )
-              : HomeBar(
-                  title: "Thingsto",
-                  titleTrue: true,
-                  icon2: AppAssets.notify,
-                  onClick: (){
-                   Get.to(
+              : Obx(() => HomeBar(
+            title: "Thingsto",
+            titleTrue: true,
+            icon2: AppAssets.notify,
+            hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
+            onClick: (){
+              Get.to(
                     () => const NotificationsScreen(),
-                     duration: const Duration(milliseconds: 350),
-                     transition: Transition.upToDown,
-                    );
-                  },
-                ),
+                duration: const Duration(milliseconds: 350),
+                transition: Transition.upToDown,
+              );
+            },
+          ),),
           SizedBox(
             height: Get.height * 0.02,
           ),

@@ -10,6 +10,7 @@ class NotificationsController extends GetxController {
   var isLoading = false.obs;
   var isError = false.obs;
   var notifications = [].obs;
+  var hasUnreadNotifications = false.obs;
 
   var cachedNotifications = [].obs;
   var isDataLoadedNotifications = false.obs;
@@ -35,6 +36,36 @@ class NotificationsController extends GetxController {
         notifications.value = data;
         cachedNotifications.value = data;
         isDataLoadedNotifications.value = true;
+      } else {
+        debugPrint(notificationsData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* Get Notifications Read or Unread Function */
+
+  getNotificationsAlert() async {
+    try {
+      isLoading.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(notificationsUnreadApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var notificationsData = jsonDecode(response.body);
+      debugPrint("notificationsData $notificationsData");
+      if (notificationsData['status'] == 'success') {
+        var data = notificationsData['data'] as Map<String, dynamic>;
+        hasUnreadNotifications.value = int.parse(data['notifications_unread'].toString()) != 0;
       } else {
         debugPrint(notificationsData['status']);
         isError.value = true;

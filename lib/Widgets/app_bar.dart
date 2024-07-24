@@ -12,6 +12,7 @@ class HomeBar extends StatefulWidget {
   final String? icon1;
   final String? icon2;
   final bool titleTrue;
+  final bool hasUnreadNotifications;
   final VoidCallback? onClick;
   const HomeBar({
     super.key,
@@ -19,6 +20,7 @@ class HomeBar extends StatefulWidget {
     this.icon1,
     this.icon2,
     this.titleTrue = false,
+    this.hasUnreadNotifications = false,
     this.onClick,
   });
 
@@ -62,13 +64,30 @@ class _HomeBarState extends State<HomeBar> {
                     widget.icon1!,
                     width: Get.width * 0.46,
                   ),
-            GestureDetector(
-              onTap: () {
-                if (widget.onClick != null) {
-                  widget.onClick!();
-                }
-              },
-              child: SvgPicture.asset(widget.icon2!),
+            Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (widget.onClick != null) {
+                      widget.onClick!();
+                    }
+                  },
+                  child: SvgPicture.asset(widget.icon2!),
+                ),
+                if (widget.hasUnreadNotifications)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

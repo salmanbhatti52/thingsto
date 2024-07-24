@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/add_things_controller.dart';
+import 'package:thingsto/Controllers/notifications_controller.dart';
 import 'package:thingsto/Controllers/ranking_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -22,6 +23,7 @@ class _RankPageState extends State<RankPage> {
 
   RankingController rankingController = Get.put(RankingController());
   AddThingsController addThingsController = Get.put(AddThingsController());
+  final NotificationsController notificationsController = Get.put(NotificationsController());
 
   var itemListForCategory = <String>[];
   String? selectCategory;
@@ -53,6 +55,7 @@ class _RankPageState extends State<RankPage> {
     super.initState();
     getRankUser();
     fetchCategories();
+    notificationsController.getNotificationsAlert();
   }
 
 
@@ -62,10 +65,11 @@ class _RankPageState extends State<RankPage> {
       backgroundColor: AppColor.whiteColor,
       body: Column(
         children: [
-          HomeBar(
+          Obx(() => HomeBar(
             title: "Ranking",
             titleTrue: true,
             icon2: AppAssets.notify,
+            hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
             onClick: (){
               Get.to(
                     () => const NotificationsScreen(),
@@ -73,7 +77,7 @@ class _RankPageState extends State<RankPage> {
                 transition: Transition.upToDown,
               );
             },
-          ),
+          ),),
           SizedBox(
             height: Get.height * 0.02,
           ),

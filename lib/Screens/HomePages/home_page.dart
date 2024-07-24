@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
+import 'package:thingsto/Controllers/notifications_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final HomeController homeController = Get.put(HomeController());
   final LanguageController languageController = Get.put(LanguageController());
+  final NotificationsController notificationsController = Get.put(NotificationsController());
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -66,6 +68,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getName();
     getUserThings();
+    notificationsController.getNotificationsAlert();
   }
 
   String? selectCategory;
@@ -122,17 +125,18 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  HomeBar(
+                  Obx(() => HomeBar(
                     icon1: AppAssets.logoName,
                     icon2: AppAssets.notify,
-                    onClick: (){
-                        Get.to(
-                              () => const NotificationsScreen(),
-                          duration: const Duration(milliseconds: 350),
-                          transition: Transition.upToDown,
-                        );
+                    hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
+                    onClick: () {
+                      Get.to(
+                            () => const NotificationsScreen(),
+                        duration: const Duration(milliseconds: 350),
+                        transition: Transition.upToDown,
+                      );
                     },
-                  ),
+                  )),
                   Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
