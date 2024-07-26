@@ -9,7 +9,8 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 class CategoryDetails extends StatelessWidget {
   final Function(String, String) onSelect;
   final List subcategories;
-  const CategoryDetails({super.key, required this.subcategories, required this.onSelect});
+  final String selectedCategoryId;
+  const CategoryDetails({super.key, required this.subcategories, required this.onSelect, required this.selectedCategoryId,});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,9 @@ class CategoryDetails extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
                         width: 1,
-                        color: AppColor.thingBorder,
+                        color: categoryId.toString() == selectedCategoryId
+                            ? AppColor.primaryColor
+                            : AppColor.thingBorder,
                       ),
                       boxShadow: const [
                         BoxShadow(

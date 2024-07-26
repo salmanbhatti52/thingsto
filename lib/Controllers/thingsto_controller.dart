@@ -228,13 +228,14 @@ class ThingstoController extends GetxController {
       final response = await http.post(Uri.parse(thingLikeUnlikeApiUrl),
           headers: {'Accept': 'application/json'}, body: data);
 
-      var thingstoData = jsonDecode(response.body);
-      debugPrint("thingstoData $thingstoData");
-      if (thingstoData['status'] == 'success') {
-        totalLikes.value = thingstoData['data']['total_likes'];
+      var likeData = jsonDecode(response.body);
+      debugPrint("likeData $likeData");
+      if (likeData['status'] == 'success') {
+        totalLikes.value = likeData['data']['total_likes'];
         isLiked.value = !isLiked.value;
       } else {
-        debugPrint(thingstoData['status']);
+        debugPrint(likeData['status']);
+        // isLiked.value = !isLiked.value;
       }
     } catch (e) {
       debugPrint("Error $e");

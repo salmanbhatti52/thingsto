@@ -349,15 +349,21 @@ class _ThingsDetailsState extends State<ThingsDetails>
                         text: thingstoController.totalLikes.value.toString(),
                         fontWeight: FontWeight.w400,
                         color: AppColor.hintColor,
+                        fontSize: 18,
                         maxLIne: 2,
                       ),
                       const SizedBox(
                         width: 5,
                       ),
                       thingstoController.isLiked.value
-                          ? const Icon(Icons.favorite, size: 20, color: Colors.redAccent)
+                          ? const Icon(
+                          Icons.favorite,
+                          size: 25,
+                          color: Colors.redAccent,
+                      )
                           : SvgPicture.asset(
                         AppAssets.heart,
+                        width: 23,
                         color: AppColor.hintColor,
                       ),
                     ],
@@ -374,7 +380,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              widget.thingsto?["location"] != null && widget.thingsto?["location"] != ""
+                  ? Expanded(
                 child: Row(
                   children: [
                     SvgPicture.asset(
@@ -395,7 +402,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     ),
                   ],
                 ),
-              ),
+              )
+                  : const SizedBox(),
               const SizedBox(width: 10), // Add spacing between the two rows
               Row(
                 children: [
@@ -419,17 +427,19 @@ class _ThingsDetailsState extends State<ThingsDetails>
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
+          padding: EdgeInsets.only(left: 15.0, right: 15.0, top: tags.isNotEmpty ? 15 : 0,),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
+              tags.isNotEmpty
+                  ? SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: tags.map<Widget>((tag) {
                     final textLength = tag["name"].length;
                     final buttonWidth = textLength * 8.0 + 40;
-                    return Padding(
+                    return tag["name"] != ""
+                        ? Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: LargeButton(
                         text: tag["name"],
@@ -441,71 +451,67 @@ class _ThingsDetailsState extends State<ThingsDetails>
                         fontSize: 12,
                         radius: 20,
                       ),
-                    );
+                    ) : SizedBox();
                   }).toList(),
                 ),
-              ),
+              )
+                  : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.022,
               ),
-              LabelField(
+              widget.thingsto?["description"] != null
+              ? LabelField(
                 align: TextAlign.start,
                 text: widget.thingsto?["description"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
                 maxLIne: 10,
-              ),
+              )
+              : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.015,
               ),
-              const LabelField(
+              source.isNotEmpty && source.any((sources) => sources["name"] != "")
+                  ? const LabelField(
                 text: "Sources & Links",
                 fontSize: 20,
-              ),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
-              // LabelField(
-              //   align: TextAlign.start,
-              //   text: widget.thingsto?["sources_links"],
-              //   fontSize: 14,
-              //   fontWeight: FontWeight.w400,
-              //   color: const Color(0xff277CE0),
-              //   maxLIne: 1,
-              // ),
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: source.map<Widget>((sources) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: GestureDetector(
-                        onTap : () async {
-                          final String urlStr = sources["name"];
-                          // if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
-                            final Uri url = Uri.parse(urlStr);
-                            if (!await launchUrl(url)) {
-                              throw Exception('Could not launch $url');
+              )
+                  : const SizedBox(),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != "")) SizedBox(height: Get.height * 0.015),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: source.map<Widget>((sources) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final String urlStr = sources["name"];
+                            if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                              final Uri url = Uri.parse(urlStr);
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $url');
+                              }
                             } else {
-                            throw Exception('Invalid URL: $urlStr');
-                            // CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
-                          }
-                        },
-                        child: LabelField(
-                          text: sources["name"],
-                          align: TextAlign.start,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff277CE0),
-                          maxLIne: 1,
+                              throw Exception('Invalid URL: $urlStr');
+                            }
+                          },
+                          child: LabelField(
+                            text: sources["name"],
+                            align: TextAlign.start,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff277CE0),
+                            maxLIne: 1,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
               // SingleChildScrollView(
               //   scrollDirection: Axis.vertical,
               //   child: Column(
@@ -528,17 +534,23 @@ class _ThingsDetailsState extends State<ThingsDetails>
               //     }).toList(),
               //   ),
               // ),
-              SizedBox(
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                   SizedBox(
                 height: Get.height * 0.015,
               ),
-              const LabelField(
+              widget.thingsto?["location"] != null && widget.thingsto?["location"] != ""
+                  ? const LabelField(
                 text: "Location",
                 fontSize: 20,
-              ),
-              SizedBox(
+              )
+                  : const SizedBox(),
+              widget.thingsto?["location"] != null && widget.thingsto?["location"] != ""
+                  ? SizedBox(
                 height: Get.height * 0.015,
-              ),
-              Container(
+              )
+                  : const SizedBox(),
+              widget.thingsto?["location"] != null && widget.thingsto?["location"] != ""
+                  ? Container(
                 height: Get.height * 0.27,
                 margin: const EdgeInsets.only(right: 15),
                 decoration: BoxDecoration(
@@ -565,7 +577,8 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     },
                   ),
                 ),
-              ),
+              )
+                  : const SizedBox(),
             ],
           ),
         ),

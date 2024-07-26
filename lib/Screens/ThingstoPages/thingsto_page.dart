@@ -67,24 +67,26 @@ class _ThingstoPageState extends State<ThingstoPage> {
   }
 
   void selectCategory(String categoryName, String categoryId) {
-    setState(() {
-      isSelect = true;
-      selectedCategoryName = categoryName;
-      selectedCategoryId = categoryId;
-      thingstoController.foundedThings(
-        categoriesId: categoryId.toString(),
-        country: "",
-        city: "",
-        distances: "",
-        checkValue2: "No",
-        backValue: "No",
-        categoryThings: "Yes",
-      );
-      thingstoController.getChildCategory(
-        categoriesId: categoryId,
-      );
-      categoryHistory.add({'name': categoryName, 'id': categoryId});
-    });
+    if(selectedCategoryId != categoryId){
+      setState(() {
+        isSelect = true;
+        selectedCategoryName = categoryName;
+        selectedCategoryId = categoryId;
+        thingstoController.foundedThings(
+          categoriesId: categoryId.toString(),
+          country: "",
+          city: "",
+          distances: "",
+          checkValue2: "No",
+          backValue: "No",
+          categoryThings: "Yes",
+        );
+        thingstoController.getChildCategory(
+          categoriesId: categoryId,
+        );
+        categoryHistory.add({'name': categoryName, 'id': categoryId});
+      });
+    }
   }
 
   void goBack() {
@@ -142,18 +144,19 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   // },
                 )
               : Obx(() => HomeBar(
-            title: "Thingsto",
-            titleTrue: true,
-            icon2: AppAssets.notify,
-            hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
-            onClick: (){
-              Get.to(
-                    () => const NotificationsScreen(),
-                duration: const Duration(milliseconds: 350),
-                transition: Transition.upToDown,
-              );
-            },
-          ),),
+                     title: "Thingsto",
+                     titleTrue: true,
+                     icon2: AppAssets.notify,
+                     hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
+                     onClick: (){
+                       Get.to(
+                             () => const NotificationsScreen(),
+                         duration: const Duration(milliseconds: 350),
+                         transition: Transition.upToDown,
+                       );
+                     },
+          ),
+          ),
           SizedBox(
             height: Get.height * 0.02,
           ),
@@ -250,12 +253,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               return CategoryDetails(
                                 subcategories: thingstoController.subcategories,
                                 onSelect: selectCategory,
+                                selectedCategoryId: selectedCategoryId,
                               );
                             },
                           )
                         : Obx(
                             () {
-                              if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty) {
+                              if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty){
                                 return Shimmers(
                                   width: Get.width,
                                   height: Get.height * 0.15,

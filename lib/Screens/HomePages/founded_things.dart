@@ -325,6 +325,7 @@ class _FoundedThingsState extends State<FoundedThings>
                         align: TextAlign.start,
                         text: thingstoController.totalLikes.value.toString(),
                         fontWeight: FontWeight.w400,
+                        fontSize: 18,
                         color: AppColor.hintColor,
                         maxLIne: 2,
                       ),
@@ -332,9 +333,10 @@ class _FoundedThingsState extends State<FoundedThings>
                         width: 5,
                       ),
                       thingstoController.isLiked.value
-                          ? const Icon(Icons.favorite, size: 20, color: Colors.redAccent)
+                          ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
                           : SvgPicture.asset(
                         AppAssets.heart,
+                        width: 23,
                         color: AppColor.hintColor,
                       ),
                     ],

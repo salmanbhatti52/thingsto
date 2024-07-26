@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -9,7 +10,7 @@ import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
-class HomeSuggestions extends StatelessWidget {
+class HomeSuggestions extends StatefulWidget {
   final double pad;
   final List thingsto;
   final String thingstoName;
@@ -21,11 +22,26 @@ class HomeSuggestions extends StatelessWidget {
   });
 
   @override
+  State<HomeSuggestions> createState() => _HomeSuggestionsState();
+}
+
+class _HomeSuggestionsState extends State<HomeSuggestions> {
+
+  final ThingstoController thingstoController = Get.put(ThingstoController());
+  final GetProfileController getProfileController = Get.put(GetProfileController());
+  late List thingsto;
+
+  @override
+  void initState() {
+    super.initState();
+    thingsto = widget.thingsto;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ThingstoController thingstoController = Get.put(ThingstoController());
     return Container(
       height: Get.height * 0.21,
-      padding: EdgeInsets.only(left: pad),
+      padding: EdgeInsets.only(left: widget.pad),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ScrollPhysics(),
@@ -38,7 +54,7 @@ class HomeSuggestions extends StatelessWidget {
               Get.to(
                 () => ThingsValidate(
                   thingsto: things,
-                  thingstoName: thingstoName,
+                  thingstoName: widget.thingstoName,
                 ),
                 duration: const Duration(milliseconds: 350),
                 transition: Transition.rightToLeft,
@@ -113,13 +129,38 @@ class HomeSuggestions extends StatelessWidget {
                   Positioned(
                     top: 8,
                     right: 8,
-                    child: thingstoController.isLiked.value
-                        ? const Icon(Icons.favorite,
-                            size: 20, color: Colors.redAccent)
-                        : SvgPicture.asset(
-                            AppAssets.heart,
-                            color: AppColor.hintColor,
-                          ),
+                    child: GestureDetector(
+                      onTap: () async {
+                        await thingstoController.likeUnlikeUser(
+                          thingsto[i]["things_id"].toString(),
+                        );
+                        if(widget.thingstoName != "HomeSide"){
+                            setState(() {
+                              thingsto.removeAt(i);
+                            });
+                        }
+                        if(widget.thingstoName == "HomeSide"){
+                          if (thingstoController.isDataLoadedThingsto.value) {
+                            thingstoController.getThingsto(checkValue: "No");
+                          } else {
+                            await thingstoController.getThingsto(checkValue: "No");
+                          }
+                        } else {
+                          if (getProfileController.isDataLoadedFavorites.value) {
+                            getProfileController.getFavoritesThings();
+                          } else {
+                            await getProfileController.getFavoritesThings();
+                          }
+                        }
+                      },
+                      child: thingstoController.isLiked.value
+                            ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
+                            : SvgPicture.asset(
+                          AppAssets.heart,
+                          width: 23,
+                          color: AppColor.hintColor,
+                        ),
+                    ),
                   ),
                   Positioned(
                     bottom: 0,

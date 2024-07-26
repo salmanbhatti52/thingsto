@@ -12,6 +12,7 @@ import 'package:thingsto/Screens/HomePages/founded_things.dart';
 import 'package:thingsto/Screens/HomePages/home_suggestions.dart';
 import 'package:thingsto/Screens/NotificationPage/notification_page.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
@@ -29,8 +30,8 @@ class _HomePageState extends State<HomePage> {
   bool isDropDownShow = false;
   bool isFind = false;
   late GoogleMapController mapController;
-  late LatLng _center;
-  late LatLng _currentLocation;
+  late LatLng _center = const LatLng(0, 0);
+  late LatLng _currentLocation = const LatLng(0, 0);
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final HomeController homeController = Get.put(HomeController());
   final LanguageController languageController = Get.put(LanguageController());
@@ -42,16 +43,17 @@ class _HomePageState extends State<HomePage> {
 
   getName()  {
     surName = prefs.getString('surName');
-    systemLattitude = prefs.getString('system_lattitude');
-    systemLongitude = prefs.getString('system_longitude');
+    // systemLattitude = prefs.getString('system_lattitude');
+    // systemLongitude = prefs.getString('system_longitude');
     if (surName != null && systemLattitude!= null && systemLongitude != null) {
       debugPrint("surname :: $surName");
-      debugPrint("systemLattitude :: $systemLattitude");
-      debugPrint("systemLongitude :: $systemLongitude");
+      // debugPrint("systemLattitude :: $systemLattitude");
+      // debugPrint("systemLongitude :: $systemLongitude");
     }
   }
 
   Future<void> getUserThings() async {
+    notificationsController.getNotificationsAlert();
     if (thingstoController.isDataLoadedThingsto.value) {
       // Show cached data and then update in the background
       thingstoController.getThingsto(checkValue: "No");
@@ -66,9 +68,23 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getLocation();
     getName();
     getUserThings();
-    notificationsController.getNotificationsAlert();
+  }
+
+  getLocation() async {
+    await GlobalService.getCurrentPosition();
+    double latitude1 = GlobalService.currentLocation!.latitude;
+    double longitude1 = GlobalService.currentLocation!.longitude;
+    debugPrint('current latitude: $latitude1');
+    debugPrint('current longitude: $longitude1');
+    double latitude = double.parse(latitude1.toString());
+    double longitude = double.parse(longitude1.toString());
+    setState(() {
+      _center = LatLng(latitude, longitude);
+      _currentLocation = LatLng(latitude, longitude);
+    });
   }
 
   String? selectCategory;
@@ -98,10 +114,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double latitude = double.parse(systemLattitude.toString());
-    double longitude = double.parse(systemLongitude.toString());
-    _center = LatLng(latitude, longitude);
-    _currentLocation = LatLng(latitude, longitude);
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: GestureDetector(
@@ -264,7 +276,8 @@ class _HomePageState extends State<HomePage> {
                       : const SizedBox(),
                       SizedBox(
                         height: Get.height * 0.3,
-                        child: GoogleMap(
+                        child: _center.latitude != 0 && _center.longitude != 0 // Check if _center is set
+                            ? GoogleMap(
                           onMapCreated: _onMapCreated,
                           mapType: MapType.normal,
 
@@ -278,6 +291,23 @@ class _HomePageState extends State<HomePage> {
                               position: _currentLocation,
                             ),
                           },
+                        ) : Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.3,
+                        ),
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.022,
+                      ),
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          child: LabelField(
+                            text: "The things of the moment",
+                            fontSize: 18,
+                            align: TextAlign.left,
+                          ),
                         ),
                       ),
                       SizedBox(
