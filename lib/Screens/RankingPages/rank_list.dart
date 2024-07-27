@@ -125,7 +125,8 @@ class RankUserList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           LabelField(
-                            text: "${rank['first_name']} ${rank['last_name']}",
+                            text: "${rank['sur_name']}",
+                            // text: "${rank['first_name']} ${rank['last_name']}",
                             fontSize: 19,
                             color: const Color(0xff080C2F),
                             interFont: true,

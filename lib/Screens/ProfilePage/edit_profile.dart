@@ -32,6 +32,7 @@ class _EditProfileState extends State<EditProfile> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
+  final quoteController = TextEditingController();
 
   UpdateProfileController updateProfileController =
       Get.put(UpdateProfileController());
@@ -43,6 +44,7 @@ class _EditProfileState extends State<EditProfile> {
     firstNameController.text = widget.getProfile['first_name'] ?? '';
     lastNameController.text = widget.getProfile['last_name'] ?? '';
     emailController.text = widget.getProfile['email'] ?? '';
+    quoteController.text = widget.getProfile['quote'] ?? '';
     selectAge = widget.getProfile['age']?.toString();
   }
 
@@ -215,6 +217,54 @@ class _EditProfileState extends State<EditProfile> {
                         textInputAction: TextInputAction.done,
                         showSuffix: false,
                       ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      const LabelField(
+                        text: 'Quote',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColor.secondaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppColor.borderColor,
+                            width: 1.0,
+                          ),
+                        ),
+                        height: Get.height * 0.11,
+                        child: TextField(
+                          maxLines: null,
+                          controller: quoteController,
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: AppColor.hintColor,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
+                          cursorColor: AppColor.hintColor,
+                          decoration: InputDecoration(
+                            fillColor: AppColor.secondaryColor,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.only(
+                              top: 0.0,
+                              left: 12,
+                            ),
+                            hintText: "Add quote",
+                            hintStyle: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: AppColor.hintColor,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         height: Get.height * 0.06,
                       ),
@@ -233,6 +283,7 @@ class _EditProfileState extends State<EditProfile> {
                                   surName: surNameController.text,
                                   firstName: firstNameController.text,
                                   lastName: lastNameController.text,
+                                  quote: quoteController.text,
                                   age: selectAge.toString(),
                                   profilePicture: updateProfileController
                                       .base64Image.value

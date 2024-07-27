@@ -382,8 +382,36 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       }),
                       SizedBox(
-                        height: Get.height * 0.03,
+                        height: Get.height * 0.02,
                       ),
+                      Obx(() {
+                        final quote = getProfileController.cachedGetProfile;
+                        return getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                            ? const Shimmers2(
+                          width: 1,
+                          height: 1,
+                        ) :  Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const LabelField(
+                              text: 'Quote',
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            LabelField(
+                                text: "${quote["quote"]}",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: AppColor.blackColor,
+                                interFont: true,
+                              ),
+                            SizedBox(
+                                height: Get.height * 0.02,
+                              ),
+                          ],
+                        );
+                      }),
                       const LabelField(
                         text: 'My favorites',
                         fontSize: 18,
@@ -391,8 +419,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: Get.height * 0.015,
                       ),
-                      Obx(
-                            () {
+                      Obx(() {
                           if (getProfileController.isLoading.value && getProfileController.cachedFavorites.isEmpty) {
                             return Shimmers(
                               width: Get.width,

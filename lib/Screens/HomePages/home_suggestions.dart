@@ -153,13 +153,15 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                           }
                         }
                       },
-                      child: thingstoController.isLiked.value
-                            ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
-                            : SvgPicture.asset(
-                          AppAssets.heart,
-                          width: 23,
-                          color: AppColor.hintColor,
-                        ),
+                      child: thingstoController.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : thingstoController.isLiked.value
+                          ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
+                          : SvgPicture.asset(
+                        AppAssets.heart,
+                        width: 23,
+                        color: AppColor.hintColor,
+                      ),
                     ),
                   ),
                   Positioned(
