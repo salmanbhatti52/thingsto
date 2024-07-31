@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/notifications_controller.dart';
@@ -11,11 +12,13 @@ import 'package:thingsto/Screens/ThingstoPages/Categories/category_details.dart'
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/TopThings/topthingsto_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/filter_dialog.dart';
+import 'package:thingsto/Screens/ThingstoPages/member_search.dart';
 import 'package:thingsto/Screens/ThingstoPages/things_see_all.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
+import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/row_text.dart';
 import 'package:thingsto/Widgets/shimmer_effect.dart';
 
@@ -28,6 +31,9 @@ class ThingstoPage extends StatefulWidget {
 
 class _ThingstoPageState extends State<ThingstoPage> {
   bool isSelect = false;
+  bool isShow = false;
+  bool isThings = true;
+  bool isMember = false;
   String selectedCategoryName = '';
   String selectedCategoryId = '';
   final TextEditingController searchController = TextEditingController();
@@ -122,6 +128,19 @@ class _ThingstoPageState extends State<ThingstoPage> {
       thingstoController.findingThings.assignAll(filteredThings);
     });
   }
+  
+  void filterMember(String query) {
+    thingstoController.searchMembers(search: "members", name: query);
+    // final filteredThings = thingstoController.cachedThingsto.where((thing) {
+    //   final thingName = thing['name'].toString().toLowerCase();
+    //   final input = query.toLowerCase();
+    //   return thingName.contains(input);
+    // }).toList();
+    // thingstoController.hasRunFoundedThings.value = true;
+    // setState(() {
+    //   thingstoController.findingThings.assignAll(filteredThings);
+    // });
+  }
 
 
   @override
@@ -166,14 +185,20 @@ class _ThingstoPageState extends State<ThingstoPage> {
               children: [
                 CustomTextFormField(
                   controller: searchController,
-                  hintText: "Search for a thing",
+                  hintText: "Search",
                   // validator: validateEmail,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   suffixImage: AppAssets.filter,
                   showPrefix: true,
+                  showSuffix: isMember ? false : true,
+                  tap: (){
+                    setState(() {
+                      isShow = true;
+                    });
+                  },
                   onChanged: (value) {
-                    filterThings(value);
+                    isThings ? filterThings(value) : filterMember(value);
                   },
                   prefixColor: AppColor.labelTextColor,
                   suffixTap: () {
@@ -187,9 +212,50 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     );
                   },
                 ),
+                if(isShow)
+                Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        LargeButton(
+                          text: "Things",
+                          width: Get.width * 0.3,
+                          containerColor: isThings ? AppColor.primaryColor : AppColor.borderColor,
+                          textColor: isThings ? AppColor.whiteColor : AppColor.blackColor,
+                          onTap: (){
+                            setState(() {
+                              isThings = true;
+                              isMember = false;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          width: Get.width * 0.02,
+                        ),
+                        LargeButton(
+                          text: "Members",
+                          width: Get.width * 0.3,
+                          containerColor: isMember ? AppColor.primaryColor : AppColor.borderColor,
+                          textColor: isMember ? AppColor.whiteColor : AppColor.blackColor,
+                          onTap: (){
+                            setState(() {
+                              isThings = false;
+                              isMember = true;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
+          if(isThings)
           Expanded(
             child: RefreshIndicator(
               color: AppColor.primaryColor,
@@ -470,6 +536,72 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.02,
                     ),
                   ],
+                ),
+              ),
+            ),
+          ),
+          if(isMember)
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Obx(() {
+                  if (thingstoController.isLoading.value) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 15,),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                      ],
+                    );
+                  }
+                  // if (thingstoController.isError.value) {
+                  //   return const Center(
+                  //     child: Padding(
+                  //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                  //       child: LabelField(
+                  //         text: "Things not found",
+                  //         fontSize: 21,
+                  //         color: AppColor.blackColor,
+                  //         interFont: true,
+                  //       ),
+                  //     ),
+                  //   );
+                  // }
+                  if (thingstoController.members.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: Get.height * 0.3,),
+                        child: const LabelField(
+                          text: 'Members not found',
+                          fontSize: 18,
+                        ),
+                      ),
+                    );
+                  }
+                  return MemberSearch(
+                    memberList: thingstoController.members,
+                  );
+                },
                 ),
               ),
             ),

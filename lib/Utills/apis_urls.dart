@@ -48,6 +48,8 @@ String updateProfileApiUrl = '${baseUrl}update_profile';
 
 String updateProfileNotificationsApiUrl = '${baseUrl}update_profile_notifications';
 
+String updateProfilePrivacyApiUrl = '${baseUrl}update_profile_privacy';
+
 String categoriesApiUrl = '${baseUrl}categories';
 
 String categoriesSubApiUrl = '${baseUrl}categories_sub';
@@ -58,11 +60,11 @@ String categoriesAllStatsApiUrl = '${baseUrl}categories_all_stats';
 
 String thingsAddApiUrl = '${baseUrl}things_add';
 
-String countriesApiUrl = '${baseUrl}countries';
+String countriesApiUrl = '${baseUrl}get_catrgory_countries';
 
-String statesApiUrl = '${baseUrl}states';
+// String statesApiUrl = '${baseUrl}states';
 
-String citiesApiUrl = '${baseUrl}cities';
+String citiesApiUrl = '${baseUrl}get_catrgory_country_cities';
 
 String thingsGetApiUrl = '${baseUrl}things';
 
@@ -81,3 +83,7 @@ String thingsByCategoryApiUrl = '${baseUrl}things_by_category';
 String notificationsApiUrl = '${baseUrl}notifications';
 
 String notificationsUnreadApiUrl = '${baseUrl}notifications_unread';
+
+String searchMembersApiUrl = '${baseUrl}search_things_and_members';
+
+String getUserThingsApiUrl = '${baseUrl}get_user_things';

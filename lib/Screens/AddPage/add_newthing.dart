@@ -80,12 +80,6 @@ class _AddNewThingsState extends State<AddNewThings>
             .toSet() // Ensure uniqueness
             .toList();
         debugPrint("itemListForCategory: $itemListForCategory");
-    await addThingsController.getAllCountries();
-        itemListForCountries = addThingsController.allCountries
-            .map((c) => c['name'].toString())
-            .toSet() // Ensure uniqueness
-            .toList();
-        debugPrint("itemListForCountries: $itemListForCountries");
   }
 
 
@@ -189,6 +183,26 @@ class _AddNewThingsState extends State<AddNewThings>
                             selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
                             ['categories_id'].toString();
                             debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
+                            // addThingsController.getAllCountries(categoryId: selectCategoryId.toString());
+                            // itemListForCountries = addThingsController.allCountries
+                            //     .map((c) => c['name'].toString())
+                            //     .toSet() // Ensure uniqueness
+                            //     .toList();
+                            // debugPrint("itemListForCountries: $itemListForCountries");
+                            itemListForCountries.clear();
+                            addThingsController.getAllCountries(categoryId: selectCategoryId.toString());
+                            addThingsController.allCountries.addListener(() {
+                              setState(() {
+                                // selectStates = null;
+                                selectCity = null;
+                                selectCityId = null;
+                                itemListForCountries = addThingsController.allCountries.value
+                                    .map((c) => c['name'].toString())
+                                    .toSet() // Ensure uniqueness
+                                    .toList();
+                                debugPrint("itemListForCountries: $itemListForCountries");
+                              });
+                            });
                             // Filter subcategories based on selected category
                             itemListForSubCategory = addThingsController.categoriesAll
                                 .where((c) => c['parent_id'] == int.parse(selectCategoryId!))
@@ -196,7 +210,9 @@ class _AddNewThingsState extends State<AddNewThings>
                                 .toSet()
                                 .toList();
                             selectSubCategory = null;
+                            selectSubCategoryId = null;
                             selectThirdCategory = null;
+                            selectThirdCategoryId = null;
                           });
                         },
                         initialValue: selectCategory,
@@ -222,6 +238,20 @@ class _AddNewThingsState extends State<AddNewThings>
                                selectSubCategory = value;
                                selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
+                               itemListForCountries.clear();
+                               addThingsController.getAllCountries(categoryId: selectSubCategoryId.toString());
+                               addThingsController.allCountries.addListener(() {
+                                 setState(() {
+                                   // selectStates = null;
+                                   selectCity = null;
+                                   selectCityId = null;
+                                   itemListForCountries = addThingsController.allCountries.value
+                                       .map((c) => c['name'].toString())
+                                       .toSet() // Ensure uniqueness
+                                       .toList();
+                                   debugPrint("itemListForCountries: $itemListForCountries");
+                                 });
+                               });
                                // Filter subcategories based on selected category
                                itemListForThirdCategory = addThingsController.categoriesAll
                                    .where((c) => c['parent_id'] == int.parse(selectSubCategoryId!))
@@ -229,6 +259,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                    .toSet()
                                    .toList();
                                selectThirdCategory = null;
+                               selectThirdCategoryId = null;
                              });
                            },
                            initialValue: selectSubCategory,
@@ -256,6 +287,20 @@ class _AddNewThingsState extends State<AddNewThings>
                                   selectThirdCategory = value;
                                   selectThirdCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                   debugPrint("selectThirdCategory: $selectThirdCategory, selectThirdCategoryId: $selectThirdCategoryId");
+                                  itemListForCountries.clear();
+                                  addThingsController.getAllCountries(categoryId: selectThirdCategoryId.toString());
+                                  addThingsController.allCountries.addListener(() {
+                                    setState(() {
+                                      // selectStates = null;
+                                      selectCity = null;
+                                      selectCityId = null;
+                                      itemListForCountries = addThingsController.allCountries.value
+                                          .map((c) => c['name'].toString())
+                                          .toSet() // Ensure uniqueness
+                                          .toList();
+                                      debugPrint("itemListForCountries: $itemListForCountries");
+                                    });
+                                  });
                                 });
                               },
                               initialValue: selectThirdCategory,
@@ -298,88 +343,102 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      const LabelField(
-                        text: 'Country',
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      CustomDropdown(
-                        itemList: itemListForCountries,
-                        hintText: "Select Country",
-                        onChanged: (value) {
-                          setState(() {
-                            selectCountry = value;
-                            selectCountryId = addThingsController.allCountries.firstWhere((c) => c['name'] == value)
-                            ['countries_id'].toString();
-                            debugPrint("selectCountry: $selectCountry, selectCountryId: $selectCountryId");
-                            // Filter subcategories based on selected country
-                            addThingsController.getAllStates(countryId: selectCountryId.toString());
-                            addThingsController.allStates.addListener(() {
-                              setState(() {
-                                selectStates = null;
-                                selectCity = null;
-                                itemListForStates = addThingsController.allStates.value
-                                    .map((c) => c['name'].toString())
-                                    .toSet() // Ensure uniqueness
-                                    .toList();
-                                debugPrint("itemListForStates: $itemListForStates");
-                              });
-                            });
-                          });
-                        },
-                        initialValue: selectCountry,
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      if(itemListForStates.isNotEmpty)
+                      if(itemListForCountries.isNotEmpty)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const LabelField(
-                              text: 'States',
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Obx(()  {
-                              return addThingsController.isStateLoading.value
-                                  ? Shimmers2(
-                                width: Get.width,
-                                height: 60,
-                              ) : CustomDropdown(
-                                itemList: itemListForStates,
-                                hintText: "Select States",
-                                onChanged: (value) {
+                        children: [
+                          const LabelField(
+                            text: 'Country',
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Obx(() => addThingsController.isCountryLoading.value
+                              ? Shimmers2(
+                            width: Get.width,
+                            height: 60,
+                          ) : CustomDropdown(
+                            itemList: itemListForCountries,
+                            hintText: "Select Country",
+                            onChanged: (value) {
+                              setState(() {
+                                selectCountry = value;
+                                selectCountryId = addThingsController.allCountries.value.firstWhere((c) => c['name'] == value)
+                                ['countries_id'].toString();
+                                debugPrint("selectCountry: $selectCountry, selectCountryId: $selectCountryId");
+                                // Filter subcategories based on selected country
+                                itemListForCities.clear();
+                                selectCity = null;
+                                selectCityId = null;
+                                addThingsController.getAllCities(countryId: selectCountryId.toString());
+                                addThingsController.allCities.addListener(() {
                                   setState(() {
-                                    selectStates = value;
-                                    selectStatesId = addThingsController.allStates.value.firstWhere((c) => c['name'] == value)
-                                    ['states_id'].toString();
-                                    debugPrint("selectStats: $selectStates, selectStataId: $selectStatesId");
-                                    // Filter subcategories based on selected states
-                                    addThingsController.getAllCities(stateId: selectStatesId.toString());
-                                    addThingsController.allCities.addListener(() {
-                                      setState(() {
-                                        selectCity = null;
-                                        itemListForCities = addThingsController.allCities.value
-                                            .map((c) => c['name'].toString())
-                                            .toSet() // Ensure uniqueness
-                                            .toList();
-                                        debugPrint("itemListForCities: $itemListForCities");
-                                      });
-                                    });
+                                    // selectStates = null;
+                                    selectCity = null;
+                                    selectCityId = null;
+                                    itemListForCities = addThingsController.allCities.value
+                                        .map((c) => c['name'].toString())
+                                        .toSet() // Ensure uniqueness
+                                        .toList();
+                                    debugPrint("itemListForCities: $itemListForCities");
                                   });
-                                },
-                                initialValue: selectStates,
-                              );
-                            }),
-                            const SizedBox(
-                              height: 18,
-                            ),
-                          ],
-                        ),
-                      if(itemListForCountries.isNotEmpty && itemListForStates.isNotEmpty && itemListForCities.isNotEmpty)
+                                });
+                              });
+                            },
+                            initialValue: selectCountry,
+                          )),
+                          const SizedBox(
+                            height: 18,
+                          ),
+                        ],
+                      ),
+                      // if(itemListForStates.isNotEmpty)
+                      //   Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       const LabelField(
+                      //         text: 'States',
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 8,
+                      //       ),
+                      //       Obx(()  {
+                      //         return addThingsController.isStateLoading.value
+                      //             ? Shimmers2(
+                      //           width: Get.width,
+                      //           height: 60,
+                      //         ) : CustomDropdown(
+                      //           itemList: itemListForStates,
+                      //           hintText: "Select States",
+                      //           onChanged: (value) {
+                      //             setState(() {
+                      //               selectStates = value;
+                      //               selectStatesId = addThingsController.allStates.value.firstWhere((c) => c['name'] == value)
+                      //               ['states_id'].toString();
+                      //               debugPrint("selectStats: $selectStates, selectStataId: $selectStatesId");
+                      //               // Filter subcategories based on selected states
+                      //               addThingsController.getAllCities(stateId: selectStatesId.toString());
+                      //               addThingsController.allCities.addListener(() {
+                      //                 setState(() {
+                      //                   selectCity = null;
+                      //                   itemListForCities = addThingsController.allCities.value
+                      //                       .map((c) => c['name'].toString())
+                      //                       .toSet() // Ensure uniqueness
+                      //                       .toList();
+                      //                   debugPrint("itemListForCities: $itemListForCities");
+                      //                 });
+                      //               });
+                      //             });
+                      //           },
+                      //           initialValue: selectStates,
+                      //         );
+                      //       }),
+                      //       const SizedBox(
+                      //         height: 18,
+                      //       ),
+                      //     ],
+                      //   ),
+                      if(itemListForCountries.isNotEmpty && itemListForCities.isNotEmpty)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

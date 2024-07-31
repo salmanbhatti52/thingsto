@@ -54,19 +54,33 @@ class _ProfilePageState extends State<ProfilePage> {
       } else {
         await getProfileController.getFavoritesThings();
       }
-      if (getProfileController.isDataLoadedCategoriesStats.value) {
-        getProfileController.getCategoriesStats();
+      if (getProfileController.isDataLoadedThings.value) {
+        getProfileController.getThings(usersCustomersId: userID.toString());
       } else {
-        await getProfileController.getCategoriesStats();
+        await getProfileController.getThings(usersCustomersId: userID.toString());
+      }
+      if (getProfileController.isDataLoadedCategoriesStats.value) {
+        getProfileController.getCategoriesStats(usersCustomersId: userID.toString());
+      } else {
+        await getProfileController.getCategoriesStats(usersCustomersId: userID.toString());
       }
     }
   }
 
   Future<void> getUserFavorite() async {
-      if (getProfileController.isDataLoadedFavorites.value) {
-        getProfileController.getFavoritesThings();
-      } else {
-        await getProfileController.getFavoritesThings();
+    final prefs = await SharedPreferences.getInstance();
+    String? userID = prefs.getString('users_customers_id');
+      if(userID != null){
+        if (getProfileController.isDataLoadedFavorites.value) {
+          getProfileController.getFavoritesThings();
+        } else {
+          await getProfileController.getFavoritesThings();
+        }
+        if (getProfileController.isDataLoadedThings.value) {
+          getProfileController.getThings(usersCustomersId: userID.toString());
+        } else {
+          await getProfileController.getThings(usersCustomersId: userID.toString());
+        }
       }
   }
 
@@ -454,6 +468,55 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                           return HomeSuggestions(
                             thingsto: getProfileController.cachedFavorites,
+                            thingstoName: "Favorite",
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                      const LabelField(
+                        text: 'History of Things',
+                        fontSize: 18,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      Obx(() {
+                          if (getProfileController.isLoading.value && getProfileController.cachedThings.isEmpty) {
+                            return Shimmers(
+                              width: Get.width,
+                              height:  Get.height * 0.255,
+                              width1: Get.width * 0.37,
+                              height1: Get.height * 0.08,
+                              length: 6,
+                            );
+                          }
+                          // if (thingstoController.isError.value) {
+                          //   return const Center(
+                          //     child: Padding(
+                          //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                          //       child: LabelField(
+                          //         text: "Things not found",
+                          //         fontSize: 21,
+                          //         color: AppColor.blackColor,
+                          //         interFont: true,
+                          //       ),
+                          //     ),
+                          //   );
+                          // }
+                          if (getProfileController.cachedThings.isEmpty) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 28.0),
+                                child: LabelField(
+                                  text: 'Things not found',
+                                ),
+                              ),
+                            );
+                          }
+                          return HomeSuggestions(
+                            thingsto: getProfileController.cachedThings,
                             thingstoName: "Favorite",
                           );
                         },

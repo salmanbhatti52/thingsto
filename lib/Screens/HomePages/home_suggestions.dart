@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
@@ -14,11 +15,13 @@ class HomeSuggestions extends StatefulWidget {
   final double pad;
   final List thingsto;
   final String thingstoName;
+  final String? id;
   const HomeSuggestions({
     super.key,
     this.pad = 15,
     required this.thingsto,
     required this.thingstoName,
+    this.id
   });
 
   @override
@@ -30,11 +33,13 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final GetProfileController getProfileController = Get.put(GetProfileController());
   late List thingsto;
+  late List<bool> isLoading;
 
   @override
   void initState() {
     super.initState();
     thingsto = widget.thingsto;
+    isLoading = List.filled(thingsto.length, false);
   }
 
   @override
@@ -131,10 +136,15 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                     right: 8,
                     child: GestureDetector(
                       onTap: () async {
+                        if(widget.thingstoName == "HomeSide"){
+                          setState(() {
+                            isLoading[i] = true;
+                          });
+                        }
                         await thingstoController.likeUnlikeUser(
                           thingsto[i]["things_id"].toString(),
                         );
-                        if(widget.thingstoName != "HomeSide"){
+                        if(widget.thingstoName == "Favorite"){
                             setState(() {
                               thingsto.removeAt(i);
                             });
@@ -145,16 +155,32 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                           } else {
                             await thingstoController.getThingsto(checkValue: "No");
                           }
-                        } else {
+                        } else if(widget.thingstoName == "Favorite") {
                           if (getProfileController.isDataLoadedFavorites.value) {
                             getProfileController.getFavoritesThings();
                           } else {
                             await getProfileController.getFavoritesThings();
                           }
+                          final prefs = await SharedPreferences.getInstance();
+                          String? userID = prefs.getString('users_customers_id');
+                          if (getProfileController.isDataLoadedThings.value) {
+                            getProfileController.getThings(usersCustomersId: userID.toString());
+                          } else {
+                            await getProfileController.getThings(usersCustomersId: userID.toString());
+                          }
+                        } else {
+                          if (getProfileController.isDataLoadedThings.value) {
+                            getProfileController.getThings(usersCustomersId: widget.id.toString());
+                          } else {
+                            await getProfileController.getThings(usersCustomersId: widget.id.toString());
+                          }
                         }
+                        setState(() {
+                          isLoading[i] = false;
+                        });
                       },
-                      child: thingstoController.isLoading.value
-                          ? const CircularProgressIndicator()
+                      child: isLoading[i]
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: AppColor.primaryColor, strokeWidth: 2,))
                           : thingstoController.isLiked.value
                           ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
                           : SvgPicture.asset(

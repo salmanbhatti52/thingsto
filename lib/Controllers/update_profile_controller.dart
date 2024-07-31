@@ -183,4 +183,48 @@ class UpdateProfileController extends GetxController {
     }
   }
 
+  /* Update Privacy Settings Function */
+
+  updatePrivacy({
+    String? usersCustomersId,
+    required String profilePrivacy,
+  }) async {
+    try {
+      isLoading.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userId $userID");
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "profile_privacy":  profilePrivacy.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(updateProfilePrivacyApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var updateData = jsonDecode(response.body);
+      debugPrint("updateData $updateData");
+      if (updateData['status'] == 'success') {
+        CustomSnackbar.show(
+          title: 'Success',
+          message: "Privacy Update successfully.",
+        );
+        Get.off(
+              () => const MyBottomNavigationBar(initialIndex: 4,),
+          duration: const Duration(milliseconds: 350),
+          transition: Transition.downToUp,
+        );
+      } else {
+        debugPrint(updateData['message']);
+        CustomSnackbar.show(
+          title: 'Error',
+          message: "Some thing wrong",
+        );
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

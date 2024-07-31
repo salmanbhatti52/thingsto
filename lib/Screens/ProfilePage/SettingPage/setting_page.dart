@@ -10,6 +10,7 @@ import 'package:thingsto/Screens/ProfilePage/edit_profile.dart';
 import 'package:thingsto/Screens/ProfilePage/email_referrals.dart';
 import 'package:thingsto/Screens/ProfilePage/language_change.dart';
 import 'package:thingsto/Screens/ProfilePage/notification_setting.dart';
+import 'package:thingsto/Screens/ProfilePage/privacy_settings.dart';
 import 'package:thingsto/Screens/ProfilePage/share_app.dart';
 import 'package:thingsto/Screens/ProfilePage/subscribe_newsletter.dart';
 import 'package:thingsto/Utills/const.dart';
@@ -71,6 +72,21 @@ class SettingPage extends StatelessWidget {
                         onBack: (){
                           Get.to(
                                 () => NotificationSetting(getProfile: getProfile,),
+                            duration: const Duration(milliseconds: 350),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      SettingContainer(
+                        image: AppAssets.privacy,
+                        text: "Privacy Settings",
+                        text1: "Change privacy settings",
+                        onBack: (){
+                          Get.to(
+                                () => PrivacySetting(getProfile: getProfile,),
                             duration: const Duration(milliseconds: 350),
                             transition: Transition.rightToLeft,
                           );

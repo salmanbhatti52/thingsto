@@ -106,3 +106,89 @@ class HelpDialog extends StatelessWidget {
     );
   }
 }
+
+class PrivacyDialog extends StatelessWidget {
+  const PrivacyDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: Get.width * 0.8,
+            height: Get.height * 0.28,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(),
+                      const MyText(
+                        text: "Monetize",
+                        fontSize: 18,
+                        color: AppColor.whiteColor,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: const Icon(
+                          Icons.clear,
+                          color: AppColor.lightBrown,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const LabelField(
+                  text:
+                  "Profile Privacy",
+                  fontSize: 18,
+                ),
+                SizedBox(
+                  height: Get.height * 0.025,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: LabelField(
+                    text:
+                    "You can not view profile of selected user as it is private. Profile privacy must be public to visit any user's profile.",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    color: AppColor.lightBrown,
+                    align: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height * 0.03,
+                ),
+                LargeButton(
+                  width: Get.width * 0.23,
+                  height : Get.height * 0.045,
+                  text: "Ok",
+                  onTap: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

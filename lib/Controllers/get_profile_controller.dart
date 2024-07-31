@@ -14,6 +14,7 @@ class GetProfileController extends GetxController {
   var isError = false.obs;
   var getProfile = {}.obs;
   var favorites = [].obs;
+  var things = [].obs;
   var categoriesStats = [].obs;
   var getTitles = [].obs;
   var getBadges = [].obs;
@@ -22,6 +23,8 @@ class GetProfileController extends GetxController {
   var isDataLoadedGetProfile = false.obs;
   var cachedFavorites = [].obs;
   var isDataLoadedFavorites = false.obs;
+  var cachedThings = [].obs;
+  var isDataLoadedThings = false.obs;
   var cachedCategoriesStats = [].obs;
   var isDataLoadedCategoriesStats = false.obs;
 
@@ -94,20 +97,49 @@ class GetProfileController extends GetxController {
     }
   }
 
+  /* Get Things Function */
+
+  getThings({required String usersCustomersId}) async {
+    try {
+      cachedThings.clear();
+      isLoading.value = true;
+      Map<String, String> data = {
+        "users_customers_id": usersCustomersId.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(getUserThingsApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var thingsData = jsonDecode(response.body);
+      debugPrint("thingsData $thingsData");
+      if (thingsData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+        things.value = data;
+        cachedThings.value = data;
+        isDataLoadedThings.value = true;
+      } else {
+        debugPrint(thingsData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   /* Get Favorites Things Function */
 
-  getCategoriesStats() async {
+  getCategoriesStats({required String usersCustomersId}) async {
     try {
       isLoading.value = true;
-      userID = (prefs.getString('users_customers_id').toString());
-      debugPrint("userID $userID");
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
       debugPrint('current latitude: $latitude1');
       debugPrint('current longitude: $longitude1');
       Map<String, String> data = {
-        "users_customers_id": userID.toString(),
+        "users_customers_id": usersCustomersId.toString(),
         "current_longitude":  longitude1.toString(),
         "current_lattitude": latitude1.toString(),
       };

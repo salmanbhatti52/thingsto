@@ -24,6 +24,7 @@ class CustomTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final dynamic Function()? suffixTap;
   final Function(String)? onChanged;
+  final dynamic Function()? tap;
   const CustomTextFormField({
     super.key,
     required this.controller,
@@ -39,6 +40,7 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixTap,
     this.prefixTap,
     this.onChanged,
+    this.tap,
     this.showSuffix = true,
     this.readOnly = false,
     this.showPrefix = false,
@@ -64,6 +66,7 @@ class CustomTextFormField extends StatelessWidget {
         keyboardType: keyboardType,
         textInputAction: textInputAction,
         onChanged: onChanged ?? (val) {},
+        onTap: tap,
         cursorColor: AppColor.hintColor,
         controller: controller,
         decoration: InputDecoration(

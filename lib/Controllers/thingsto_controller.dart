@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:thingsto/Resources/app_colors.dart';
-import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
@@ -19,6 +18,7 @@ class ThingstoController extends GetxController {
   var categories = [].obs;
   var subcategories = [].obs;
   var thingsto = [].obs;
+  var members = [].obs;
   var totalLikes = 0.obs;
   var isLiked = false.obs;
   var isValidate = false.obs;
@@ -205,6 +205,39 @@ class ThingstoController extends GetxController {
         // isDataLoadedTopThingsto.value = true;
       } else {
         debugPrint(topThingstoData['status']);
+        isError.value = true;
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* Get Search Members Function */
+
+  searchMembers({
+    required String search,
+    required String name,
+  }) async {
+    try {
+      isLoading.value = true;
+      Map<String, String> data = {
+        "search": search,
+        "name": name,
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(searchMembersApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var searchData = jsonDecode(response.body);
+      debugPrint("searchData $searchData");
+      if (searchData['status'] == 'success') {
+        var data = jsonDecode(response.body)['data'] as List;
+          members.value = data;
+          debugPrint("members $members");
+      } else {
+        debugPrint(searchData['status']);
         isError.value = true;
       }
     } catch (e) {

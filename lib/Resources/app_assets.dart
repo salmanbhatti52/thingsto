@@ -42,6 +42,8 @@ class AppAssets {
 
   static const String notification = 'assets/images/notification.svg';
 
+  static const String privacy = 'assets/images/privacy.svg';
+
   static const String lang = 'assets/images/lang.svg';
 
   static const String password = 'assets/images/password.svg';
