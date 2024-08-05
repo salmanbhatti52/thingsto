@@ -151,26 +151,26 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                         }
                         if(widget.thingstoName == "HomeSide"){
                           if (thingstoController.isDataLoadedThingsto.value) {
-                            thingstoController.getThingsto(checkValue: "No");
+                            await thingstoController.getThingsto(checkValue: "No");
                           } else {
                             await thingstoController.getThingsto(checkValue: "No");
                           }
                         } else if(widget.thingstoName == "Favorite") {
                           if (getProfileController.isDataLoadedFavorites.value) {
-                            getProfileController.getFavoritesThings();
+                            await getProfileController.getFavoritesThings();
                           } else {
                             await getProfileController.getFavoritesThings();
                           }
                           final prefs = await SharedPreferences.getInstance();
                           String? userID = prefs.getString('users_customers_id');
                           if (getProfileController.isDataLoadedThings.value) {
-                            getProfileController.getThings(usersCustomersId: userID.toString());
+                            await getProfileController.getThings(usersCustomersId: userID.toString());
                           } else {
                             await getProfileController.getThings(usersCustomersId: userID.toString());
                           }
                         } else {
                           if (getProfileController.isDataLoadedThings.value) {
-                            getProfileController.getThings(usersCustomersId: widget.id.toString());
+                            await getProfileController.getThings(usersCustomersId: widget.id.toString());
                           } else {
                             await getProfileController.getThings(usersCustomersId: widget.id.toString());
                           }

@@ -368,7 +368,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.01,
                     ),
                     RowText(
-                      text: "Things to",
+                      text: "The things of the moment",
                       seeTrue: true,
                       onTap: () {
                         Get.to(

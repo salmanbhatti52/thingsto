@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -129,7 +130,7 @@ class ThingsValidate extends StatelessWidget {
                           : thingstoController.isLoading1.value ? "Please Wait..." : "Validate this thing",
                       containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                       onTap: () {
-                        !thingstoController.isValidate.value ?  thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto") : null;
+                        !thingstoController.isValidate.value ?  thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto", context) : null;
                       },
                     ),)
                    :  showValidate
@@ -150,7 +151,9 @@ class ThingsValidate extends StatelessWidget {
                           if (thingstoController.imageFile.value != null) {
                             thingstoController.validateThingsWithProof(
                               thingsto["things_id"].toString(), "thingsto",
-                              thingstoController.base64Image.value.toString(),);
+                              thingstoController.base64Image.value.toString(),
+                              context,
+                            );
                           } else {
                             CustomSnackbar.show(title: "",
                                 message: "Add Photo Proof of your thing");

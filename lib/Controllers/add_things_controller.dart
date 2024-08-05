@@ -30,7 +30,7 @@ class AddThingsController extends GetxController {
   var imageFiles = <XFile>[].obs;
   var base64Images = <String>[].obs;
   var pickedFile = ''.obs;
-  RxList<String> tags = <String>[].obs;
+  // RxList<String> tags = <String>[].obs;
   RxList<String> links = <String>[].obs;
   ValueNotifier<List<Map<String, dynamic>>> allCountries = ValueNotifier([]);
   // ValueNotifier<List<Map<String, dynamic>>> allStates = ValueNotifier([]);
@@ -40,17 +40,17 @@ class AddThingsController extends GetxController {
 
   /* Add and Delete Tags  Function */
 
-  void addTag(String tag) {
-    if (tag.isNotEmpty) {
-      tags.add(tag);
-    }
-  }
-
-  void deleteTag(int index) {
-    if (index >= 0 && index < tags.length) {
-      tags.removeAt(index);
-    }
-  }
+  // void addTag(String tag) {
+  //   if (tag.isNotEmpty) {
+  //     tags.add(tag);
+  //   }
+  // }
+  //
+  // void deleteTag(int index) {
+  //   if (index >= 0 && index < tags.length) {
+  //     tags.removeAt(index);
+  //   }
+  // }
 
   /* Add and Delete Links  Function */
 
@@ -428,7 +428,7 @@ class AddThingsController extends GetxController {
       base64Images.clear(),
       base64Image.value = '',
       imageFile.value = null,
-      tags.clear(),
+      // tags.clear(),
       links.clear(),
       pickedFile.value == '',
     };
@@ -526,12 +526,12 @@ class AddThingsController extends GetxController {
         "lattitude": lattitude.toString(),
         "google_place_id": placeId.toString(),
         "countries_id": countryId.toString(),
-        "states_id": stateId.toString(),
+        "states_id": "",
         "cities_id": cityId.toString(),
         "sources": links,
         "confirm_by_moderator": confirmModerator.toString(),
         "description": description.toString(),
-        "tags": tags,
+        "tags": "",
         "images": imagesList,
         "thumbnail_images": singleImagesList,
       };

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -19,7 +18,6 @@ import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
-import 'package:thingsto/Widgets/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ThingsDetails extends StatefulWidget {
@@ -451,7 +449,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                         fontSize: 12,
                         radius: 20,
                       ),
-                    ) : SizedBox();
+                    ) : const SizedBox();
                   }).toList(),
                 ),
               )

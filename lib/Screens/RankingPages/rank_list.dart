@@ -151,14 +151,15 @@ class RankUserList extends StatelessWidget {
                               color: const Color(0xff080C2F),
                               interFont: true,
                             ),
-                            const Row(
+                            Row(
                               children: [
                                 // SvgPicture.asset(AppAssets.star),
                                 // const SizedBox(
                                 //   width: 6,
                                 // ),
                                 LabelField(
-                                  text: "None",
+                                  text: "${rank['active_title']}",
+                                  // text: "None",
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                   interFont: true,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -14,6 +15,7 @@ import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
+import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
@@ -172,10 +174,29 @@ class _FoundedThingsState extends State<FoundedThings>
 
   @override
   Widget build(BuildContext context) {
+    thingstoController.initializeThings(widget.foundedThings["things_validated"]);
+    List thingsValidated = [];
+    bool showValidateButton = false;
+    bool showValidate = false;
+    if (widget.foundedThings["things_validated"] != null) {
+      thingsValidated = widget.foundedThings["things_validated"];
+      if(thingsValidated.isNotEmpty) {
+        String userID = (prefs.getString('users_customers_id').toString());
+        debugPrint("userID $userID");
+        if(thingsValidated.any((validates) => validates['validaters_id'] == int.parse(userID) && validates['status'] == "Validate")) {
+          showValidate = thingsValidated.any((validation) => validation['status'] == 'Validate');
+          debugPrint("showValidate $showValidate");
+        } else {
+          showValidateButton = thingsValidated.any((validation) => validation['status'] == 'Pending');
+          debugPrint("showValidateButton $showValidateButton");
+        }
+      }
+    }
+
     List<dynamic> tags = widget.foundedThings["tags"] ?? [];
     List<dynamic> source = widget.foundedThings["sources"] ?? [];
-    double latitude = double.parse(widget.foundedThings["lattitude"]);
-    double longitude = double.parse(widget.foundedThings["longitude"]);
+    double latitude = widget.foundedThings["lattitude"] != null ? double.parse(widget.foundedThings["lattitude"]) : 0;
+    double longitude = widget.foundedThings["longitude"] !=null ?  double.parse(widget.foundedThings["longitude"]) : 0;
     thingstoController.totalLikes.value = int.parse(widget.foundedThings["total_likes"].toString());
     thingstoController.initializeLikes(widget.foundedThings["likes"]);
     _center = LatLng(latitude, longitude);
@@ -353,7 +374,8 @@ class _FoundedThingsState extends State<FoundedThings>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              widget.foundedThings["location"] != null && widget.foundedThings["location"] != ""
+                  ? Expanded(
                 child: Row(
                   children: [
                     SvgPicture.asset(
@@ -374,7 +396,9 @@ class _FoundedThingsState extends State<FoundedThings>
                     ),
                   ],
                 ),
-              ),
+              )
+                  : const SizedBox(),
+              const SizedBox(width: 10),
               Row(
                 children: [
                   LabelField(
@@ -401,13 +425,15 @@ class _FoundedThingsState extends State<FoundedThings>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
+              tags.isNotEmpty
+                  ? SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: tags.map<Widget>((tag) {
                     final textLength = tag["name"].length;
                     final buttonWidth = textLength * 8.0 + 40;
-                    return Padding(
+                    return tag["name"] != ""
+                        ? Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: LargeButton(
                         text: tag["name"],
@@ -419,28 +445,22 @@ class _FoundedThingsState extends State<FoundedThings>
                         fontSize: 12,
                         radius: 20,
                       ),
-                    );
+                    ) : const SizedBox();
                   }).toList(),
                 ),
-              ),
+              ) : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.022,
               ),
-              LabelField(
+              widget.foundedThings["description"] != null
+                  ? LabelField(
                 align: TextAlign.start,
                 text: widget.foundedThings["description"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
                 maxLIne: 10,
-              ),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
-              const LabelField(
-                text: "Sources & Links",
-                fontSize: 20,
-              ),
+              ) : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.015,
               ),
@@ -452,48 +472,85 @@ class _FoundedThingsState extends State<FoundedThings>
               //   color: const Color(0xff277CE0),
               //   maxLIne: 1,
               // ),
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: source.map<Widget>((sources) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: GestureDetector(
-                        onTap : () async {
-                          final String urlStr = sources["name"];
-                          // if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
-                          final Uri url = Uri.parse(urlStr);
-                          if (!await launchUrl(url)) {
-                            throw Exception('Could not launch $url');
-                          } else {
-                            throw Exception('Invalid URL: $urlStr');
-                            // CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
-                          }
-                        },
-                        child: LabelField(
-                          text: sources["name"],
-                          align: TextAlign.start,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff277CE0),
-                          maxLIne: 1,
+              source.isNotEmpty && source.any((sources) => sources["name"] != "")
+                  ? const LabelField(
+                text: "Sources & Links",
+                fontSize: 20,
+              )
+                  : const SizedBox(),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != "")) SizedBox(height: Get.height * 0.015),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: source.map<Widget>((sources) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final String urlStr = sources["name"];
+                            if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                              final Uri url = Uri.parse(urlStr);
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $url');
+                              }
+                            } else {
+                              throw Exception('Invalid URL: $urlStr');
+                            }
+                          },
+                          child: LabelField(
+                            text: sources["name"],
+                            align: TextAlign.start,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff277CE0),
+                            maxLIne: 1,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
-              const LabelField(
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.vertical,
+              //   child: Column(
+              //     children: source.map<Widget>((sources) {
+              //       final textLength = sources["name"].length;
+              //       final buttonWidth = textLength * 8.0 + 40;
+              //       return Padding(
+              //         padding: const EdgeInsets.only(bottom: 8.0),
+              //         child: LargeButton(
+              //           text: sources["name"],
+              //           textColor: const Color(0xff277CE0),
+              //           maxLIne: 1,
+              //           onTap: () {},
+              //           width: buttonWidth,
+              //           height: 26,
+              //           fontSize: 12,
+              //           radius: 20,
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
+              widget.foundedThings["location"] != null && widget.foundedThings["location"] != ""
+                  ? const LabelField(
                 text: "Location",
                 fontSize: 20,
-              ),
-              SizedBox(
+              )
+                  : const SizedBox(),
+              widget.foundedThings["location"] != null && widget.foundedThings["location"] != ""
+                  ? SizedBox(
                 height: Get.height * 0.015,
-              ),
-              Container(
+              )
+                  : const SizedBox(),
+              widget.foundedThings["location"] != null && widget.foundedThings["location"] != ""
+                  ? Container(
                 height: Get.height * 0.27,
                 margin: const EdgeInsets.only(right: 15),
                 decoration: BoxDecoration(
@@ -520,10 +577,106 @@ class _FoundedThingsState extends State<FoundedThings>
                     },
                   ),
                 ),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: Get.height * 0.022,
               ),
             ],
           ),
         ),
+        Center(
+          child: Column(
+            children: [
+              Obx(() {
+                return thingstoController.moderateCheck.value
+                    ? thingstoController.imageFile.value == null
+                    ? GestureDetector(
+                  onTap: thingstoController.imagePick,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                    child: DottedBorder(
+                      color: AppColor.primaryColor,
+                      strokeWidth: 1,
+                      radius: const Radius.circular(10),
+                      borderType: BorderType.RRect,
+                      child: Container(
+                        width: Get.width,
+                        height: Get.height * 0.2,
+                        color: AppColor.secondaryColor,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(AppAssets.upload),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const LabelField(
+                                text: "Add Photo/Proof of your thing",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.hintColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                    : Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(thingstoController.imageFile.value!.path,),
+                      fit: BoxFit.cover,
+                      width: Get.width,
+                      height: Get.height * 0.2,
+                    ),
+                  ),
+                ):  const SizedBox();
+              }),
+              widget.foundedThings["confirm_by_moderator"] == "No"
+                  ? Obx(() => LargeButton(
+                text: thingstoController.isValidate.value
+                    ?  thingstoController.isLoading1.value ? "Please Wait..." : "Validated thing"
+                    : thingstoController.isLoading1.value ? "Please Wait..." : "Validate this thing",
+                containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
+                onTap: () {
+                  !thingstoController.isValidate.value ?  thingstoController.validateThings(widget.foundedThings["things_id"].toString(), "thingsto", context) : null;
+                },
+              ),)
+                  :  showValidate
+                  ? LargeButton(
+                text: "Validated thing",
+                containerColor: const Color(0xffC4A484),
+                onTap: () {},
+              ) :  showValidateButton
+                  ? LargeButton(
+                text: "Things being moderated",
+                containerColor: const Color(0xffC4A484),
+                onTap: () {},
+              )
+                  : Obx(() => LargeButton(
+                  text: thingstoController.isLoading1.value ? "Please Wait..." : "Validate thing, send to moderation",
+                  onTap: () {
+                    thingstoController.moderateCheck.value = true;
+                    if (thingstoController.imageFile.value != null) {
+                      thingstoController.validateThingsWithProof(
+                        widget.foundedThings["things_id"].toString(), "thingsto",
+                        thingstoController.base64Image.value.toString(),
+                        context,
+                      );
+                    } else {
+                      CustomSnackbar.show(title: "",
+                          message: "Add Photo Proof of your thing");
+                    }
+                  }),),
+            ],
+          ),
+        )
       ],
     );
   }

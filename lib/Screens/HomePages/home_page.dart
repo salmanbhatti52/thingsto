@@ -257,10 +257,10 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
                                 return SizedBox(
-                                  height: Get.height * 1.07,
+                                  height: Get.height * 1.09,
                                   child: ListView.builder(
                                     scrollDirection: Axis.vertical,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    // physics: const NeverScrollableScrollPhysics(),
                                     itemCount: homeController.findingThings.length,
                                     itemBuilder: (BuildContext context, i) {
                                       final findingThings = homeController.findingThings[i];

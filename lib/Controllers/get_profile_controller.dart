@@ -104,25 +104,43 @@ class GetProfileController extends GetxController {
       cachedThings.clear();
       isLoading.value = true;
       Map<String, String> data = {
-        "users_customers_id": usersCustomersId.toString(),
+        "users_customers_id": usersCustomersId,
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(getUserThingsApiUrl),
           headers: {'Accept': 'application/json'}, body: data);
 
-      var thingsData = jsonDecode(response.body);
-      debugPrint("thingsData $thingsData");
-      if (thingsData['status'] == 'success') {
-        var data = jsonDecode(response.body)['data'] as List;
-        things.value = data;
-        cachedThings.value = data;
-        isDataLoadedThings.value = true;
+      if (response.statusCode == 200) {
+        var thingsData = jsonDecode(response.body);
+        debugPrint("thingsData $thingsData");
+
+        if (thingsData is Map && thingsData['status'] == 'success') {
+          var data = thingsData['data'];
+          if (data is List) {
+            List<dynamic> getThings = data.map((item) {
+              if (item is Map) {
+                return item['things'];
+              }
+              return null;
+            }).where((item) => item != null).toList();
+
+            things.value = getThings;
+            cachedThings.value = getThings;
+            debugPrint("cachedThings $cachedThings");
+            isDataLoadedThings.value = true;
+          } else {
+            throw Exception("Invalid data format for 'data'");
+          }
+        } else {
+          debugPrint("Status not success: ${thingsData['status']}");
+          isError.value = true;
+        }
       } else {
-        debugPrint(thingsData['status']);
+        debugPrint("HTTP Error: ${response.statusCode}");
         isError.value = true;
       }
     } catch (e) {
-      debugPrint("Error $e");
+      debugPrint("Errorsss $e");
     } finally {
       isLoading.value = false;
     }

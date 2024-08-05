@@ -133,7 +133,9 @@ class TopThingstoContainer extends StatelessWidget {
                                     align: TextAlign.left,
                                   ),
                                   const SizedBox(height: 3,),
-                                  LargeButton(
+                                  topThings['tags'] != null &&
+                                      topThings['tags'].isNotEmpty
+                                      ? LargeButton(
                                     text: topThings['tags'][0]['name'],
                                     fontWeight: FontWeight.w500,
                                     maxLIne: 1,
@@ -142,7 +144,8 @@ class TopThingstoContainer extends StatelessWidget {
                                     height: 20,
                                     radius: 5,
                                     onTap: () {},
-                                  ),
+                                  )
+                                      : const SizedBox(),
                                 ],
                               ),
                             ),

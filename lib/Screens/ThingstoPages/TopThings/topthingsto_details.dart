@@ -16,7 +16,6 @@ import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
-import 'package:thingsto/Widgets/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TopThingsDetails extends StatefulWidget {
@@ -174,8 +173,8 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
   Widget build(BuildContext context) {
     List<dynamic> tags = widget.topThingsto?["tags"] ?? [];
     List<dynamic> source = widget.topThingsto?["sources"] ?? [];
-    double latitude = double.parse(widget.topThingsto?["lattitude"]);
-    double longitude = double.parse(widget.topThingsto?["longitude"]);
+    double latitude = widget.topThingsto?["lattitude"] != null ? double.parse(widget.topThingsto?["lattitude"]) : 0;
+    double longitude = widget.topThingsto?["longitude"] !=null ?  double.parse(widget.topThingsto?["longitude"]) : 0;
     thingstoController.totalLikes.value = int.parse(widget.topThingsto!["total_likes"].toString());
     thingstoController.initializeLikes(widget.topThingsto?["likes"]);
     _center = LatLng(latitude, longitude);
@@ -314,7 +313,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                 fontSize: 20,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   thingstoController.likeUnlikeUser(
                     widget.topThingsto!["things_id"].toString(),
                   );
@@ -329,15 +328,19 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                         align: TextAlign.start,
                         text: thingstoController.totalLikes.value.toString(),
                         fontWeight: FontWeight.w400,
-                        fontSize: 18,
                         color: AppColor.hintColor,
+                        fontSize: 18,
                         maxLIne: 2,
                       ),
                       const SizedBox(
                         width: 5,
                       ),
                       thingstoController.isLiked.value
-                          ? const Icon(Icons.favorite, size: 25, color: Colors.redAccent)
+                          ? const Icon(
+                        Icons.favorite,
+                        size: 25,
+                        color: Colors.redAccent,
+                      )
                           : SvgPicture.asset(
                         AppAssets.heart,
                         width: 23,
@@ -357,7 +360,8 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              widget.topThingsto?["location"] != null && widget.topThingsto?["location"] != ""
+                  ? Expanded(
                 child: Row(
                   children: [
                     SvgPicture.asset(
@@ -370,7 +374,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                     Expanded(
                       child: LabelField(
                         align: TextAlign.start,
-                        text: widget.topThingsto?["location"],
+                        text: widget.topThingsto?["location"] ?? "",
                         fontWeight: FontWeight.w400,
                         color: AppColor.hintColor,
                         maxLIne: 2,
@@ -378,7 +382,8 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                     ),
                   ],
                 ),
-              ),
+              )
+                  : const SizedBox(),
               const SizedBox(width: 10), // Add spacing between the two rows
               Row(
                 children: [
@@ -402,17 +407,19 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
+          padding: EdgeInsets.only(left: 15.0, right: 15.0, top: tags.isNotEmpty ? 15 : 0,),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
+              tags.isNotEmpty
+                  ? SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: tags.map<Widget>((tag) {
                     final textLength = tag["name"].length;
                     final buttonWidth = textLength * 8.0 + 40;
-                    return Padding(
+                    return tag["name"] != ""
+                        ? Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: LargeButton(
                         text: tag["name"],
@@ -424,81 +431,106 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                         fontSize: 12,
                         radius: 20,
                       ),
-                    );
+                    ) : const SizedBox();
                   }).toList(),
                 ),
-              ),
+              )
+                  : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.022,
               ),
-              LabelField(
+              widget.topThingsto?["description"] != null
+                  ? LabelField(
                 align: TextAlign.start,
                 text: widget.topThingsto?["description"],
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
                 maxLIne: 10,
-              ),
+              )
+                  : const SizedBox(),
               SizedBox(
                 height: Get.height * 0.015,
               ),
-              const LabelField(
+              source.isNotEmpty && source.any((sources) => sources["name"] != "")
+                  ? const LabelField(
                 text: "Sources & Links",
                 fontSize: 20,
-              ),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
-              // LabelField(
-              //   align: TextAlign.start,
-              //   text: widget.topThingsto?["sources_links"],
-              //   fontSize: 14,
-              //   fontWeight: FontWeight.w400,
-              //   color: const Color(0xff277CE0),
-              //   maxLIne: 1,
-              // ),
-              SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: source.map<Widget>((sources) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: GestureDetector(
-                        onTap : () async {
-                          final String urlStr = sources["name"];
-                          // if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
-                          final Uri url = Uri.parse(urlStr);
-                          if (!await launchUrl(url)) {
-                            throw Exception('Could not launch $url');
-                          } else {
-                            throw Exception('Invalid URL: $urlStr');
-                            // CustomSnackbar.show(title: "Error", message: 'Invalid URL: $urlStr');
-                          }
-                        },
-                        child: LabelField(
-                          text: sources["name"],
-                          align: TextAlign.start,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff277CE0),
-                          maxLIne: 1,
+              )
+                  : const SizedBox(),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != "")) SizedBox(height: Get.height * 0.015),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: source.map<Widget>((sources) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final String urlStr = sources["name"];
+                            if (Uri.tryParse(urlStr)?.hasAbsolutePath ?? false) {
+                              final Uri url = Uri.parse(urlStr);
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $url');
+                              }
+                            } else {
+                              throw Exception('Invalid URL: $urlStr');
+                            }
+                          },
+                          child: LabelField(
+                            text: sources["name"],
+                            align: TextAlign.start,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff277CE0),
+                            maxLIne: 1,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
-              const LabelField(
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.vertical,
+              //   child: Column(
+              //     children: source.map<Widget>((sources) {
+              //       final textLength = sources["name"].length;
+              //       final buttonWidth = textLength * 8.0 + 40;
+              //       return Padding(
+              //         padding: const EdgeInsets.only(bottom: 8.0),
+              //         child: LargeButton(
+              //           text: sources["name"],
+              //           textColor: const Color(0xff277CE0),
+              //           maxLIne: 1,
+              //           onTap: () {},
+              //           width: buttonWidth,
+              //           height: 26,
+              //           fontSize: 12,
+              //           radius: 20,
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
+              if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
+              widget.topThingsto?["location"] != null && widget.topThingsto?["location"] != ""
+                  ? const LabelField(
                 text: "Location",
                 fontSize: 20,
-              ),
-              SizedBox(
+              )
+                  : const SizedBox(),
+              widget.topThingsto?["location"] != null && widget.topThingsto?["location"] != ""
+                  ? SizedBox(
                 height: Get.height * 0.015,
-              ),
-              Container(
+              )
+                  : const SizedBox(),
+              widget.topThingsto?["location"] != null && widget.topThingsto?["location"] != ""
+                  ? Container(
                 height: Get.height * 0.27,
                 margin: const EdgeInsets.only(right: 15),
                 decoration: BoxDecoration(
@@ -525,7 +557,8 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                     },
                   ),
                 ),
-              ),
+              )
+                  : const SizedBox(),
             ],
           ),
         ),

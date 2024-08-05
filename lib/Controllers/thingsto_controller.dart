@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
@@ -119,45 +120,59 @@ class ThingstoController extends GetxController {
     try {
       isLoading.value = true;
       hasRunFoundedThings.value = false;
-      await GlobalService.getCurrentPosition();
-      userID = (prefs.getString('users_customers_id').toString());
-      double latitude1 = GlobalService.currentLocation!.latitude;
-      double longitude1 = GlobalService.currentLocation!.longitude;
-      debugPrint("userID $userID");
-      debugPrint('current latitude: $latitude1');
-      debugPrint('current longitude: $longitude1');
-      Map<String, String> data = {
-        "users_customers_id": userID.toString(),
-        "current_longitude":  longitude1.toString(),
-        "current_lattitude": latitude1.toString(),
-      };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(thingsGetApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
+      // await GlobalService.getCurrentPosition();
+      // userID = (prefs.getString('users_customers_id').toString());
+      // double latitude1 = GlobalService.currentLocation!.latitude;
+      // double longitude1 = GlobalService.currentLocation!.longitude;
+      // debugPrint("userID $userID");
+      // debugPrint('current latitude: $latitude1');
+      // debugPrint('current longitude: $longitude1');
+      // Map<String, String> data = {
+      //   "users_customers_id": userID.toString(),
+      //   "current_longitude":  longitude1.toString(),
+      //   "current_lattitude": latitude1.toString(),
+      // };
+      // debugPrint("data $data");
+      final response = await http.get(Uri.parse(thingsGetApiUrl));
+          // headers: {'Accept': 'application/json'}, body: data);
 
       var thingstoData = jsonDecode(response.body);
       debugPrint("thingstoData $thingstoData");
-      if (thingstoData['status'] == 'success') {
-        var data = jsonDecode(response.body)['data'] as List;
-        var filteredData = data.where((thing) {
-          var validaters = thing['things_validated'] as List;
-          return !validaters.any((validator) => validator['validaters_id'].toString() == userID.toString() && validator['status'].toString() == "Validate");
-        }).toList();
-        if(checkValue == "Yes"){
-          thingsto.value = data;
-            findingThings.value = thingsto;
-            debugPrint("findingThings $findingThings");
-            debugPrint("thingsto $thingsto");
-            Get.back();
-  }
-        cachedThingsto.value = filteredData;
-        isDataLoadedThingsto.value = true;
+      if (response.statusCode == 200) {
+        var thingsData = jsonDecode(response.body);
+        debugPrint("thingsData $thingsData");
 
-        // thingsto.value = data;
-        // cachedThingsto.value = data;
-        // isDataLoadedThingsto.value = true;
+        if (thingsData is Map && thingsData['status'] == 'success') {
+          var data = thingsData['data'];
+          if (data is List) {
+            List<dynamic> getThings = data.map((item) {
+              if (item is Map) {
+                return item['things'];
+              }
+              return null;
+            }).where((item) => item != null).toList();
+            var filteredData = getThings.where((thing) {
+              var validaters = thing['things_validated'] as List;
+              return !validaters.any((validator) => validator['validaters_id'].toString() == userID.toString() && validator['status'].toString() == "Validate");
+            }).toList();
+            if(checkValue == "Yes"){
+              thingsto.value = getThings;
+              findingThings.value = thingsto;
+              debugPrint("findingThings $findingThings");
+              debugPrint("thingsto $thingsto");
+              Get.back();
+            }
+            cachedThingsto.value = filteredData;
+            isDataLoadedThingsto.value = true;
+          } else {
+            throw Exception("Invalid data format for 'data'");
+          }
+        } else {
+          debugPrint("Status not success: ${thingsData['status']}");
+          isError.value = true;
+        }
       } else {
-        debugPrint(thingstoData['status']);
+        debugPrint("HTTP Error: ${response.statusCode}");
         isError.value = true;
       }
     } catch (e) {
@@ -174,19 +189,19 @@ class ThingstoController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-      await GlobalService.getCurrentPosition();
-      double latitude1 = GlobalService.currentLocation!.latitude;
-      double longitude1 = GlobalService.currentLocation!.longitude;
-      debugPrint('current latitude: $latitude1');
-      debugPrint('current longitude: $longitude1');
-      Map<String, String> data = {
-        "users_customers_id": usersCustomersId,
-        "current_longitude":  longitude1.toString(),
-        "current_lattitude": latitude1.toString(),
-      };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(thingsTopGetApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
+      // await GlobalService.getCurrentPosition();
+      // double latitude1 = GlobalService.currentLocation!.latitude;
+      // double longitude1 = GlobalService.currentLocation!.longitude;
+      // debugPrint('current latitude: $latitude1');
+      // debugPrint('current longitude: $longitude1');
+      // Map<String, String> data = {
+      //   "users_customers_id": usersCustomersId,
+      //   "current_longitude":  longitude1.toString(),
+      //   "current_lattitude": latitude1.toString(),
+      // };
+      // debugPrint("data $data");
+      final response = await http.get(Uri.parse(thingsTopGetApiUrl));
+          // headers: {'Accept': 'application/json'}, body: data);
 
       var topThingstoData = jsonDecode(response.body);
       debugPrint("TopThingstoData $topThingstoData");
@@ -196,8 +211,8 @@ class ThingstoController extends GetxController {
           var validaters = thing['things_validated'] as List;
           return !validaters.any((validator) => validator['validaters_id'].toString() == usersCustomersId && validator['status'].toString() == "Validate");
         }).toList();
-        topThingsto.value = filteredData;
-        cachedTopThingsto.value = filteredData;
+        topThingsto.value = data;
+        cachedTopThingsto.value = data;
         isDataLoadedTopThingsto.value = true;
 
         // topThingsto.value = data;
@@ -397,7 +412,7 @@ class ThingstoController extends GetxController {
     debugPrint("base64Image ${base64Image.value}");
   }
 
-  Future<void> validateThings(String thingId, String things) async {
+  Future<void> validateThings(String thingId, String things, ctx) async {
     try {
       isLoading1.value = true;
       String userID = (prefs.getString('users_customers_id').toString());
@@ -415,9 +430,10 @@ class ThingstoController extends GetxController {
       if (validateData['status'] == 'success') {
         // totalLikes.value = validateData['data']['total_likes'];
         isValidate.value = !isValidate.value;
-        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto( usersCustomersId: userID.toString());
+        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto(usersCustomersId: userID.toString());
         Get.back();
         CustomSnackbar.show(title: "Success", message: "Things Validated");
+        showSuccessAnimation(ctx);
       } else {
         debugPrint(validateData['status']);
       }
@@ -428,7 +444,7 @@ class ThingstoController extends GetxController {
   }
   }
 
-  Future<void> validateThingsWithProof(String thingId, String things, String proof) async {
+  Future<void> validateThingsWithProof(String thingId, String things, String proof, ctx) async {
     try {
       isLoading1.value = true;
       var headersList = {
@@ -471,9 +487,10 @@ class ThingstoController extends GetxController {
         moderateCheck.value = false;
         // totalLikes.value = validateData['data']['total_likes'];
         // isValidate.value = !isValidate.value;
-        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto( usersCustomersId: userID.toString());
+        things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto(usersCustomersId: userID.toString());
         Get.back();
         CustomSnackbar.show(title: "Success", message: "Things send to Validation");
+        showSuccessAnimation(ctx);
         // Get.off(
         //       () => const MyBottomNavigationBar(initialIndex: 2,),
         //   duration: const Duration(milliseconds: 350),
@@ -493,6 +510,27 @@ class ThingstoController extends GetxController {
     String userID = (prefs.getString('users_customers_id').toString());
     debugPrint("userID $userID");
     isValidate.value = validate.any((validates) => validates['validaters_id'] == int.parse(userID));
+  }
+
+  void showSuccessAnimation(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Lottie.asset(
+            'assets/animation/animation.json', // your success animation file
+            repeat: false,
+            onLoaded: (composition) {
+              Future.delayed(composition.duration, () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              });
+            },
+          ),
+        );
+      },
+    );
   }
 
 }

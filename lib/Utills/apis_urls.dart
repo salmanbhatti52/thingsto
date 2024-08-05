@@ -66,9 +66,13 @@ String countriesApiUrl = '${baseUrl}get_catrgory_countries';
 
 String citiesApiUrl = '${baseUrl}get_catrgory_country_cities';
 
-String thingsGetApiUrl = '${baseUrl}things';
+// String thingsGetApiUrl = '${baseUrl}things';
 
-String thingsTopGetApiUrl = '${baseUrl}things_top';
+String thingsGetApiUrl = '${baseUrl}get_highlighted_things';
+
+// String thingsTopGetApiUrl = '${baseUrl}things_top';
+
+String thingsTopGetApiUrl = '${baseUrl}get_top_things';
 
 String thingLikeUnlikeApiUrl = '${baseUrl}things_like_unlike';
 
@@ -86,4 +90,4 @@ String notificationsUnreadApiUrl = '${baseUrl}notifications_unread';
 
 String searchMembersApiUrl = '${baseUrl}search_things_and_members';
 
-String getUserThingsApiUrl = '${baseUrl}get_user_things';
+String getUserThingsApiUrl = '${baseUrl}get_user_validated_things';
