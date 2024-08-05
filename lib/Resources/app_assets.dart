@@ -93,4 +93,6 @@ class AppAssets {
   static const String dummyImage = 'assets/images/dummyImage.jpg';
 
   static const String dummy2 = 'assets/images/dummy2.png';
+
+  static const String captcha = 'assets/images/captcha.png';
 }

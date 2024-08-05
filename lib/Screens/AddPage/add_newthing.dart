@@ -11,6 +11,7 @@ import 'package:places_service/places_service.dart';
 import 'package:thingsto/Controllers/add_things_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:thingsto/Screens/AddPage/human_verification.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
@@ -63,6 +64,7 @@ class _AddNewThingsState extends State<AddNewThings>
   final linkController = TextEditingController();
   final textController = TextEditingController();
   bool _isChecked = false;
+  bool _isVerfied = false;
   late AnimationController _controller;
   late Animation<double> _animation;
   double latitude = 0;
@@ -119,6 +121,11 @@ class _AddNewThingsState extends State<AddNewThings>
   List<PlacesAutoCompleteResult> _autoCompleteResult = [];
   LatLng? latitudeLongitude = const LatLng(30.183419, 71.427832);
   final TextEditingController _currentAddress1 = TextEditingController();
+
+  humanVerification(bool verification){
+    debugPrint("verification $verification");
+    _isVerfied = verification;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1097,20 +1104,29 @@ class _AddNewThingsState extends State<AddNewThings>
                               text: "Add Thing",
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
-                                  addThingsController.addThings(
-                                    categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                    name: thingNameController.text.toString(),
-                                    earnPoints: pointsController.text.toString(),
-                                    location: locationController.text.toString(),
-                                    longitude: longitude.toString(),
-                                    lattitude: latitude.toString(),
-                                    countryId: selectCountryId.toString(),
-                                    placeId: placesId.toString(),
-                                    stateId: selectStatesId.toString(),
-                                    cityId: selectCityId.toString(),
-                                    confirmModerator: _isChecked ? "Yes" : "No",
-                                    description: descController.text.toString(),
-                                  );
+                                  if(_isVerfied){
+                                    addThingsController.addThings(
+                                      categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                      name: thingNameController.text.toString(),
+                                      earnPoints: pointsController.text.toString(),
+                                      location: locationController.text.toString(),
+                                      longitude: longitude.toString(),
+                                      lattitude: latitude.toString(),
+                                      countryId: selectCountryId.toString(),
+                                      placeId: placesId.toString(),
+                                      stateId: selectStatesId.toString(),
+                                      cityId: selectCityId.toString(),
+                                      confirmModerator: _isChecked ? "Yes" : "No",
+                                      description: descController.text.toString(),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      barrierColor: Colors.grey.withOpacity(0.4),
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
+                                    );
+                                  }
                                 }
                               },
                             ),
