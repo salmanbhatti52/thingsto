@@ -1104,29 +1104,46 @@ class _AddNewThingsState extends State<AddNewThings>
                               text: "Add Thing",
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
-                                  if(_isVerfied){
-                                    addThingsController.addThings(
-                                      categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                      name: thingNameController.text.toString(),
-                                      earnPoints: pointsController.text.toString(),
-                                      location: locationController.text.toString(),
-                                      longitude: longitude.toString(),
-                                      lattitude: latitude.toString(),
-                                      countryId: selectCountryId.toString(),
-                                      placeId: placesId.toString(),
-                                      stateId: selectStatesId.toString(),
-                                      cityId: selectCityId.toString(),
-                                      confirmModerator: _isChecked ? "Yes" : "No",
-                                      description: descController.text.toString(),
-                                    );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      barrierColor: Colors.grey.withOpacity(0.4),
-                                      barrierDismissible: true,
-                                      builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
-                                    );
-                                  }
+                                   if(_isChecked){
+                                     addThingsController.addThings(
+                                       categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                       name: thingNameController.text.toString(),
+                                       earnPoints: pointsController.text.toString(),
+                                       location: locationController.text.toString(),
+                                       longitude: longitude.toString(),
+                                       lattitude: latitude.toString(),
+                                       countryId: selectCountryId.toString(),
+                                       placeId: placesId.toString(),
+                                       stateId: selectStatesId.toString(),
+                                       cityId: selectCityId.toString(),
+                                       confirmModerator: _isChecked ? "Yes" : "No",
+                                       description: descController.text.toString(),
+                                     );
+                                   } else {
+                                     if(_isVerfied) {
+                                       addThingsController.addThings(
+                                         categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                         name: thingNameController.text.toString(),
+                                         earnPoints: pointsController.text.toString(),
+                                         location: locationController.text.toString(),
+                                         longitude: longitude.toString(),
+                                         lattitude: latitude.toString(),
+                                         countryId: selectCountryId.toString(),
+                                         placeId: placesId.toString(),
+                                         stateId: selectStatesId.toString(),
+                                         cityId: selectCityId.toString(),
+                                         confirmModerator: _isChecked ? "Yes" : "No",
+                                         description: descController.text.toString(),
+                                       );
+                                     } else {
+                                       showDialog(
+                                         context: context,
+                                         barrierColor: Colors.grey.withOpacity(0.4),
+                                         barrierDismissible: true,
+                                         builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
+                                       );
+                                     }
+                                   }
                                 }
                               },
                             ),
