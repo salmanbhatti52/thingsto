@@ -92,7 +92,7 @@ class _RankDetailsState extends State<RankDetails> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: widget.getProfile["profile_picture"] != null
+                                    child: widget.getProfile["profile_picture"] != null && widget.getProfile['profile_picture'] != ""
                                         ? Image.network(
                                       '$baseUrlImage${widget.getProfile["profile_picture"]}',
                                       fit: BoxFit.cover,
@@ -226,10 +226,12 @@ class _RankDetailsState extends State<RankDetails> {
                           // ),
                         ],
                       ),
-                    SizedBox(
+                    widget.getProfile["quote"] != null && widget.getProfile["quote"] != ""
+                        ? SizedBox(
                       height: Get.height * 0.02,
-                    ),
-                    Column(
+                    ) : const SizedBox(),
+                    widget.getProfile["quote"] != null && widget.getProfile["quote"] != ""
+                        ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const LabelField(
@@ -249,7 +251,7 @@ class _RankDetailsState extends State<RankDetails> {
                             height: Get.height * 0.02,
                           ),
                         ],
-                      ),
+                      ) : const SizedBox(),
                     SizedBox(
                       height: Get.height * 0.02,
                     ),

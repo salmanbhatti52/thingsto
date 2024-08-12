@@ -230,7 +230,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                 interFont: true,
                                               ),
                                             ),
-                                            Container(
+                                            things['tags'] != null && things['tags'].isNotEmpty ||  things['location'] != null ? Container(
                                               width: Get.width,
                                               height: 55,
                                               padding: const EdgeInsets.only(left: 20),
@@ -254,7 +254,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                     fontSize: 11,
                                                     color: AppColor.primaryColor,
                                                     interFont: true,
-                                                    maxLIne: 1,
+                                                    maxLIne: things['tags'] != null && things['tags'].isNotEmpty ? 1 : 2,
                                                     align: TextAlign.left,
                                                   ),
                                                   const SizedBox(height: 3,),
@@ -272,7 +272,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                   ) : const SizedBox(),
                                                 ],
                                               ),
-                                            ),
+                                            ) : SizedBox(height: Get.height * 0.05,),
                                           ],
                                         ),
                                       ],

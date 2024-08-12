@@ -36,7 +36,7 @@ class RankUserList extends StatelessWidget {
                     showDialog(
                       context: context,
                       barrierColor: Colors.grey.withOpacity(0.4),
-                      barrierDismissible: false,
+                      barrierDismissible: true,
                       builder: (BuildContext context) => const PrivacyDialog(),
                     );
                   } else {
@@ -71,7 +71,7 @@ class RankUserList extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        rank['profile_picture'] != null
+                        rank['profile_picture'] != null && rank['profile_picture'] != ""
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.network(

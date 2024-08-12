@@ -224,7 +224,8 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Row(
+                                    things["location"] != null && things["location"] != ""
+                                    ? Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -246,7 +247,7 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                                           ),
                                         ),
                                       ],
-                                    ),
+                                    ) : const SizedBox(),
                                   ],
                                 ),
                               ),

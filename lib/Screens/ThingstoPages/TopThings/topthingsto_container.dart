@@ -105,7 +105,7 @@ class TopThingstoContainer extends StatelessWidget {
                               interFont: true,
                               maxLIne: 1,
                             ),
-                            Container(
+                            topThings['tags'] != null && topThings['tags'].isNotEmpty ||  topThings['location'] != null ? Container(
                               width: Get.width * 0.37,
                               height: 55,
                               padding: const EdgeInsets.only(left: 20),
@@ -129,7 +129,7 @@ class TopThingstoContainer extends StatelessWidget {
                                     fontSize: 11,
                                     color: AppColor.primaryColor,
                                     interFont: true,
-                                    maxLIne: 1,
+                                    maxLIne: topThings['tags'] != null && topThings['tags'].isNotEmpty ? 1 : 2,
                                     align: TextAlign.left,
                                   ),
                                   const SizedBox(height: 3,),
@@ -148,7 +148,7 @@ class TopThingstoContainer extends StatelessWidget {
                                       : const SizedBox(),
                                 ],
                               ),
-                            ),
+                            ) : SizedBox(height: Get.height * 0.05,),
                           ],
                         ),
                       ],

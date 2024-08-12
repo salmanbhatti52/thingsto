@@ -214,6 +214,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     var size = renderBox.size;
 
+    // Calculate the height based on the number of items
+    double itemHeight = 50.0; // Assuming each item in the list has a height of 50
+    double calculatedHeight = _filteredItemList.length * itemHeight;
+
+    // Set a maximum height for the dropdown
+    double maxHeight = 200.0;
+
+    // Final height is the minimum of calculatedHeight and maxHeight
+    double dropdownHeight = calculatedHeight > maxHeight ? maxHeight : calculatedHeight;
+
+
     return OverlayEntry(
       builder: (context) => Positioned(
         width: size.width,
@@ -235,7 +246,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   ),
                 ),
                 SizedBox(
-                  height: 200, // Adjust as needed
+                  height: dropdownHeight,
                   child: ListView(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,

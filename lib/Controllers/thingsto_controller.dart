@@ -13,6 +13,7 @@ import 'package:thingsto/Widgets/snackbar.dart';
 
 class ThingstoController extends GetxController {
   var isLoading = false.obs;
+  var isLoadingCategory = false.obs;
   var isLoading1 = false.obs;
   var isError = false.obs;
   var isSubLoading = false.obs;
@@ -43,7 +44,7 @@ class ThingstoController extends GetxController {
     required String usersCustomersId,
   }) async {
     try {
-      isLoading.value = true;
+      isLoadingCategory.value = true;
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
@@ -72,7 +73,7 @@ class ThingstoController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading.value = false;
+      isLoadingCategory.value = false;
     }
   }
 

@@ -61,7 +61,7 @@ class _AddPageState extends State<AddPage> {
                   showDialog(
                       context: context,
                       barrierColor: Colors.grey.withOpacity(0.4),
-                      barrierDismissible: false,
+                      barrierDismissible: true,
                       builder: (BuildContext context) => const HelpDialog(),
                   );
                 },

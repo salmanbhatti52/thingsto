@@ -97,6 +97,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
 
   void goBack() {
     thingstoController.hasRunFoundedThings.value = false;
+    thingstoController.findingThings.clear();
     setState(() {
       if (categoryHistory.isNotEmpty) {
         categoryHistory.removeLast();
@@ -325,7 +326,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           )
                         : Obx(
                             () {
-                              if (thingstoController.isLoading.value && thingstoController.cachedCategories.isEmpty){
+                              if (thingstoController.isLoadingCategory.value && thingstoController.cachedCategories.isEmpty){
                                 return Shimmers(
                                   width: Get.width,
                                   height: Get.height * 0.15,
@@ -368,7 +369,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.01,
                     ),
                     RowText(
-                      text: "The things of the moment",
+                      text: selectedCategoryId.isEmpty ? "The things of the moment" : "Things to",
                       seeTrue: true,
                       onTap: () {
                         Get.to(

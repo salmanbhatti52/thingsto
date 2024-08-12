@@ -282,18 +282,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 : activeBadge == "None" ? const SizedBox() : Positioned(
                               left: Get.width * 0.2,
                               bottom: 5,
-                              child: Container(
-                                width: 34,
-                                height: 34,
-                                decoration: BoxDecoration(
-                                  color: AppColor.whiteColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    width: 1,
-                                    color: const Color(0xffFEE400),
-                                  ),
-                                ),
-                                child: Center(
+                              // child: Container(
+                              //   width: 34,
+                              //   height: 34,
+                              //   decoration: BoxDecoration(
+                              //     color: AppColor.whiteColor,
+                              //     shape: BoxShape.circle,
+                              //     border: Border.all(
+                              //       width: 1,
+                              //       color: const Color(0xffFEE400),
+                              //     ),
+                              //   ),
+                              //   child: Center(
                                   child: activeBadge.isNotEmpty
                                       ? Image.network(
                                     '$baseUrlImage$activeBadge',
@@ -329,8 +329,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     width: 34,
                                     height: 34,
                                   ),
-                                ),
-                              ),
+                                // ),
+                              // ),
                             ),
                           ],
                         );

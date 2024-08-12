@@ -22,14 +22,19 @@ class _LanguageChangePageState extends State<LanguageChangePage> with TickerProv
   late Animation<double> _animation;
   String? _selectedLanguage;
   final LanguageController languageController = Get.put(LanguageController());
+
   @override
   void initState() {
     super.initState();
+    _selectedLanguage = widget.getProfile['language']?.toString();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
     _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    if (_selectedLanguage != null) {
+      _animationController.forward();
+    }
   }
 
   void _toggleLanguageCheckbox(String language) {

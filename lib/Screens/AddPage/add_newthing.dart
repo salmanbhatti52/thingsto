@@ -245,20 +245,20 @@ class _AddNewThingsState extends State<AddNewThings>
                                selectSubCategory = value;
                                selectSubCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                debugPrint("selectSubCategory: $selectSubCategory, selectSubCategoryId: $selectSubCategoryId");
-                               itemListForCountries.clear();
-                               addThingsController.getAllCountries(categoryId: selectSubCategoryId.toString());
-                               addThingsController.allCountries.addListener(() {
-                                 setState(() {
-                                   // selectStates = null;
-                                   selectCity = null;
-                                   selectCityId = null;
-                                   itemListForCountries = addThingsController.allCountries.value
-                                       .map((c) => c['name'].toString())
-                                       .toSet() // Ensure uniqueness
-                                       .toList();
-                                   debugPrint("itemListForCountries: $itemListForCountries");
-                                 });
-                               });
+                               // itemListForCountries.clear();
+                               // addThingsController.getAllCountries(categoryId: selectSubCategoryId.toString());
+                               // addThingsController.allCountries.addListener(() {
+                               //   setState(() {
+                               //     // selectStates = null;
+                               //     selectCity = null;
+                               //     selectCityId = null;
+                               //     itemListForCountries = addThingsController.allCountries.value
+                               //         .map((c) => c['name'].toString())
+                               //         .toSet() // Ensure uniqueness
+                               //         .toList();
+                               //     debugPrint("itemListForCountries: $itemListForCountries");
+                               //   });
+                               // });
                                // Filter subcategories based on selected category
                                itemListForThirdCategory = addThingsController.categoriesAll
                                    .where((c) => c['parent_id'] == int.parse(selectSubCategoryId!))
@@ -294,20 +294,20 @@ class _AddNewThingsState extends State<AddNewThings>
                                   selectThirdCategory = value;
                                   selectThirdCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)['categories_id'].toString();
                                   debugPrint("selectThirdCategory: $selectThirdCategory, selectThirdCategoryId: $selectThirdCategoryId");
-                                  itemListForCountries.clear();
-                                  addThingsController.getAllCountries(categoryId: selectThirdCategoryId.toString());
-                                  addThingsController.allCountries.addListener(() {
-                                    setState(() {
-                                      // selectStates = null;
-                                      selectCity = null;
-                                      selectCityId = null;
-                                      itemListForCountries = addThingsController.allCountries.value
-                                          .map((c) => c['name'].toString())
-                                          .toSet() // Ensure uniqueness
-                                          .toList();
-                                      debugPrint("itemListForCountries: $itemListForCountries");
-                                    });
-                                  });
+                                  // itemListForCountries.clear();
+                                  // addThingsController.getAllCountries(categoryId: selectThirdCategoryId.toString());
+                                  // addThingsController.allCountries.addListener(() {
+                                  //   setState(() {
+                                  //     // selectStates = null;
+                                  //     selectCity = null;
+                                  //     selectCityId = null;
+                                  //     itemListForCountries = addThingsController.allCountries.value
+                                  //         .map((c) => c['name'].toString())
+                                  //         .toSet() // Ensure uniqueness
+                                  //         .toList();
+                                  //     debugPrint("itemListForCountries: $itemListForCountries");
+                                  //   });
+                                  // });
                                 });
                               },
                               initialValue: selectThirdCategory,
@@ -1104,23 +1104,19 @@ class _AddNewThingsState extends State<AddNewThings>
                               text: "Add Thing",
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
-                                   if(_isChecked){
-                                     addThingsController.addThings(
-                                       categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                       name: thingNameController.text.toString(),
-                                       earnPoints: pointsController.text.toString(),
-                                       location: locationController.text.toString(),
-                                       longitude: longitude.toString(),
-                                       lattitude: latitude.toString(),
-                                       countryId: selectCountryId.toString(),
-                                       placeId: placesId.toString(),
-                                       stateId: selectStatesId.toString(),
-                                       cityId: selectCityId.toString(),
-                                       confirmModerator: _isChecked ? "Yes" : "No",
-                                       description: descController.text.toString(),
+
+                                   if(selectCategoryId == null ||
+                                       thingNameController.text.isEmpty ||
+                                       pointsController.text.isEmpty ||
+                                       locationController.text.isEmpty ||
+                                       selectCountryId == null ||
+                                       descController.text.isEmpty){
+                                     CustomSnackbar.show(
+                                       title: 'Error',
+                                       message: "All fields are required",
                                      );
                                    } else {
-                                     if(_isVerfied) {
+                                     if(_isChecked){
                                        addThingsController.addThings(
                                          categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
                                          name: thingNameController.text.toString(),
@@ -1136,12 +1132,29 @@ class _AddNewThingsState extends State<AddNewThings>
                                          description: descController.text.toString(),
                                        );
                                      } else {
-                                       showDialog(
-                                         context: context,
-                                         barrierColor: Colors.grey.withOpacity(0.4),
-                                         barrierDismissible: true,
-                                         builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
-                                       );
+                                       if(_isVerfied) {
+                                         addThingsController.addThings(
+                                           categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                           name: thingNameController.text.toString(),
+                                           earnPoints: pointsController.text.toString(),
+                                           location: locationController.text.toString(),
+                                           longitude: longitude.toString(),
+                                           lattitude: latitude.toString(),
+                                           countryId: selectCountryId.toString(),
+                                           placeId: placesId.toString(),
+                                           stateId: selectStatesId.toString(),
+                                           cityId: selectCityId.toString(),
+                                           confirmModerator: _isChecked ? "Yes" : "No",
+                                           description: descController.text.toString(),
+                                         );
+                                       } else {
+                                         showDialog(
+                                           context: context,
+                                           barrierColor: Colors.grey.withOpacity(0.4),
+                                           barrierDismissible: true,
+                                           builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
+                                         );
+                                       }
                                      }
                                    }
                                 }

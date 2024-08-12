@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     mapController = controller;
   }
 
-  getName()  {
+  getName(){
     surName = prefs.getString('surName');
     // systemLattitude = prefs.getString('system_lattitude');
     // systemLongitude = prefs.getString('system_longitude');
@@ -257,13 +257,13 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
                                 return SizedBox(
-                                  height: Get.height * 1.09,
+                                  height: Get.height * 0.5,
                                   child: ListView.builder(
                                     scrollDirection: Axis.vertical,
                                     // physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: homeController.findingThings.length,
+                                    itemCount: 1,
                                     itemBuilder: (BuildContext context, i) {
-                                      final findingThings = homeController.findingThings[i];
+                                      final findingThings = homeController.findingThings[0];
                                       return FoundedThings(
                                         foundedThings: findingThings,
                                       );
