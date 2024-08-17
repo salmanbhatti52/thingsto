@@ -32,6 +32,7 @@ class AddThingsController extends GetxController {
   var pickedFile = ''.obs;
   // RxList<String> tags = <String>[].obs;
   RxList<String> links = <String>[].obs;
+  RxList<String> audio = <String>[].obs;
   ValueNotifier<List<Map<String, dynamic>>> allCountries = ValueNotifier([]);
   // ValueNotifier<List<Map<String, dynamic>>> allStates = ValueNotifier([]);
   ValueNotifier<List<Map<String, dynamic>>> allCities = ValueNotifier([]);
@@ -63,6 +64,20 @@ class AddThingsController extends GetxController {
   void deleteLink(int index) {
     if (index >= 0 && index < links.length) {
       links.removeAt(index);
+    }
+  }
+
+  /* Add and Delete audio  Function */
+
+  void addAudio(String link) {
+    if (link.isNotEmpty) {
+      audio.add(link);
+    }
+  }
+
+  void deleteAudio(int index) {
+    if (index >= 0 && index < audio.length) {
+      audio.removeAt(index);
     }
   }
 
@@ -430,6 +445,7 @@ class AddThingsController extends GetxController {
       imageFile.value = null,
       // tags.clear(),
       links.clear(),
+      audio.clear(),
       pickedFile.value == '',
     };
     debugPrint(" data $data2");
@@ -481,6 +497,7 @@ class AddThingsController extends GetxController {
       }
 
       List<Map<String, String>> imagesList = [];
+      List<Map<String, String>> audioList = [];
 
       String base64Audio = '';
       if(base64Images.isNotEmpty) {
@@ -495,24 +512,35 @@ class AddThingsController extends GetxController {
           });
         }
       } else {
-        if (pickedFile.value.isNotEmpty) {
-          File audioFile = File(pickedFile.value);
-          if (await audioFile.exists()) {
-            List<int> audioBytes = await audioFile.readAsBytes();
-            base64Audio = base64Encode(audioBytes);
-            debugPrint("base64Audio $base64Audio");
-          } else {
-            debugPrint("Error: Audio file does not exist at ${pickedFile.value}");
-          }
+        for (int i = 0; i < audio.length; i++) {
+          String base64Image = audio[i];
+          // String mediaType = 'Image';
+          // String extension = 'jpg';
+          audioList.add({
+            'link': base64Image,
+            // 'media_type': mediaType,
+            // 'extension': extension,
+          });
         }
-        String base64Image = base64Audio;
-        String mediaType = 'Music';
-        String extension = 'mp3';
-        imagesList.add({
-          'base64_data': base64Image,
-          'media_type': mediaType,
-          'extension': extension,
-        });
+        // if (pickedFile.value.isNotEmpty) {
+        //   File audioFile = File(pickedFile.value);
+        //   if (await audioFile.exists()) {
+        //     List<int> audioBytes = await audioFile.readAsBytes();
+        //     base64Audio = base64Encode(audioBytes);
+        //     debugPrint("base64Audio $base64Audio");
+        //   } else {
+        //     debugPrint("Error: Audio file does not exist at ${pickedFile.value}");
+        //   }
+        // }
+        // String base64Image = base64Audio;
+        // String mediaType = 'Music';
+        // String extension = 'mp3';
+        // imagesList.add({
+        //   'base64_data': base64Image,
+        //   'media_type': mediaType,
+        //   'extension': extension,
+        // });
+
       }
 
 
@@ -533,6 +561,7 @@ class AddThingsController extends GetxController {
         "description": description.toString(),
         "tags": "",
         "images": imagesList,
+        "musics": audioList,
         "thumbnail_images": singleImagesList,
       };
 

@@ -19,6 +19,7 @@ import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ThingsDetails extends StatefulWidget {
   final Map<String, dynamic>? thingsto;
@@ -210,8 +211,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
         );
       } else if (item['type'] == 'Music') {
         return Center(
-          child:
-          Column(
+          child: Column(
             children: [
               SizedBox(height: Get.height * 0.05,),
               SvgPicture.asset(

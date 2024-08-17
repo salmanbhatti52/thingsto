@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -62,6 +63,7 @@ class _AddNewThingsState extends State<AddNewThings>
   late TextEditingController locationController;
   final descController = TextEditingController();
   final linkController = TextEditingController();
+  final musicController = TextEditingController();
   final textController = TextEditingController();
   bool _isChecked = false;
   bool _isVerfied = false;
@@ -697,31 +699,31 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      const LabelField(
-                        text: 'Select File',
+                      LabelField(
+                        text: selectCategory != "Music" ? 'Add Image' : "Add Music link",
                       ),
                       const SizedBox(
                         height: 8,
                       ),
-                      CustomDropdown(
-                        itemList: itemListForSelection,
-                        hintText: selectFile != null ? selectFile.toString() : "Choose File",
-                        onChanged: (value) {
-                          setState(() {
-                            selectFile = value;
-                            addThingsController.base64Images.clear();
-                            addThingsController.imageFiles.clear();
-                            addThingsController.pickedFile.value = "";
-                            debugPrint("base64Images: ${addThingsController.base64Images.length}");
-                            debugPrint("pickedFile: ${addThingsController.pickedFile.value}");
-                          });
-                          debugPrint("select File: $selectFile");
-                        },
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      if(selectFile == "Image")
+                      // CustomDropdown(
+                      //   itemList: itemListForSelection,
+                      //   hintText: selectFile != null ? selectFile.toString() : "Choose File",
+                      //   onChanged: (value) {
+                      //     setState(() {
+                      //       selectFile = value;
+                      //       addThingsController.base64Images.clear();
+                      //       addThingsController.imageFiles.clear();
+                      //       addThingsController.pickedFile.value = "";
+                      //       debugPrint("base64Images: ${addThingsController.base64Images.length}");
+                      //       debugPrint("pickedFile: ${addThingsController.pickedFile.value}");
+                      //     });
+                      //     debugPrint("select File: $selectFile");
+                      //   },
+                      // ),
+                      // const SizedBox(
+                      //   height: 18,
+                      // ),
+                      if(selectCategory != "Music")
                         GestureDetector(
                           onTap: addThingsController.pickImages,
                           child: DottedBorder(
@@ -753,37 +755,100 @@ class _AddNewThingsState extends State<AddNewThings>
                             ),
                           ),
                         ),
-                      if(selectFile == "Music")
-                        GestureDetector(
-                          onTap: addThingsController.pickAudioFile,
-                          child: DottedBorder(
-                            color: AppColor.primaryColor,
-                            strokeWidth: 1,
-                            radius: const Radius.circular(10),
-                            borderType: BorderType.RRect,
-                            child: Container(
-                              width: Get.width,
-                              height: Get.height * 0.1,
+                      if(selectCategory == "Music")
+                        // GestureDetector(
+                        //   onTap: addThingsController.pickAudioFile,
+                        //   child: DottedBorder(
+                        //     color: AppColor.primaryColor,
+                        //     strokeWidth: 1,
+                        //     radius: const Radius.circular(10),
+                        //     borderType: BorderType.RRect,
+                        //     child: Container(
+                        //       width: Get.width,
+                        //       height: Get.height * 0.1,
+                        //       color: AppColor.secondaryColor,
+                        //       child: Center(
+                        //         child: Column(
+                        //           mainAxisAlignment: MainAxisAlignment.center,
+                        //           children: [
+                        //             SvgPicture.asset(AppAssets.upload),
+                        //             const SizedBox(
+                        //               height: 10,
+                        //             ),
+                        //             const LabelField(
+                        //               text: "Upload Music",
+                        //               fontSize: 14,
+                        //               fontWeight: FontWeight.w400,
+                        //               color: AppColor.hintColor,
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      Container(
+                            decoration: BoxDecoration(
                               color: AppColor.secondaryColor,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(AppAssets.upload),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const LabelField(
-                                      text: "Upload Music",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColor.hintColor,
-                                    ),
-                                  ],
-                                ),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColor.borderColor,
+                                width: 1.0,
                               ),
                             ),
-                          ),
+                            height: Get.height * 0.055,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    maxLines: null,
+                                    controller: musicController,
+                                    textAlign: TextAlign.left,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: AppColor.hintColor,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    cursorColor: AppColor.hintColor,
+                                    decoration: InputDecoration(
+                                      fillColor: AppColor.secondaryColor,
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      contentPadding: const EdgeInsets.only(
+                                        top: 0.0,
+                                        left: 12,
+                                      ),
+                                      hintText: "Enter music link",
+                                      hintStyle: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: AppColor.hintColor,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: GestureDetector(
+                                    onTap:(){
+                                      String link = musicController.text.trim();
+                                      if (link.isEmpty) {
+                                        return CustomSnackbar.show(title: "Error", message: "Please add music link before adding");
+                                      } else {
+                                        addThingsController.addAudio(link);
+                                        musicController.clear();
+                                      }
+                                    },
+                                    child: const Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      color: AppColor.primaryColor,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
                         ),
                       Obx(() {
                         if (addThingsController.imageFiles.isEmpty) {
@@ -814,32 +879,77 @@ class _AddNewThingsState extends State<AddNewThings>
                         );
                       }),
                       Obx(() {
-                        return addThingsController.pickedFile.value.isEmpty
-                            ? const SizedBox()
-                            : const Column(
+                        return addThingsController.audio.isNotEmpty
+                            ? Column(
                           children: [
                             SizedBox(
-                              height: 18,
-                            ),
-                        Row(
-                          children: [
-                            LabelField(
-                              text: 'Selected file: ',
-                              align: TextAlign.left,
-                            ),
-                            LabelField(
-                              text: 'File Attached',
-                              align: TextAlign.left,
-                              fontSize: 14,
-                              color: AppColor.hintColor,
-                              fontWeight: FontWeight.w400,
+                              height: 150,
+                              child: ListView.builder(
+                                itemCount: addThingsController.audio.length,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 5),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(child: LabelField(maxLIne: 3, align: TextAlign.left, text: addThingsController.audio[index], color: AppColor.whiteColor,)),
+                                          GestureDetector(
+                                            onTap: () {
+                                              addThingsController.deleteAudio(index);
+                                            },
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: AppColor.whiteColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
-                        ),
-                          ],
-                        );
-                      }
-                      ),
+                        )
+                            :  const SizedBox();
+                      }),
+                      // const SizedBox(
+                      //   height: 18,
+                      // ),
+                      // Obx(() {
+                      //   return addThingsController.pickedFile.value.isEmpty
+                      //       ? const SizedBox()
+                      //       : const Column(
+                      //     children: [
+                      //       SizedBox(
+                      //         height: 18,
+                      //       ),
+                      //   Row(
+                      //     children: [
+                      //       LabelField(
+                      //         text: 'Selected file: ',
+                      //         align: TextAlign.left,
+                      //       ),
+                      //       LabelField(
+                      //         text: 'File Attached',
+                      //         align: TextAlign.left,
+                      //         fontSize: 14,
+                      //         color: AppColor.hintColor,
+                      //         fontWeight: FontWeight.w400,
+                      //       ),
+                      //     ],
+                      //   ),
+                      //     ],
+                      //   );
+                      // }
+                      // ),
                       const SizedBox(
                         height: 18,
                       ),

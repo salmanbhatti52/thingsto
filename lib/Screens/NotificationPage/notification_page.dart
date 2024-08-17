@@ -137,7 +137,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Row(
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            senderData['profile_picture'] != null
+                            senderData["profile_picture"] != null && senderData['profile_picture'] != ""
                                 ? ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Image.network(
