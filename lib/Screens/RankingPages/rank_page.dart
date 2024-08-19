@@ -40,13 +40,15 @@ class _RankPageState extends State<RankPage> {
 
   Future<void> fetchCategories() async {
     await addThingsController.getAllCategory();
-    setState(() {
-      itemListForCategory = addThingsController.categoriesP0
-          .map((c) => c['name'].toString())
-          .toSet() // Ensure uniqueness
-          .toList();
-      debugPrint("itemListForCategory: $itemListForCategory");
-    });
+    if (mounted) {
+      setState(() {
+        itemListForCategory = addThingsController.categoriesP0
+            .map((c) => c['name'].toString())
+            .toSet() // Ensure uniqueness
+            .toList();
+        debugPrint("itemListForCategory: $itemListForCategory");
+      });
+    }
   }
 
   @override

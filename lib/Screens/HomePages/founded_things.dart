@@ -20,6 +20,7 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class FoundedThings extends StatefulWidget {
   final Map<String, dynamic> foundedThings;
@@ -48,6 +49,7 @@ class _FoundedThingsState extends State<FoundedThings>
   Duration? duration;
   Duration? position;
   AudioPlayer? audioPlayer;
+  List<WebViewController> controllers = [];
   final ThingstoController thingstoController = Get.put(ThingstoController());
 
   void _onMapCreated(GoogleMapController controller) {
@@ -67,14 +69,57 @@ class _FoundedThingsState extends State<FoundedThings>
       var media = widget.foundedThings['images'];
       if (media is List) {
         for (var item in media) {
-          if (item is Map<String, dynamic> && item.containsKey('name')) {
-            listOfMedia.add({
-              'url': '$baseUrlImage${item['name']}',
-              'type': item['media_type']
-            });
+          String iframeHtml = item['name'];
+
+          // Extract the URL from the src attribute in the iframe
+          final urlRegExp = RegExp(r'src="([^"]+)"');
+          final match = urlRegExp.firstMatch(iframeHtml);
+          String? url = match?.group(1);
+
+          // Check if a valid URL was extracted and it's a Spotify embed link
+          if (url != null && url.contains('https://')) {
+            var controller = WebViewController()
+              ..setJavaScriptMode(JavaScriptMode.unrestricted)
+              ..setNavigationDelegate(
+                NavigationDelegate(
+                  onProgress: (int progress) {
+                    // Update loading bar.
+                  },
+                  onPageStarted: (String url) {},
+                  onPageFinished: (String url) {},
+                  onHttpError: (HttpResponseError error) {},
+                  onWebResourceError: (WebResourceError error) {},
+                  onNavigationRequest: (NavigationRequest request) {
+                    if (request.url.startsWith('https://')) {
+                      _launchURL(request.url);
+                      return NavigationDecision.prevent;
+                    }
+                    return NavigationDecision.navigate;
+                  },
+                ),
+              )
+              ..loadRequest(Uri.parse(url));
+
+            controllers.add(controller);
           }
+
+          listOfMedia.add({
+            'url': '$baseUrlImage${item['name']}',
+            'type': item['media_type']
+          });
         }
       }
+    }
+  }
+
+  Future<void> _launchURL(String urls) async {
+    if (Uri.tryParse(urls)?.hasAbsolutePath ?? false) {
+      final Uri url = Uri.parse(urls);
+      if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+      }
+    } else {
+      throw Exception('Invalid URL: $urls');
     }
   }
 
@@ -104,6 +149,12 @@ class _FoundedThingsState extends State<FoundedThings>
   @override
   void dispose() {
     audioPlayer?.dispose();
+    for (var controller in controllers) {
+      // Example of navigating to a blank page
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.loadRequest(Uri.dataFromString('<html></html>', mimeType: 'text/html'));
+      });
+    }
     super.dispose();
   }
 
@@ -226,41 +277,85 @@ class _FoundedThingsState extends State<FoundedThings>
           },
         );
       } else if (item['type'] == 'Music') {
-        return Center(
-          child:
-          Column(
-            children: [
-              SizedBox(height: Get.height * 0.05,),
-              SvgPicture.asset(
-                AppAssets.music,
-                width: 100,
-                height: 100,
-              ),
-              SizedBox(height: Get.height * 0.05,),
-              LabelField(
-                text: '${position?.inMinutes ?? 0}:${position?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'} / ${duration?.inMinutes ?? 0}:${duration?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'}',
-              ),
-              SizedBox(height: Get.height * 0.02,),
-              GestureDetector(
-                  onTap: () {
-                    _initAudioPlayer(item['url']);
-                    playPause(item['url']);
-                  },
-                  child: isPlayingMap[0] == true
-                      ? const Icon(
-                    Icons.stop_circle_sharp,
-                    size: 55,
+        return Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: widget.foundedThings['thumbnail'] !=null
+                ? Image.network(
+              '$baseUrlImage${widget.foundedThings['thumbnail']}',
+              width: Get.width,
+              height: Get.height * 0.13,
+              fit: BoxFit.fill,
+              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                return Image.network(
+                  AppAssets.dummyPic,
+                  width: Get.width,
+                  height: Get.height * 0.13,
+                  fit: BoxFit.fill,
+                );
+              },
+              loadingBuilder:
+                  (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return Center(
+                  child:
+                  CircularProgressIndicator(
                     color: AppColor.primaryColor,
-                  )
-                      : const Icon(
-                    Icons.play_arrow_rounded,
-                    size: 55,
-                    color: AppColor.primaryColor,
-                  )
-              ),
-            ],
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+            )
+                : Image.network(
+              AppAssets.dummyPic,
+              width: Get.width,
+              height: Get.height * 0.13,
+              fit: BoxFit.fill,
+            ),
           ),
         );
+
+        //   Center(
+        //   child:
+        //   Column(
+        //     children: [
+        //       SizedBox(height: Get.height * 0.05,),
+        //       SvgPicture.asset(
+        //         AppAssets.music,
+        //         width: 100,
+        //         height: 100,
+        //       ),
+        //       SizedBox(height: Get.height * 0.05,),
+        //       LabelField(
+        //         text: '${position?.inMinutes ?? 0}:${position?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'} / ${duration?.inMinutes ?? 0}:${duration?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'}',
+        //       ),
+        //       SizedBox(height: Get.height * 0.02,),
+        //       GestureDetector(
+        //           onTap: () {
+        //             _initAudioPlayer(item['url']);
+        //             playPause(item['url']);
+        //           },
+        //           child: isPlayingMap[0] == true
+        //               ? const Icon(
+        //             Icons.stop_circle_sharp,
+        //             size: 55,
+        //             color: AppColor.primaryColor,
+        //           )
+        //               : const Icon(
+        //             Icons.play_arrow_rounded,
+        //             size: 55,
+        //             color: AppColor.primaryColor,
+        //           )
+        //       ),
+        //     ],
+        //   ),
+        // );
       } else {
         return Container();
       }
@@ -535,6 +630,24 @@ class _FoundedThingsState extends State<FoundedThings>
               //   ),
               // ),
               if (source.isNotEmpty && source.any((sources) => sources["name"] != ""))
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
+              controllers.isNotEmpty
+                  ? const LabelField(
+                text: "Extract:",
+                fontSize: 20,
+              )
+                  : const SizedBox(),
+              if (controllers.isNotEmpty) SizedBox(height: Get.height * 0.015),
+              for (int i = 0; i < controllers.length; i++)
+                SizedBox(
+                  height: 100,
+                  child: WebViewWidget(
+                    controller: controllers[i],
+                  ),
+                ),
+              if (controllers.isNotEmpty)
                 SizedBox(
                   height: Get.height * 0.015,
                 ),
