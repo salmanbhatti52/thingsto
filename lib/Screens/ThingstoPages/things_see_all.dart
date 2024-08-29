@@ -218,7 +218,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                         //   ),
                                         // ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.only(left: 20.0),
@@ -228,9 +228,11 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                 fontSize: 15,
                                                 color: AppColor.blackColor,
                                                 interFont: true,
+                                                maxLIne: 1,
                                               ),
                                             ),
-                                            things['tags'] != null && things['tags'].isNotEmpty ||  things['location'] != null ? Container(
+                                            things['tags'] != null && things['tags'].isNotEmpty ||  things['location'] != null
+                                                ? Container(
                                               width: Get.width,
                                               height: 55,
                                               padding: const EdgeInsets.only(left: 20),
@@ -272,7 +274,8 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                   ) : const SizedBox(),
                                                 ],
                                               ),
-                                            ) : SizedBox(height: Get.height * 0.05,),
+                                            )
+                                                : SizedBox(height: Get.height * 0.05,),
                                           ],
                                         ),
                                       ],

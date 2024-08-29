@@ -486,7 +486,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                   LabelField(
                     align: TextAlign.start,
                     text:  widget.topThingsto!["earn_points"].toString(),
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,
                   ),
@@ -495,7 +495,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                   ),
                   SvgPicture.asset(
                     AppAssets.logo,
-                    width: 15,
+                    width: 20,
                   ),
                 ],
               ),

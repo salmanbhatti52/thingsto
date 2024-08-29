@@ -499,7 +499,7 @@ class _FoundedThingsState extends State<FoundedThings>
                   LabelField(
                     align: TextAlign.start,
                     text:  widget.foundedThings["earn_points"].toString(),
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: FontWeight.w400,
                     color: AppColor.hintColor,
                   ),
@@ -508,7 +508,7 @@ class _FoundedThingsState extends State<FoundedThings>
                   ),
                   SvgPicture.asset(
                     AppAssets.logo,
-                    width: 15,
+                    width: 20,
                   ),
                 ],
               ),
