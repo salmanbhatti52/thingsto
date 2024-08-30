@@ -90,6 +90,9 @@ class _ThingstoPageState extends State<ThingstoPage> {
         thingstoController.getChildCategory(
           categoriesId: categoryId,
         );
+        thingstoController.topThingsByCategory(
+          categoriesId: categoryId.toString(),
+        );
         categoryHistory.add({'name': categoryName, 'id': categoryId});
       });
     }
@@ -496,6 +499,31 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.02,
                     ),
                     Obx(() {
+                      if (thingstoController.isLoading1.value) {
+                        return Shimmers(
+                          width: Get.width,
+                          height: Get.height * 0.255,
+                          width1: Get.width * 0.37,
+                          height1: Get.height * 0.08,
+                          length: 6,
+                        );
+                      }
+                      if (thingstoController.hasRunFoundedThings.value) {
+                        if (thingstoController.topThingsByCat.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'Top Things not found',
+                              ),
+                            ),
+                          );
+                        } else {
+                          return ThingstoContainer(
+                            thingsto: thingstoController.topThingsByCat,
+                          );
+                        }
+                      } else {
                         if (thingstoController.isLoading.value && thingstoController.cachedTopThingsto.isEmpty) {
                           return Shimmers(
                             width: Get.width,
@@ -505,19 +533,6 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             length: 6,
                           );
                         }
-                        // if (thingstoController.isError.value) {
-                        //   return const Center(
-                        //     child: Padding(
-                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                        //       child: LabelField(
-                        //         text: "Things not found",
-                        //         fontSize: 21,
-                        //         color: AppColor.blackColor,
-                        //         interFont: true,
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
                         if (thingstoController.cachedTopThingsto.isEmpty) {
                           return const Center(
                             child: Padding(
@@ -527,12 +542,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               ),
                             ),
                           );
+                        } else {
+                          return ThingstoContainer(
+                            thingsto: thingstoController.cachedTopThingsto,
+                          );
                         }
-                        return TopThingstoContainer(
-                          topThingsto: thingstoController.cachedTopThingsto,
-                        );
-                      },
-                    ),
+                      }
+                    }),
                     SizedBox(
                       height: Get.height * 0.02,
                     ),

@@ -26,6 +26,7 @@ class ThingstoController extends GetxController {
   var isValidate = false.obs;
   var topThingsto = [].obs;
   var findingThings = [].obs;
+  var topThingsByCat = [].obs;
   var hasRunFoundedThings = false.obs;
   Rx<CroppedFile?> imageFile = Rx<CroppedFile?>(null);
   RxString base64Image = RxString("");
@@ -354,6 +355,44 @@ class ThingstoController extends GetxController {
           );
         }
       }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
+    }
+  }
+
+  /* Get Top Things By Category Function */
+
+  topThingsByCategory({
+    required String categoriesId,
+  }) async {
+    try {
+      isLoading1.value = true;
+        userID = (prefs.getString('users_customers_id').toString());
+        debugPrint("userID $userID");
+        Map<String, String> categoryData = {
+          "users_customers_id": userID.toString(),
+          "categories_id": categoriesId.toString(),
+        };
+        debugPrint("categoryData $categoryData");
+        final response = await http.post(Uri.parse(topThingsByCategoryApiUrl),
+            headers: {'Accept': 'application/json'}, body: categoryData);
+
+        var topThingstoData = jsonDecode(response.body);
+        debugPrint("topThingstoData $topThingstoData");
+        hasRunFoundedThings.value = true;
+        if (topThingstoData['status'] == 'success') {
+          var data = jsonDecode(response.body)['data'] as List;
+          topThingsByCat.value = data;
+        } else {
+          debugPrint(topThingstoData['status']);
+          var errorMsg = topThingstoData['message'];
+          // CustomSnackbar.show(
+          //   title: '',
+          //   message: errorMsg.toString(),
+          // );
+        }
     } catch (e) {
       debugPrint("Error $e");
     } finally {

@@ -6,7 +6,8 @@ String baseUrlImage = 'https://thingsto.fr/portal/public/';
 
 String systemSettingsApiUrl = '${baseUrl}system_settings';
 
-String citiesAllApiUrl = '${baseUrl}cities_all';
+String citiesAllApiUrl = '${baseUrl}search_cities';
+// String citiesAllApiUrl = '${baseUrl}cities_all';
 
 String languagesApiUrl = '${baseUrl}languages';
 
@@ -83,6 +84,8 @@ String thingsFavouritesApiUrl = '${baseUrl}things_favourites';
 String thingsSearchApiUrl = '${baseUrl}things_search';
 
 String thingsByCategoryApiUrl = '${baseUrl}things_by_category';
+
+String topThingsByCategoryApiUrl = '${baseUrl}get_top_things_by_category';
 
 String notificationsApiUrl = '${baseUrl}notifications';
 
