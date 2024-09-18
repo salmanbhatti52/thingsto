@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:thingsto/Controllers/add_things_controller.dart';
 import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
-import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 

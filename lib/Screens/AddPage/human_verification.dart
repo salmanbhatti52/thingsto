@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_assets.dart';
@@ -26,7 +25,6 @@ class _HumanVerificationState extends State<HumanVerification> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     buildCaptcha();
   }

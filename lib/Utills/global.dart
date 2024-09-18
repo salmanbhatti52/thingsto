@@ -28,13 +28,13 @@ class GlobalService {
       final data = json.decode(response.body);
       if (data['results'] != null && data['results'].isNotEmpty) {
         final placeId = data['results'][0]['place_id'];
-        print('Place ID: $placeId');
+        debugPrint('Place ID: $placeId');
         return placeId;
       } else {
-        print('No results found.');
+        debugPrint('No results found.');
       }
     } else {
-      print('Failed to fetch data');
+      debugPrint('Failed to fetch data');
     }
     return null;
   }

@@ -9,7 +9,6 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
-import 'package:thingsto/Widgets/snackbar.dart';
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({super.key});

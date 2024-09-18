@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/notifications_controller.dart';
@@ -10,7 +9,6 @@ import 'package:thingsto/Screens/NotificationPage/notification_page.dart';
 import 'package:thingsto/Screens/ThingstoPages/Categories/category_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/Categories/category_details.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_container.dart';
-import 'package:thingsto/Screens/ThingstoPages/TopThings/topthingsto_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/filter_dialog.dart';
 import 'package:thingsto/Screens/ThingstoPages/member_search.dart';
 import 'package:thingsto/Screens/ThingstoPages/things_see_all.dart';

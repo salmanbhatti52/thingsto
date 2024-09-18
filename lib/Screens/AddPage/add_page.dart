@@ -25,7 +25,6 @@ class _AddPageState extends State<AddPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     notificationsController.getNotificationsAlert();
   }

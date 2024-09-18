@@ -32,7 +32,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUser();
   }
