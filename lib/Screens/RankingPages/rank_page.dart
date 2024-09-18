@@ -42,10 +42,11 @@ class _RankPageState extends State<RankPage> {
     await addThingsController.getAllCategory();
     if (mounted) {
       setState(() {
-        itemListForCategory = addThingsController.categoriesP0
-            .map((c) => c['name'].toString())
-            .toSet() // Ensure uniqueness
-            .toList();
+        itemListForCategory = ['All Categories'] +
+            addThingsController.categoriesP0
+                .map((c) => c['name'].toString())
+                .toSet() // Ensure uniqueness
+                .toList();
         debugPrint("itemListForCategory: $itemListForCategory");
       });
     }
@@ -99,11 +100,11 @@ class _RankPageState extends State<RankPage> {
                       if (rankingController.isFiltered.value) {
                         return GestureDetector(
                           onTap: () {
-                            getRankUser();
-                            selectCategory = null;
+                            // getRankUser();
+                            // selectCategory = null;
                           },
                           child: const LabelField(
-                            text: "Clear filter",
+                            text: "",
                             fontSize: 14,
                           ),
                         );
@@ -127,13 +128,20 @@ class _RankPageState extends State<RankPage> {
                     onChanged: (value) {
                       setState(() {
                         selectCategory = value;
-                        selectCategoryId = addThingsController.categoriesAll.firstWhere((c) => c['name'] == value)
-                        ['categories_id'].toString();
+                        if (selectCategory == "All Categories") {
+                          selectCategoryId = "";
+                          rankingController.getRankUser(filter: "all", categoryId: "");
+                        } else {
+                          selectCategoryId = addThingsController.categoriesAll
+                              .firstWhere((c) => c['name'] == value)['categories_id']
+                              .toString();
+                          rankingController.getRankUser(
+                              filter: "category", categoryId: selectCategoryId.toString());
+                        }
                         debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
-                        rankingController.getRankUser(filter: "category", categoryId: selectCategoryId.toString());
                       });
                     },
-                    initialValue: selectCategory,
+                    initialValue: selectCategory ?? null,
                   );
                 }),
                 Obx(() {

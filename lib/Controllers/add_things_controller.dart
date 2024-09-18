@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,7 @@ class AddThingsController extends GetxController {
   var imageFiles = <XFile>[].obs;
   var base64Images = <String>[].obs;
   var pickedFile = ''.obs;
-  // RxList<String> tags = <String>[].obs;
+  RxList<String> tags = <String>[].obs;
   RxList<String> links = <String>[].obs;
   RxList<String> audio = <String>[].obs;
   ValueNotifier<List<Map<String, dynamic>>> allCountries = ValueNotifier([]);
@@ -41,17 +40,17 @@ class AddThingsController extends GetxController {
 
   /* Add and Delete Tags  Function */
 
-  // void addTag(String tag) {
-  //   if (tag.isNotEmpty) {
-  //     tags.add(tag);
-  //   }
-  // }
-  //
-  // void deleteTag(int index) {
-  //   if (index >= 0 && index < tags.length) {
-  //     tags.removeAt(index);
-  //   }
-  // }
+  void addTag(String tag) {
+    if (tag.isNotEmpty) {
+      tags.add(tag);
+    }
+  }
+
+  void deleteTag(int index) {
+    if (index >= 0 && index < tags.length) {
+      tags.removeAt(index);
+    }
+  }
 
   /* Add and Delete Links  Function */
 
@@ -91,6 +90,11 @@ class AddThingsController extends GetxController {
       maxHeight: 1800,
     );
     if (pickedImage != null) {
+      int imageSize = await pickedImage.length();
+      if (imageSize > 10 * 1024 * 1024) { // 10 MB size limit
+        CustomSnackbar.show(title: "Error", message: "Image size exceeds 10 MB.");
+        return;
+      }
       await cropImage(pickedImage.path);
     }
   }
@@ -146,8 +150,20 @@ class AddThingsController extends GetxController {
       if (pickedFiles.length > 5) {
         CustomSnackbar.show(title: "Error", message: "You can only select up to 5 images.");
       } else {
-        imageFiles.assignAll(pickedFiles);
-        _convertImagesToBase64();
+        bool allFilesValid = true;
+        for (var pickedFile in pickedFiles) {
+          int imageSize = await pickedFile.length();
+          if (imageSize > 10 * 1024 * 1024) {
+            allFilesValid = false;
+            CustomSnackbar.show(title: "Error", message: "One or more images exceed 10 MB.");
+            break;
+          }
+        }
+
+        if (allFilesValid) {
+          imageFiles.assignAll(pickedFiles);
+          _convertImagesToBase64();
+        }
       }
     }
   }
@@ -443,7 +459,7 @@ class AddThingsController extends GetxController {
       base64Images.clear(),
       base64Image.value = '',
       imageFile.value = null,
-      // tags.clear(),
+      tags.clear(),
       links.clear(),
       audio.clear(),
       pickedFile.value == '',
@@ -559,7 +575,7 @@ class AddThingsController extends GetxController {
         "sources": links,
         "confirm_by_moderator": confirmModerator.toString(),
         "description": description.toString(),
-        "tags": "",
+        "tags": tags,
         "images": imagesList,
         "musics": audioList,
         "thumbnail_images": singleImagesList,

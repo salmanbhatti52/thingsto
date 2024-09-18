@@ -358,7 +358,7 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                     viewportFraction: 0.999,
                     aspectRatio: 2,
                     animateToClosest: false,
-                    enableInfiniteScroll: false,
+                    enableInfiniteScroll: true,
                     height: double.infinity,
                     onPageChanged: (index, reason) {
                       setState(() {

@@ -72,6 +72,18 @@ class ThingsValidate extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 25.0),
                       child: ThingsDetails(thingsto: thingsto,thingstoName: thingstoName,),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0, bottom: 10),
+                      child: Row(
+                        children: [
+                          LabelField(
+                            align: TextAlign.left,
+                            text: "Posted By : ${thingsto["users_customers"][0]["sur_name"]}",
+                            fontSize: 20,
+                          ),
+                        ],
+                      ),
+                    ),
                     Obx(() {
                       return thingstoController.moderateCheck.value
                           ? thingstoController.imageFile.value == null

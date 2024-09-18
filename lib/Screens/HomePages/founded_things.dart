@@ -378,7 +378,7 @@ class _FoundedThingsState extends State<FoundedThings>
                     viewportFraction: 0.999,
                     aspectRatio: 2,
                     animateToClosest: false,
-                    enableInfiniteScroll: false,
+                    enableInfiniteScroll: true,
                     height: double.infinity,
                     onPageChanged: (index, reason) {
                       setState(() {

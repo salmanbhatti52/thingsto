@@ -1068,97 +1068,96 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-
-                      // const LabelField(
-                      //   text: 'Tags',
-                      // ),
-                      // const SizedBox(
-                      //   height: 8,
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     CustomTextFormField(
-                      //       height: 40,
-                      //       width: Get.width * 0.3,
-                      //       controller: textController,
-                      //       hintText: "Add Tags",
-                      //       keyboardType: TextInputType.text,
-                      //       textInputAction: TextInputAction.next,
-                      //       showSuffix: false,
-                      //     ),
-                      //     Padding(
-                      //       padding: const EdgeInsets.only(left: 5.0),
-                      //       child: IconButton(
-                      //         onPressed: (){
-                      //           if (textController.text.isEmpty) {
-                      //             return CustomSnackbar.show(title: "Error", message: "Please type tag before adding");
-                      //           } else {
-                      //             addThingsController.addTag(textController.text);
-                      //             textController.clear();
-                      //             // setState(() {});
-                      //           }
-                      //         },
-                      //         icon: const Icon(
-                      //           Icons.add_circle_outline_rounded,
-                      //           color: AppColor.primaryColor,
-                      //           size: 35,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // Obx(() {
-                      //   return addThingsController.tags.isNotEmpty
-                      //       ? Column(
-                      //     children: [
-                      //       const SizedBox(
-                      //         height: 10,
-                      //       ),
-                      //       SizedBox(
-                      //         height: 35,
-                      //         child: ListView.builder(
-                      //           itemCount: addThingsController.tags.length,
-                      //           scrollDirection: Axis.horizontal,
-                      //           itemBuilder: (context, index) {
-                      //             return Container(
-                      //               margin: const EdgeInsets.only(right: 5),
-                      //               decoration: BoxDecoration(
-                      //                 color: AppColor.primaryColor,
-                      //                 borderRadius: BorderRadius.circular(5),
-                      //               ),
-                      //               child: Center(
-                      //                 child: Padding(
-                      //                   padding: const EdgeInsets.all(8.0),
-                      //                   child: Row(
-                      //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //                     children: [
-                      //                       LabelField(text: addThingsController.tags[index], color: AppColor.whiteColor,),
-                      //                       const SizedBox(width: 10,),
-                      //                       GestureDetector(
-                      //                         onTap: () {
-                      //                           addThingsController.deleteTag(index);
-                      //                         },
-                      //                         child: const Icon(
-                      //                           Icons.close,
-                      //                           size: 15,
-                      //                           color: AppColor.whiteColor,
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             );
-                      //           },
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   )
-                      //       :  const SizedBox();
-                      // }),
-                      // const SizedBox(
-                      //   height: 18,
-                      // ),
+                      const LabelField(
+                        text: 'Tags',
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          CustomTextFormField(
+                            height: 40,
+                            width: Get.width * 0.3,
+                            controller: textController,
+                            hintText: "Add Tags",
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            showSuffix: false,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: IconButton(
+                              onPressed: (){
+                                if (textController.text.isEmpty) {
+                                  return CustomSnackbar.show(title: "Error", message: "Please type tag before adding");
+                                } else {
+                                  addThingsController.addTag(textController.text);
+                                  textController.clear();
+                                  // setState(() {});
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.add_circle_outline_rounded,
+                                color: AppColor.primaryColor,
+                                size: 35,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Obx(() {
+                        return addThingsController.tags.isNotEmpty
+                            ? Column(
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 35,
+                              child: ListView.builder(
+                                itemCount: addThingsController.tags.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(right: 5),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            LabelField(text: addThingsController.tags[index], color: AppColor.whiteColor,),
+                                            const SizedBox(width: 10,),
+                                            GestureDetector(
+                                              onTap: () {
+                                                addThingsController.deleteTag(index);
+                                              },
+                                              child: const Icon(
+                                                Icons.close,
+                                                size: 15,
+                                                color: AppColor.whiteColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                            :  const SizedBox();
+                      }),
+                      const SizedBox(
+                        height: 18,
+                      ),
                       Row(
                         children: [
                           GestureDetector(
