@@ -239,6 +239,7 @@ class ThingstoController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      members.clear();
       Map<String, String> data = {
         "search": search,
         "name": name,

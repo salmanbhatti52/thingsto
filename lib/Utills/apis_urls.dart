@@ -31,6 +31,8 @@ String changePasswordApiUrl = '${baseUrl}change_password';
 
 String emailReferralInviteApiUrl = '${baseUrl}email_referral_invite';
 
+String getReferralStatsApiUrl = '${baseUrl}get_referral_stats';
+
 String subscribeNewsletterApiUrl = '${baseUrl}subscribe_newsletter';
 
 String getProfileApiUrl = '${baseUrl}customers_profile';

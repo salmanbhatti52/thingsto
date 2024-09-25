@@ -27,7 +27,7 @@ class RankUserList extends StatelessWidget {
         itemCount: rankUser.length,
         itemBuilder: (BuildContext context, i) {
           final rank = rankUser[i];
-          return Stack(
+          return Column(
             children: [
               GestureDetector(
                 onTap: () {
@@ -71,74 +71,148 @@ class RankUserList extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         rank['profile_picture'] != null && rank['profile_picture'] != ""
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  '$baseUrlImage${rank["profile_picture"]}',
-                                  fit: BoxFit.fill,
-                                  width: 84,
-                                  height: 84,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    } else {
-                                      return SizedBox(
-                                        width: 84,
-                                        height: 84,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: AppColor.primaryColor,
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
+                            ? Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                '$baseUrlImage${rank["profile_picture"]}',
+                                fit: BoxFit.fill,
+                                width: 84,
+                                height: 84,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return SizedBox(
+                                      width: 84,
+                                      height: 84,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColor.primaryColor,
+                                          value: loadingProgress
+                                              .expectedTotalBytes !=
+                                              null
+                                              ? loadingProgress
+                                              .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                              : null,
                                         ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  AppAssets.dummyPic,
-                                  fit: BoxFit.fill,
-                                  width: 84,
-                                  height: 84,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    } else {
-                                      return SizedBox(
-                                        width: 84,
-                                        height: 84,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: AppColor.primaryColor,
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: rank["active_badge"] != "None"
+                                  ? Image.network(
+                                '$baseUrlImage${rank["active_badge"]}',
+                                width: 25,
+                                height: 25,
+                                loadingBuilder: (BuildContext context, Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress ==
+                                      null) {
+                                    return child;
+                                  } else {
+                                    return SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: Center(
+                                        child:
+                                        CircularProgressIndicator(
+                                          color: AppColor.primaryColor,
+                                          value: loadingProgress.expectedTotalBytes !=
+                                              null
+                                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
+                                  : Container(),
+                            ),
+                          ],
+                        )
+                            : Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                AppAssets.dummyPic,
+                                fit: BoxFit.fill,
+                                width: 84,
+                                height: 84,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return SizedBox(
+                                      width: 84,
+                                      height: 84,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColor.primaryColor,
+                                          value: loadingProgress
+                                              .expectedTotalBytes !=
+                                              null
+                                              ? loadingProgress
+                                              .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: rank["active_badge"] != "None"
+                                  ? Image.network(
+                                '$baseUrlImage${rank["active_badge"]}',
+                                width: 25,
+                                height: 25,
+                                loadingBuilder: (BuildContext context, Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress ==
+                                      null) {
+                                    return child;
+                                  } else {
+                                    return SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: Center(
+                                        child:
+                                        CircularProgressIndicator(
+                                          color: AppColor.primaryColor,
+                                          value: loadingProgress.expectedTotalBytes !=
+                                              null
+                                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
+                                  : Container(),
+                            ),
+                          ],
+                        ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,

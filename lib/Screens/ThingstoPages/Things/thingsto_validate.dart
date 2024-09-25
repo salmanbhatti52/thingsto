@@ -78,7 +78,7 @@ class ThingsValidate extends StatelessWidget {
                         children: [
                           LabelField(
                             align: TextAlign.left,
-                            text: "Posted By : ${thingsto["users_customers"][0]["sur_name"]}",
+                            text: "Posted By : ${thingsto["users_customers"] is List ? thingsto["users_customers"][0]["sur_name"] : thingsto["users_customers"]["sur_name"]}",
                             fontSize: 20,
                           ),
                         ],

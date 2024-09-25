@@ -11,6 +11,7 @@ import 'package:thingsto/Screens/ThingstoPages/Categories/category_details.dart'
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_container.dart';
 import 'package:thingsto/Screens/ThingstoPages/filter_dialog.dart';
 import 'package:thingsto/Screens/ThingstoPages/member_search.dart';
+import 'package:thingsto/Screens/ThingstoPages/things_search.dart';
 import 'package:thingsto/Screens/ThingstoPages/things_see_all.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
@@ -19,6 +20,7 @@ import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/row_text.dart';
 import 'package:thingsto/Widgets/shimmer_effect.dart';
+import 'package:thingsto/Widgets/snackbar.dart';
 
 class ThingstoPage extends StatefulWidget {
   const ThingstoPage({super.key});
@@ -30,7 +32,7 @@ class ThingstoPage extends StatefulWidget {
 class _ThingstoPageState extends State<ThingstoPage> {
   bool isSelect = false;
   bool isShow = false;
-  bool isThings = true;
+  bool isThings = false;
   bool isMember = false;
   String selectedCategoryName = '';
   String selectedCategoryId = '';
@@ -120,15 +122,16 @@ class _ThingstoPageState extends State<ThingstoPage> {
   }
 
   void filterThings(String query) {
-    final filteredThings = thingstoController.cachedThingsto.where((thing) {
-      final thingName = thing['name'].toString().toLowerCase();
-      final input = query.toLowerCase();
-      return thingName.contains(input);
-    }).toList();
-    thingstoController.hasRunFoundedThings.value = true;
-    setState(() {
-      thingstoController.findingThings.assignAll(filteredThings);
-    });
+    thingstoController.searchMembers(search: "things", name: query);
+    // final filteredThings = thingstoController.members.where((thing) {
+    //   final thingName = thing['name'].toString().toLowerCase();
+    //   final input = query.toLowerCase();
+    //   return thingName.contains(input);
+    // }).toList();
+    // thingstoController.hasRunFoundedThings.value = true;
+    // setState(() {
+    //   thingstoController.findingThings.assignAll(filteredThings);
+    // });
   }
   
   void filterMember(String query) {
@@ -200,7 +203,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     });
                   },
                   onChanged: (value) {
-                    isThings ? filterThings(value) : filterMember(value);
+                    if(isThings) {
+                      filterThings(value);
+                    } else if(isMember){
+                      filterMember(value);
+                    } else {
+                      CustomSnackbar.show(title: "Error", message: "Please select one");
+                    }
                   },
                   prefixColor: AppColor.labelTextColor,
                   suffixTap: () {
@@ -230,6 +239,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           textColor: isThings ? AppColor.whiteColor : AppColor.blackColor,
                           onTap: (){
                             setState(() {
+                              thingstoController.members.clear();
                               isThings = true;
                               isMember = false;
                             });
@@ -245,6 +255,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           textColor: isMember ? AppColor.whiteColor : AppColor.blackColor,
                           onTap: (){
                             setState(() {
+                              thingstoController.members.clear();
                               isThings = false;
                               isMember = true;
                             });
@@ -257,7 +268,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
               ],
             ),
           ),
-          if(isThings)
+          if(!isThings && !isMember)
           Expanded(
             child: RefreshIndicator(
               color: AppColor.primaryColor,
@@ -551,6 +562,72 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.02,
                     ),
                   ],
+                ),
+              ),
+            ),
+          ),
+          if(isThings)
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Obx(() {
+                  if (thingstoController.isLoading.value) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 15,),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                        Shimmers2(
+                          width: Get.width,
+                          height: Get.height * 0.12,
+                        ),
+                      ],
+                    );
+                  }
+                  // if (thingstoController.isError.value) {
+                  //   return const Center(
+                  //     child: Padding(
+                  //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                  //       child: LabelField(
+                  //         text: "Things not found",
+                  //         fontSize: 21,
+                  //         color: AppColor.blackColor,
+                  //         interFont: true,
+                  //       ),
+                  //     ),
+                  //   );
+                  // }
+                  if (thingstoController.members.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: Get.height * 0.3,),
+                        child: const LabelField(
+                          text: 'Things not found',
+                          fontSize: 18,
+                        ),
+                      ),
+                    );
+                  }
+                  return ThingsSearch(
+                    memberList: thingstoController.members,
+                  );
+                },
                 ),
               ),
             ),

@@ -23,6 +23,8 @@ class AuthController extends GetxController {
   var systemLongitudes = ''.obs;
   var systemAndroid = ''.obs;
   var systemIos = ''.obs;
+  var systemRef = ''.obs;
+  var systemRefLim = ''.obs;
   var language = ''.obs;
 
   passwordTap() {
@@ -86,7 +88,19 @@ class AuthController extends GetxController {
               systemIos(setting['description']);
               await prefs.setString('share_app_ios', systemIos.toString());
               shareIos = prefs.getString('share_app_ios') ?? '';
-              debugPrint("shareIos: $shareAndroid");
+              debugPrint("shareIos: $shareIos");
+              break;
+            case 'referral_bonus':
+              systemRef(setting['description']);
+              await prefs.setString('referral_bonus', systemRef.toString());
+              referralBonus = prefs.getString('referral_bonus') ?? '';
+              debugPrint("referralBonus: $referralBonus");
+              break;
+            case 'referral_bonus_limit':
+              systemRefLim(setting['description']);
+              await prefs.setString('referral_bonus_limit', systemRefLim.toString());
+              referralBonusLimit = prefs.getString('referral_bonus_limit') ?? '';
+              debugPrint("referralBonusLimit: $referralBonusLimit");
               break;
             default:
               debugPrint("Unknown setting type: ${setting['type']}");

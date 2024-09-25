@@ -279,7 +279,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
                                 ? const SizedBox()
-                                : activeBadge == "None" ? const SizedBox() : Positioned(
+                                : activeBadge == "None" ? const SizedBox()
+                                : Positioned(
                               left: Get.width * 0.2,
                               bottom: 5,
                               // child: Container(

@@ -5,10 +5,13 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class SettingController extends GetxController {
   var isLoading = false.obs;
+  var isLoading1 = false.obs;
+  RxInt totalReferrals = 0.obs;
   RxBool isOldPasswordVisible = true.obs;
   RxBool isPasswordVisible = true.obs;
   RxBool isConfirmPasswordVisible = true.obs;
@@ -148,6 +151,46 @@ class SettingController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  /* Get Referral Stats Function */
+
+  getReferralStats() async {
+    try {
+      isLoading1.value = true;
+      userID = (prefs.getString('users_customers_id').toString());
+      debugPrint("userID $userID");
+      await GlobalService.getCurrentPosition();
+      double latitude1 = GlobalService.currentLocation!.latitude;
+      double longitude1 = GlobalService.currentLocation!.longitude;
+      debugPrint('current latitude: $latitude1');
+      debugPrint('current longitude: $longitude1');
+      Map<String, String> data = {
+        "users_customers_id": userID.toString(),
+        "current_longitude":  longitude1.toString(),
+        "current_lattitude": latitude1.toString(),
+      };
+      debugPrint("data $data");
+      final response = await http.post(Uri.parse(getReferralStatsApiUrl),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var referralData = jsonDecode(response.body);
+      debugPrint("referralData $referralData");
+      if (referralData['status'] == 'success') {
+        var data = referralData['data'];
+        if (data is Map) {
+          totalReferrals.value = data['total_referrals'];
+          debugPrint("totalReferrals $totalReferrals");
+         }
+      } else {
+        debugPrint(referralData['status']);
+      }
+    } catch (e) {
+      debugPrint("Error $e");
+    } finally {
+      isLoading1.value = false;
+    }
+  }
+
 
   /* Subscribe News Letter  Function */
 

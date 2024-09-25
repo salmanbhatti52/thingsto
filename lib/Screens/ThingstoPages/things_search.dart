@@ -6,9 +6,9 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
-class MemberSearch extends StatelessWidget {
+class ThingsSearch extends StatelessWidget {
   final List memberList;
-  const MemberSearch({super.key, required this.memberList,});
+  const ThingsSearch({super.key, required this.memberList,});
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,11 @@ class MemberSearch extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  members['profile_picture'] != null
+                  members['thumbnail'] != null
                       ? ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      '$baseUrlImage${members["profile_picture"]}',
+                      '$baseUrlImage${members["thumbnail"]}',
                       fit: BoxFit.fill,
                       width: 80,
                       height: 95,
@@ -121,20 +121,25 @@ class MemberSearch extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         LabelField(
-                          text: "${members['sur_name']}",
+                          text: "${members['name']}",
                           fontSize: 16,
                         ),
-                        LabelField(
-                          text: "${members['email']}",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColor.lightBrown,
+                        SizedBox(
+                          width: Get.width * 0.55,
+                          child: LabelField(
+                            text: members['location'] != null ? "${members['location']}" : "No Locations",
+                            fontSize: 14,
+                            maxLIne: 1,
+                            fontWeight: FontWeight.w400,
+                            align: TextAlign.left,
+                            color: AppColor.lightBrown,
+                          ),
                         ),
                         Row(
                           children: [
                             LabelField(
                               align: TextAlign.start,
-                              text: "${members['total_points']}",
+                              text: "${members['total_likes']}",
                               fontSize: 18,
                               fontWeight: FontWeight.w400,
                               color: AppColor.lightBrown,
