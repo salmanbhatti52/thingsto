@@ -431,7 +431,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     //   await getProfileController.getFavoritesThings();
                     // }
                   } else if(widget.thingstoName == "HomeSide") {
-                    thingstoController.getThingsto(checkValue: "No");
+                    // thingstoController.getThingsto(checkValue: "No");
                   } else {
                     thingstoController.getThingsto(checkValue: "No");
                   }

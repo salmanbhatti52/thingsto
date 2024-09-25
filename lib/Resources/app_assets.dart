@@ -8,6 +8,8 @@ class AppAssets {
 
   static const String logoName = 'assets/images/logoThingsto.png';
 
+  static const String downward = 'assets/images/downward.png';
+
   static const String name = 'assets/images/name.svg';
 
   static const String search = 'assets/images/search.svg';

@@ -561,7 +561,7 @@ class ThingstoController extends GetxController {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Lottie.asset(
-            'assets/animation/animation1.json', // your success animation file
+            'assets/animation/animation6.json', // your success animation file
             repeat: false,
             onLoaded: (composition) {
               Future.delayed(composition.duration, () {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -175,6 +176,20 @@ class _AddNewThingsState extends State<AddNewThings>
                     child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Image.asset(
+                            AppAssets.downward,
+                            width: Get.width * 0.05,
+                          ),
+                          const SizedBox(width: 5,),
+                          const LabelField(
+                            text: 'select a category first',
+                            fontSize: 12,
+                          ),
+                        ],
+                      ),
                       const LabelField(
                         text: 'Category',
                       ),
@@ -537,7 +552,7 @@ class _AddNewThingsState extends State<AddNewThings>
                           ),
                           if (_autoCompleteResult.isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(top: 90.0),
+                              padding: const EdgeInsets.only(top: 60.0),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -546,48 +561,93 @@ class _AddNewThingsState extends State<AddNewThings>
                                 child: ListView.builder(
                                   itemCount: _autoCompleteResult.length,
                                   itemBuilder: (context, index) {
-                                    return ListTile(
-                                      visualDensity: const VisualDensity(
-                                          horizontal: 0, vertical: -4),
-                                      title: Text(
-                                        _autoCompleteResult[index].mainText ?? "",
-                                        style: const TextStyle(color: Colors.black),
-                                      ),
-                                      subtitle: Text(
-                                        _autoCompleteResult[index].description ?? "",
-                                        style: const TextStyle(color: Colors.black),
-                                      ),
-                                      onTap: () async {
-                                        var id = _autoCompleteResult[index].placeId;
-                                        final placeDetails = await _placesService.getPlaceDetails(id!);
-                                        final placeId = await GlobalService.fetchPlaceId(placeDetails.lat!, placeDetails.lng!);
-                                        if (placeId != null) {
-                                          debugPrint('Place ID: $placeId');
-                                        } else {
-                                          debugPrint('Failed to fetch Place ID');
-                                        }
-                                        setState(() {
-                                          latitudeLongitude = LatLng(latitude, longitude);
-                                          locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText ?? ""} ";
-                                          _autoCompleteResult.clear();
-                                        });
-                                        latitude = placeDetails.lat!;
-                                        longitude = placeDetails.lng!;
-                                        country = placeDetails.city.toString();
-                                        state = placeDetails.state.toString();
-                                        city = placeDetails.city.toString();
-                                        postCode = placeDetails.zip.toString();
-                                        placesId = placeId.toString();
-                                        debugPrint('current address: ${locationController.text}');
-                                        debugPrint('current city: $city');
-                                        debugPrint('current state: $state');
-                                        debugPrint('current country: $country');
-                                        debugPrint('current postal code: $postCode');
-                                        debugPrint('current latitude: $latitude');
-                                        debugPrint('current longitude: $longitude');
-                                        debugPrint('current placesId: $placesId');
-                                      },
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Row(
+                                            children: [
+                                              SvgPicture.asset(
+                                                AppAssets.location,
+                                                color: AppColor.lightBrown,
+                                              ),
+                                              const SizedBox(width: 5,),
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    var id = _autoCompleteResult[index].placeId;
+                                                    final placeDetails = await _placesService.getPlaceDetails(id!);
+                                                    final placeId = await GlobalService.fetchPlaceId(placeDetails.lat!, placeDetails.lng!);
+                                                    if (placeId != null) {
+                                                      debugPrint('Place ID: $placeId');
+                                                    } else {
+                                                      debugPrint('Failed to fetch Place ID');
+                                                    }
+                                                    setState(() {
+                                                      latitudeLongitude = LatLng(latitude, longitude);
+                                                      locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText ?? ""} ";
+                                                      _autoCompleteResult.clear();
+                                                    });
+                                                    latitude = placeDetails.lat!;
+                                                    longitude = placeDetails.lng!;
+                                                    country = placeDetails.city.toString();
+                                                    state = placeDetails.state.toString();
+                                                    city = placeDetails.city.toString();
+                                                    postCode = placeDetails.zip.toString();
+                                                    placesId = placeId.toString();
+                                                  },
+                                                  child: LabelField(
+                                                    text: _autoCompleteResult[index].description ?? "",
+                                                    align: TextAlign.left,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ),
+                                        const Divider(
+                                          color: Colors.black,
+                                          thickness: 0.5,
+                                        ),
+                                      ],
                                     );
+                                    //   ListTile(
+                                    //   visualDensity: const VisualDensity(
+                                    //       horizontal: 0, vertical: -4),
+                                    //   title: Text(
+                                    //     _autoCompleteResult[index].mainText ?? "",
+                                    //     style: const TextStyle(color: Colors.black),
+                                    //   ),
+                                    //   subtitle: Text(
+                                    //     _autoCompleteResult[index].description ?? "",
+                                    //     style: const TextStyle(color: Colors.black),
+                                    //   ),
+                                    //   onTap: () async {
+                                    //     var id = _autoCompleteResult[index].placeId;
+                                    //     final placeDetails = await _placesService.getPlaceDetails(id!);
+                                    //     final placeId = await GlobalService.fetchPlaceId(placeDetails.lat!, placeDetails.lng!);
+                                    //     if (placeId != null) {
+                                    //       debugPrint('Place ID: $placeId');
+                                    //     } else {
+                                    //       debugPrint('Failed to fetch Place ID');
+                                    //     }
+                                    //     setState(() {
+                                    //       latitudeLongitude = LatLng(latitude, longitude);
+                                    //       locationController.text = "${_autoCompleteResult[index].mainText!} ${_autoCompleteResult[index].secondaryText ?? ""} ";
+                                    //       _autoCompleteResult.clear();
+                                    //     });
+                                    //     latitude = placeDetails.lat!;
+                                    //     longitude = placeDetails.lng!;
+                                    //     country = placeDetails.city.toString();
+                                    //     state = placeDetails.state.toString();
+                                    //     city = placeDetails.city.toString();
+                                    //     postCode = placeDetails.zip.toString();
+                                    //     placesId = placeId.toString();
+                                    //   },
+                                    // );
                                   },
                                 ),
                               ),
