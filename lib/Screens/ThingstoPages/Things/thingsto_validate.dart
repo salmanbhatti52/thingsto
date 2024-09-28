@@ -44,6 +44,11 @@ class ThingsValidate extends StatelessWidget {
       onWillPop: (){
         thingstoController.moderateCheck.value = false;
         thingstoController.imageFile.value = null;
+        thingstoController.isLoadingLiked.value
+            ? WidgetsBinding.instance.addPostFrameCallback((_) {
+          thingstoController.getThingsto(checkValue: "No");
+        }) : null;
+        thingstoController.isLoadingLiked.value = false;
         debugPrint("${thingstoController.moderateCheck.value}");
         debugPrint("${thingstoController.imageFile.value}");
         return Future.value(true);
@@ -59,6 +64,11 @@ class ThingsValidate extends StatelessWidget {
                 Get.back();
                 thingstoController.moderateCheck.value = false;
                 thingstoController.imageFile.value = null;
+                thingstoController.isLoadingLiked.value
+                    ? WidgetsBinding.instance.addPostFrameCallback((_) {
+                  thingstoController.getThingsto(checkValue: "No");
+                })  : null;
+                thingstoController.isLoadingLiked.value = false;
                 debugPrint("${thingstoController.moderateCheck.value}");
                 debugPrint("${thingstoController.imageFile.value}");
               },

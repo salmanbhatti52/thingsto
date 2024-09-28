@@ -126,7 +126,8 @@ class _FindThingsState extends State<FindThings> {
               ),
           ),
         ),
-        LargeButton(
+        selectCityId != null
+        ? LargeButton(
           text: isFind ? "FIND an other one" : "FIND IT",
           onTap: () {
             if (formKey.currentState!.validate()) {
@@ -138,9 +139,9 @@ class _FindThingsState extends State<FindThings> {
                   widget.onFind!();
                   widget.onFindWithData!(selectCityId!);
                   if (isFind) {
-                    controller.clear();
-                    selectCityId = null;
-                    selectCity = null;
+                    // controller.clear();
+                    // selectCityId = null;
+                    // selectCity = null;
                   }
                 }
               } else {
@@ -150,7 +151,8 @@ class _FindThingsState extends State<FindThings> {
           },
           width: isFind ? Get.width * 0.49 : Get.width * 0.27,
           height: Get.height * 0.05,
-        ),
+        )
+        : const SizedBox(),
       ],
     );
   }

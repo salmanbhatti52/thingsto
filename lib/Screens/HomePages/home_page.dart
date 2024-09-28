@@ -259,7 +259,6 @@ class _HomePageState extends State<HomePage> {
                                   height: Get.height * 0.5,
                                   child: ListView.builder(
                                     scrollDirection: Axis.vertical,
-                                    // physics: const NeverScrollableScrollPhysics(),
                                     itemCount: 1,
                                     itemBuilder: (BuildContext context, i) {
                                       final findingThings = homeController.findingThings[0];

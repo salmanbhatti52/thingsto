@@ -419,6 +419,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
               ),
               GestureDetector(
                 onTap: () async {
+                  thingstoController.isLoadingLiked.value = true;
                   thingstoController.likeUnlikeUser(
                     widget.thingsto!["things_id"].toString(),
                   );

@@ -181,7 +181,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         children: [
                           Image.asset(
                             AppAssets.downward,
-                            width: Get.width * 0.05,
+                            width: Get.width * 0.035,
                           ),
                           const SizedBox(width: 5,),
                           const LabelField(
@@ -757,8 +757,8 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
-                      LabelField(
-                        text: selectCategory != "Music" ? 'Add Image' : "Add Music link",
+                      const LabelField(
+                        text: 'Add Image',
                       ),
                       const SizedBox(
                         height: 8,
@@ -781,7 +781,7 @@ class _AddNewThingsState extends State<AddNewThings>
                       // const SizedBox(
                       //   height: 18,
                       // ),
-                      if(selectCategory != "Music")
+                      // if(selectCategory != "Music")
                         GestureDetector(
                           onTap: addThingsController.pickImages,
                           child: DottedBorder(
@@ -813,6 +813,13 @@ class _AddNewThingsState extends State<AddNewThings>
                             ),
                           ),
                         ),
+                      if(selectCategory == "Music")
+                      const Padding(
+                        padding: EdgeInsets.only(top: 18, bottom: 10),
+                        child: LabelField(
+                          text: "Add Music link",
+                        ),
+                      ),
                       if(selectCategory == "Music")
                         // GestureDetector(
                         //   onTap: addThingsController.pickAudioFile,

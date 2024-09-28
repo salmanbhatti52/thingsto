@@ -13,6 +13,7 @@ import 'package:thingsto/Widgets/snackbar.dart';
 
 class ThingstoController extends GetxController {
   var isLoading = false.obs;
+  var isLoadingLiked = false.obs;
   var isLoadingCategory = false.obs;
   var isLoading1 = false.obs;
   var isError = false.obs;

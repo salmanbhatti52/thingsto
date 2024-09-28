@@ -109,7 +109,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   physics: const ScrollPhysics(),
                   itemCount: notificationsController.cachedNotifications.length,
                   itemBuilder: (BuildContext context, i) {
-                    final notifications = notificationsController.cachedNotifications[i];
+                    int reversedIndex = notificationsController.cachedNotifications.length - 1 - i;
+                    final notifications = notificationsController.cachedNotifications[reversedIndex];
                     Map<String, dynamic> senderData = notifications["sender_data"];
                     final dateAdded = notifications['date_added'];
                     final formattedDate = _formatDate(dateAdded);
@@ -229,6 +230,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         text: notifications["message"],
                                         fontWeight: FontWeight.w500,
                                         align: TextAlign.left,
+                                        maxLIne: 2,
                                       ),
                                       LabelField(
                                         text: formattedDate,
