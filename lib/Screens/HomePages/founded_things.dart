@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -44,16 +45,40 @@ class _FoundedThingsState extends State<FoundedThings>
   List<dynamic> listOfMedia = [];
   late GoogleMapController mapController;
   late LatLng _center;
-  late LatLng _currentLocation;
+  // late LatLng _currentLocation;
   Map<int, bool> isPlayingMap = {};
   Duration? duration;
   Duration? position;
   AudioPlayer? audioPlayer;
   List<WebViewController> controllers = [];
   final ThingstoController thingstoController = Get.put(ThingstoController());
+  final HomeController homeController = Get.put(HomeController());
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  Set<Marker> _createMarkers() {
+    Set<Marker> markers = {};
+
+    for (var thing in homeController.findingThings) {
+      if (thing['lattitude'] != null && thing['longitude'] != null) {
+        double latitude = double.parse(thing['lattitude']);
+        double longitude = double.parse(thing['longitude']);
+
+        markers.add(
+          Marker(
+            markerId: MarkerId(thing['things_id'].toString()), // Unique marker ID
+            position: LatLng(latitude, longitude),
+            infoWindow: InfoWindow(
+              title: thing['name'], // You can display thing's name or other info
+              snippet: thing['location'], // Optional location or other details
+            ),
+          ),
+        );
+      }
+    }
+    return markers;
   }
 
   @override
@@ -246,12 +271,12 @@ class _FoundedThingsState extends State<FoundedThings>
 
     List<dynamic> tags = widget.foundedThings["tags"] ?? [];
     List<dynamic> source = widget.foundedThings["sources"] ?? [];
-    double latitude = widget.foundedThings["lattitude"] != null ? double.parse(widget.foundedThings["lattitude"]) : 0;
-    double longitude = widget.foundedThings["longitude"] !=null ?  double.parse(widget.foundedThings["longitude"]) : 0;
+    double initialLatitude = widget.foundedThings.isNotEmpty && widget.foundedThings["lattitude"] != null ? double.parse(widget.foundedThings["lattitude"]) : 0;
+    double initialLongitude = widget.foundedThings.isNotEmpty && widget.foundedThings["longitude"] != null ? double.parse(widget.foundedThings["longitude"]) : 0;
     thingstoController.totalLikes.value = int.parse(widget.foundedThings["total_likes"].toString());
     thingstoController.initializeLikes(widget.foundedThings["likes"]);
-    _center = LatLng(latitude, longitude);
-    _currentLocation = LatLng(latitude, longitude);
+    _center = LatLng(initialLatitude, initialLongitude);
+    // _currentLocation = LatLng(latitude, longitude);
     List<Widget> mediaSliders = listOfMedia.map((item) {
       if (item['type'] == 'Image') {
         return Image.network(
@@ -682,12 +707,7 @@ class _FoundedThingsState extends State<FoundedThings>
                       target: _center,
                       zoom: 11.0,
                     ),
-                    markers: {
-                      Marker(
-                        markerId: const MarkerId("Location"),
-                        position: _currentLocation,
-                      ),
-                    },
+                    markers: _createMarkers(),
                   ),
                 ),
               )

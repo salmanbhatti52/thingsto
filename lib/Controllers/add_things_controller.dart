@@ -92,7 +92,7 @@ class AddThingsController extends GetxController {
     if (pickedImage != null) {
       int imageSize = await pickedImage.length();
       if (imageSize > 10 * 1024 * 1024) { // 10 MB size limit
-        CustomSnackbar.show(title: "Error", message: "Image size exceeds 10 MB.");
+        CustomSnackbar.show(title: "Error", message: "Maximum size of image should be 10mb.");
         return;
       }
       await cropImage(pickedImage.path);

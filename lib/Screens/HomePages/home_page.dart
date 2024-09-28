@@ -96,19 +96,24 @@ class _HomePageState extends State<HomePage> {
     if (selectCategory!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          isFind = !isFind;
+          isFind = true;
         });
-        if (isFind) {
-          homeController.foundedThings(
-            categoriesId: selectCategory.toString(),
-            // name: thingName.toString(),
-          );
-        }
+        homeController.foundedThings(categoriesId: selectCategory!);
+        // if (isFind) {
+        //   homeController.foundedThings(
+        //     categoriesId: selectCategory.toString(),
+        //     // name: thingName.toString(),
+        //   );
+        // }
       });
     } else {
       CustomSnackbar.show(title: "Error", message: "Please select all fields");
     }
     debugPrint("Thing Name: $thingName, isFind: $isFind, Category ID: $selectCategory");
+  }
+
+  void showNextThing() {
+    homeController.showNextThing();
   }
 
   @override
@@ -255,18 +260,43 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   );
                                 }
-                                return SizedBox(
-                                  height: Get.height * 0.5,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: 1,
-                                    itemBuilder: (BuildContext context, i) {
-                                      final findingThings = homeController.findingThings[0];
-                                      return FoundedThings(
-                                        foundedThings: findingThings,
-                                      );
-                                    },
-                                  ),
+                                // return SizedBox(
+                                //   height: Get.height * 0.5,
+                                //   child: ListView.builder(
+                                //     scrollDirection: Axis.vertical,
+                                //     itemCount: 1,
+                                //     itemBuilder: (BuildContext context, i) {
+                                //       final findingThings = homeController.findingThings[0];
+                                //       return FoundedThings(
+                                //         foundedThings: findingThings,
+                                //       );
+                                //     },
+                                //   ),
+                                // );
+                                final findingThing = homeController.findingThings[homeController.currentItemIndex.value];
+                                return Column(
+                                  children: [
+                                    !homeController.isLastItemShown.value
+                                        ? FoundedThings(
+                                      foundedThings: findingThing,
+                                    ) : const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 28.0),
+                                        child: LabelField(
+                                          text: "No more things found",
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    if (!homeController.isLastItemShown.value)
+                                    LargeButton(
+                                      text: "Show More Thing",
+                                      onTap: showNextThing,
+                                      width: Get.width * 0.46,
+                                      height: Get.height * 0.05,
+                                    ),
+                                  ],
                                 );
                               },
                             ),

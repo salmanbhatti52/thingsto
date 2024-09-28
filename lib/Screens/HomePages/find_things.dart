@@ -98,6 +98,8 @@ class _FindThingsState extends State<FindThings> {
                                   return GestureDetector(
                                       onTap: (){
                                         setState(() {
+                                          homeController.isLastItemShown.value = false;
+                                          homeController.findingThings.clear();
                                           selectCity = city['name'];
                                           selectCityId = city['cities_id'].toString();
                                           controller.text = city['name'];
@@ -126,9 +128,10 @@ class _FindThingsState extends State<FindThings> {
               ),
           ),
         ),
-        selectCityId != null
-        ? LargeButton(
-          text: isFind ? "FIND an other one" : "FIND IT",
+        if (!homeController.isLastItemShown.value)
+          selectCityId != null
+            ? LargeButton(
+          text: "FIND IT",
           onTap: () {
             if (formKey.currentState!.validate()) {
               if (selectCityId != null && selectCityId!.isNotEmpty) {
@@ -149,10 +152,10 @@ class _FindThingsState extends State<FindThings> {
               }
             }
           },
-          width: isFind ? Get.width * 0.49 : Get.width * 0.27,
+          width: Get.width * 0.27,
           height: Get.height * 0.05,
         )
-        : const SizedBox(),
+            : const SizedBox(),
       ],
     );
   }

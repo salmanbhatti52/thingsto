@@ -10,7 +10,9 @@ import 'package:thingsto/Utills/global.dart';
 class HomeController extends GetxController {
   var isLoading = false.obs;
   var errorMsg = "".obs;
-  var findingThings = [].obs;
+  var findingThings = <dynamic>[].obs;
+  var currentItemIndex = 0.obs;
+  var isLastItemShown = false.obs;
   var allCities = <Map<String, dynamic>>[].obs;
   var filteredCities = <Map<String, dynamic>>[].obs;
 
@@ -63,13 +65,15 @@ class HomeController extends GetxController {
 
   /* Get Founded Things Function */
 
-  foundedThings({
+  Future<void> foundedThings({
     required String categoriesId,
     // required String name,
 }) async {
     try {
       isLoading.value = true;
       findingThings.clear();
+      resetIndex();
+      isLastItemShown.value = false;
       await GlobalService.getCurrentPosition();
       userID = (prefs.getString('users_customers_id').toString());
       double latitude1 = GlobalService.currentLocation!.latitude;
@@ -100,6 +104,21 @@ class HomeController extends GetxController {
       debugPrint("Error $e");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // Resets the index for a new search
+  void resetIndex() {
+    currentItemIndex.value = 0;
+  }
+
+  // Function to move to the next item in the list
+  void showNextThing() {
+    if (currentItemIndex.value < findingThings.length - 1) {
+      currentItemIndex.value++;
+    } else {
+      // currentItemIndex.value = 0; // Optionally reset to start again
+      isLastItemShown.value = true;
     }
   }
 
