@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -73,7 +74,7 @@ class CustomTextFormField extends StatelessWidget {
           fillColor: AppColor.secondaryColor,
           filled: true,
           contentPadding:  EdgeInsets.symmetric(horizontal: Get.width * 0.05, vertical: 10),
-          hintText: hintText,
+          hintText: easy.tr(hintText),
           hintStyle: readOnly ? GoogleFonts.poppins(
             fontSize: 16,
             color: AppColor.lightBrown,

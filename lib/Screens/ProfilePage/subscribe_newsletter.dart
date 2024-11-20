@@ -23,7 +23,7 @@ class SubscribeNewsLetter extends StatelessWidget {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Subscribe",
+            title: "subscribe",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -45,7 +45,7 @@ class SubscribeNewsLetter extends StatelessWidget {
                         height: Get.height * 0.07,
                       ),
                       const LabelField(
-                        text: "Subscribe To Our Newsletter",
+                        text: "subscribe_to_newsletter",
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
                         maxLIne: 4,
@@ -54,14 +54,14 @@ class SubscribeNewsLetter extends StatelessWidget {
                         height: Get.height * 0.03,
                       ),
                       const LabelField(
-                        text: 'Subscribe Email',
+                        text: 'subscribe_email',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: emailController,
-                        hintText: "Enter Your Email",
+                        hintText: "enter_your_email",
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.done,
                         showSuffix: false,
@@ -72,11 +72,11 @@ class SubscribeNewsLetter extends StatelessWidget {
                       Obx(
                             () => settingController.isLoading.value
                             ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                             : LargeButton(
-                          text: "Subscribe",
+                          text: "subscribe",
                           onTap: () {
                             if (formKey.currentState!.validate()) {
                               if (emailController.text.isNotEmpty) {
@@ -85,8 +85,8 @@ class SubscribeNewsLetter extends StatelessWidget {
                                 );
                               } else {
                                 CustomSnackbar.show(
-                                  title: 'Error',
-                                  message: "Email is required",
+                                  title: 'error',
+                                  message: "email_required",
                                 );
                               }
                             }

@@ -264,16 +264,16 @@ class GetProfileController extends GetxController {
       if (titleData['status'] == 'success') {
         getUserProfile(usersCustomersId: userID.toString());
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Title update successfully",
+          title: 'success',
+          message: "title_update_success",
         );
         // var data = jsonDecode(response.body)['data'] as List;
         // getTitles.value = data.map((item) => item['titles'] as Map<String, dynamic>).toList();
       } else {
         debugPrint(titleData['status']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "This title is already active.",
+          title: 'error',
+          message: "title_already_active",
         );
         isError.value = true;
       }
@@ -305,16 +305,16 @@ class GetProfileController extends GetxController {
       if (titleData['status'] == 'success') {
         getUserProfile(usersCustomersId: userID.toString());
         CustomSnackbar.show(
-          title: 'Success',
-          message: " Badge update successfully",
+          title: 'success',
+          message: " badge_update_success",
         );
         // var data = jsonDecode(response.body)['data'] as List;
         // getTitles.value = data.map((item) => item['titles'] as Map<String, dynamic>).toList();
       } else {
         debugPrint(titleData['status']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "This badge is already active.",
+          title: 'error',
+          message: "badge_already_active",
         );
         isError.value = true;
       }

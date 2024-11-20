@@ -51,8 +51,8 @@ class AuthController extends GetxController {
             case 'language':
               language(setting['description']);
               await prefs.setString('language', language.toString());
-              languages = prefs.getString('language') ?? '';
-              debugPrint("languages: $languages");
+              // languages = prefs.getString('language') ?? '';
+              // debugPrint("languages: $languages");
               break;
             case 'geo_api_key':
               geoApiKey(setting['description']);
@@ -221,7 +221,7 @@ class AuthController extends GetxController {
         debugPrint(referralData['status']);
         var errorMsg = referralData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }
@@ -248,7 +248,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       Map<String, String> data = {
-        "referral_users_customers_id": "1",
+        "referral_users_customers_id": referralUsersCustomersId,
         "sur_name": surName,
         "first_name": firstName,
         "last_name": lastName,
@@ -276,16 +276,17 @@ class AuthController extends GetxController {
         await prefs.setString('email', userData['email']);
         await prefs.setString('isLogin', 'true');
 
-        Get.offAll(
-          () => const MyBottomNavigationBar(),
-          duration: const Duration(milliseconds: 350),
-          transition: Transition.rightToLeft,
-        );
+        // Get.offAll(
+        //   () => const MyBottomNavigationBar(),
+        //   duration: const Duration(milliseconds: 350),
+        //   transition: Transition.rightToLeft,
+        // );
+        CustomSnackbar.show(title: "success", message: "email_sent_confirmation");
       } else {
         debugPrint(signupData['status']);
         var errorMsg = signupData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }
@@ -349,7 +350,7 @@ class AuthController extends GetxController {
         debugPrint(loginData['status']);
         var errorMsg = loginData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }
@@ -378,7 +379,7 @@ class AuthController extends GetxController {
       debugPrint("forgotData $forgotData");
       if (forgotData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
+          title: 'success',
           message: forgotData['data']["message"],
         );
 
@@ -394,7 +395,7 @@ class AuthController extends GetxController {
         debugPrint(forgotData['status']);
         var errorMsg = forgotData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }
@@ -437,7 +438,7 @@ class AuthController extends GetxController {
         debugPrint(modifyData['status']);
         var errorMsg = modifyData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }

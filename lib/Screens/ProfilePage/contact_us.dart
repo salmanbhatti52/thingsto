@@ -14,7 +14,7 @@ class ContactPage extends StatelessWidget {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Contact Us",
+            title: "contact_us",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -28,7 +28,7 @@ class ContactPage extends StatelessWidget {
             child: Column(
               children: [
                 const LabelField(
-                  text: "If you have any query, some issue to report or need help on something,\nfeel free to contact our support\nteam at given email.",
+                  text: "support_message",
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
                   maxLIne: 4,

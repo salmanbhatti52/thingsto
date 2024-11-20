@@ -31,7 +31,7 @@ class AddThingsController extends GetxController {
   var pickedFile = ''.obs;
   RxList<String> tags = <String>[].obs;
   RxList<String> links = <String>[].obs;
-  RxList<String> audio = <String>[].obs;
+  RxList<Map<String, String>> audio = <Map<String, String>>[].obs;
   ValueNotifier<List<Map<String, dynamic>>> allCountries = ValueNotifier([]);
   // ValueNotifier<List<Map<String, dynamic>>> allStates = ValueNotifier([]);
   ValueNotifier<List<Map<String, dynamic>>> allCities = ValueNotifier([]);
@@ -68,9 +68,12 @@ class AddThingsController extends GetxController {
 
   /* Add and Delete audio  Function */
 
-  void addAudio(String link) {
+  void addAudio(String link, String platform) {
     if (link.isNotEmpty) {
-      audio.add(link);
+      audio.add({
+        'link': link,
+        'platform': platform,
+      });
     }
   }
 
@@ -79,6 +82,42 @@ class AddThingsController extends GetxController {
       audio.removeAt(index);
     }
   }
+
+  String processSpotifyUrl(String url) {
+    // Regex for Spotify track URL (handles optional parameters after the track ID)
+    final spotifyRegex = RegExp(r'spotify\.com/(?:intl-[a-z]{2}/)?track/([a-zA-Z0-9]+)');
+
+    // Check if it's a Spotify URL
+    if (spotifyRegex.hasMatch(url)) {
+      // Extract the track ID using regex
+      final match = spotifyRegex.firstMatch(url);
+      String? trackId = match?.group(1);
+      return trackId != null ? "https://open.spotify.com/embed/track/$trackId" : url;
+    }
+
+    // Regex for YouTube URLs (both youtu.be and youtube.com variations)
+    final youtubeRegex = RegExp(
+      r'(youtu\.be/|youtube\.com/watch\?v=|youtube\.com/embed/|youtube\.com/shorts/)([a-zA-Z0-9_-]+)',
+    );
+
+    // Check if it's a YouTube URL
+    if (youtubeRegex.hasMatch(url)) {
+      final match = youtubeRegex.firstMatch(url);
+      String? videoId = match?.group(2);
+      return videoId != null ? "https://www.youtube.com/embed/$videoId" : url;
+    }
+
+    // Show an error if the URL is not valid
+    CustomSnackbar.show(
+      title: "error",
+      message: "valid_spotify_youtube_link",
+    );
+
+    return "";
+  }
+
+
+
 
   /* Get thumbnail  Function */
 
@@ -92,7 +131,7 @@ class AddThingsController extends GetxController {
     if (pickedImage != null) {
       int imageSize = await pickedImage.length();
       if (imageSize > 10 * 1024 * 1024) { // 10 MB size limit
-        CustomSnackbar.show(title: "Error", message: "Maximum size of image should be 10mb.");
+        CustomSnackbar.show(title: "error", message: "max_image_size");
         return;
       }
       await cropImage(pickedImage.path);
@@ -148,14 +187,14 @@ class AddThingsController extends GetxController {
 
     if (pickedFiles.isNotEmpty) {
       if (pickedFiles.length > 5) {
-        CustomSnackbar.show(title: "Error", message: "You can only select up to 5 images.");
+        CustomSnackbar.show(title: "error", message: "select_images_limit");
       } else {
         bool allFilesValid = true;
         for (var pickedFile in pickedFiles) {
           int imageSize = await pickedFile.length();
           if (imageSize > 10 * 1024 * 1024) {
             allFilesValid = false;
-            CustomSnackbar.show(title: "Error", message: "One or more images exceed 10 MB.");
+            CustomSnackbar.show(title: "error", message: "image_size_exceed");
             break;
           }
         }
@@ -203,7 +242,7 @@ class AddThingsController extends GetxController {
     if (result != null) {
       pickedFile.value = result.files.single.path!;
     } else {
-      CustomSnackbar.show(title: "Error", message: "Something Wrong");
+      CustomSnackbar.show(title: "error", message: "something_wrong");
     }
   }
 
@@ -527,15 +566,23 @@ class AddThingsController extends GetxController {
             'extension': extension,
           });
         }
-      } else {
-        for (int i = 0; i < audio.length; i++) {
-          String base64Image = audio[i];
-          // String mediaType = 'Image';
-          // String extension = 'jpg';
+      }
+      if (audio.isNotEmpty){
+        // for (int i = 0; i < audio.length; i++) {
+        //   String base64Image = audio[i];
+        //   // String mediaType = 'Image';
+        //   // String extension = 'jpg';
+        //   audioList.add({
+        //     'link': base64Image,
+        //     'media_platform ':
+        //     // 'media_type': mediaType,
+        //     // 'extension': extension,
+        //   });
+        // }
+        for (var item in audio) {
           audioList.add({
-            'link': base64Image,
-            // 'media_type': mediaType,
-            // 'extension': extension,
+            'link': item['link']!,
+            'media_platform': item['platform']!,
           });
         }
         // if (pickedFile.value.isNotEmpty) {
@@ -569,9 +616,9 @@ class AddThingsController extends GetxController {
         "longitude": longitude.toString(),
         "lattitude": lattitude.toString(),
         "google_place_id": placeId.toString(),
-        "countries_id": countryId.toString(),
+        "countries_id": countryId != null ? countryId.toString() : "",
         "states_id": "",
-        "cities_id": cityId.toString(),
+        "cities_id": cityId != null ? cityId.toString() : "",
         "sources": links,
         "confirm_by_moderator": confirmModerator.toString(),
         "description": description.toString(),
@@ -581,7 +628,7 @@ class AddThingsController extends GetxController {
         "thumbnail_images": singleImagesList,
       };
 
-      debugPrint("data $data");
+      debugPrint("Request Data: ${jsonEncode(data)}");
       var req = http.Request('POST', url);
       req.headers.addAll(headersList);
       req.body = json.encode(data);
@@ -589,11 +636,12 @@ class AddThingsController extends GetxController {
       final resBody = await res.stream.bytesToString();
       var addThingsData = jsonDecode(resBody);
       debugPrint("addThingsData $addThingsData");
+      debugPrint("resBody $resBody");
       if (addThingsData['status'] == 'success') {
         resetState();
         var message = addThingsData['message'];
         CustomSnackbar.show(
-          title: 'Success',
+          title: 'success',
           message: message.toString(),
         );
         Get.off(
@@ -605,7 +653,7 @@ class AddThingsController extends GetxController {
         debugPrint(addThingsData['status']);
         var errorMsg = addThingsData['message'];
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: errorMsg.toString(),
         );
       }

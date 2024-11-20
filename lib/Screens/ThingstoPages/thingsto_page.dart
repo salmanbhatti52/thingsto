@@ -38,7 +38,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
   String selectedCategoryId = '';
   final TextEditingController searchController = TextEditingController();
   final ThingstoController thingstoController = Get.put(ThingstoController());
-  final LanguageController languageController = Get.put(LanguageController());
+  // final LanguageController languageController = Get.put(LanguageController());
   final NotificationsController notificationsController = Get.put(NotificationsController());
   final List<Map<String, String>> categoryHistory = [];
 
@@ -156,7 +156,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
         children: [
           isSelect
               ? BackButtonBar(
-                  title: "Thingsto",
+                  title: "thingsto",
             onBack: goBack,
                   // onBack: () {
                   //   setState(() {
@@ -168,7 +168,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   // },
                 )
               : Obx(() => HomeBar(
-                     title: "Thingsto",
+                     title: "thingsto",
                      titleTrue: true,
                      icon2: AppAssets.notify,
                      hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
@@ -190,7 +190,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
               children: [
                 CustomTextFormField(
                   controller: searchController,
-                  hintText: "Search",
+                  hintText: "search",
                   // validator: validateEmail,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
@@ -208,7 +208,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     } else if(isMember){
                       filterMember(value);
                     } else {
-                      CustomSnackbar.show(title: "Error", message: "Please select one");
+                      CustomSnackbar.show(title: "error", message: "pleaseSelectOne");
                     }
                   },
                   prefixColor: AppColor.labelTextColor,
@@ -233,7 +233,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         LargeButton(
-                          text: "Things",
+                          text: "things",
                           width: Get.width * 0.3,
                           containerColor: isThings ? AppColor.primaryColor : AppColor.borderColor,
                           textColor: isThings ? AppColor.whiteColor : AppColor.blackColor,
@@ -249,7 +249,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                           width: Get.width * 0.02,
                         ),
                         LargeButton(
-                          text: "Members",
+                          text: "members",
                           width: Get.width * 0.3,
                           containerColor: isMember ? AppColor.primaryColor : AppColor.borderColor,
                           textColor: isMember ? AppColor.whiteColor : AppColor.blackColor,
@@ -287,12 +287,11 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       onTap: (){},
                       seeTrue: false,
                           )
-                        : Obx(() => RowText(
-                      text: languageController.phrases['categories'] ??
-                          "Categories",
+                        : RowText(
+                      text: "categories",
                       onTap: (){},
                       seeTrue: false,
-                    ),),
+                    ),
                     isSelect
                         ? Obx(
                             () {
@@ -321,7 +320,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               if (thingstoController.subcategories.isEmpty) {
                                 return const Center(
                                   child: Text(
-                                    'Subcategories not found',
+                                    'subcategoriesNotFound',
                                     style: TextStyle(
                                       color: AppColor.blackColor,
                                       fontSize: 16,
@@ -363,7 +362,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                               if (thingstoController.cachedCategories.isEmpty) {
                                 return const Center(
                                   child: Text(
-                                    'Categories not found',
+                                    'categoriesNotFound',
                                     style: TextStyle(
                                       color: AppColor.blackColor,
                                       fontSize: 16,
@@ -381,7 +380,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.01,
                     ),
                     RowText(
-                      text: selectedCategoryId.isEmpty ? "The things of the moment" : "Things to",
+                      text: selectedCategoryId.isEmpty ? "things_of_the_moment" : "thingsto",
                       seeTrue: true,
                       onTap: () {
                         Get.to(
@@ -410,7 +409,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
                               child: LabelField(
-                                text: 'Things not found',
+                                text: 'things_not_found',
                               ),
                             ),
                           );
@@ -434,7 +433,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
                               child: LabelField(
-                                text: 'Things not found',
+                                text: 'things_not_found',
                               ),
                             ),
                           );
@@ -494,7 +493,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       height: Get.height * 0.03,
                     ),
                     RowText(
-                      text: "Top Things to",
+                      text: "topThingsTo",
                       seeTrue: true,
                       onTap: () {
                         Get.to(
@@ -523,7 +522,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
                               child: LabelField(
-                                text: 'Top Things not found',
+                                text: 'topThingsNotFound',
                               ),
                             ),
                           );
@@ -547,7 +546,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 28.0),
                               child: LabelField(
-                                text: 'Top Things not found',
+                                text: 'topThingsNotFound',
                               ),
                             ),
                           );
@@ -618,7 +617,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: Get.height * 0.3,),
                         child: const LabelField(
-                          text: 'Things not found',
+                          text: 'things_not_found',
                           fontSize: 18,
                         ),
                       ),
@@ -684,7 +683,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                       child: Padding(
                         padding: EdgeInsets.only(top: Get.height * 0.3,),
                         child: const LabelField(
-                          text: 'Members not found',
+                          text: 'membersNotFound',
                           fontSize: 18,
                         ),
                       ),

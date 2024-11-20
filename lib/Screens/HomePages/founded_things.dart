@@ -22,6 +22,7 @@ import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class FoundedThings extends StatefulWidget {
   final Map<String, dynamic> foundedThings;
@@ -43,6 +44,7 @@ class _FoundedThingsState extends State<FoundedThings>
   final CarouselController _controller = CarouselController();
   double sheetTopPosition = 0;
   List<dynamic> listOfMedia = [];
+  List<Widget> mediaSliders = [];
   late GoogleMapController mapController;
   late LatLng _center;
   // late LatLng _currentLocation;
@@ -51,6 +53,7 @@ class _FoundedThingsState extends State<FoundedThings>
   Duration? position;
   AudioPlayer? audioPlayer;
   List<WebViewController> controllers = [];
+  List<YoutubePlayerController> youtubeControllers = [];
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final HomeController homeController = Get.put(HomeController());
 
@@ -90,51 +93,126 @@ class _FoundedThingsState extends State<FoundedThings>
   @override
   void initState() {
     super.initState();
-    if (widget.foundedThings.containsKey('images')) {
-      var media = widget.foundedThings['images'];
-      if (media is List) {
-        for (var item in media) {
-          String iframeHtml = item['name'];
 
-          // Extract the URL from the src attribute in the iframe
-          final urlRegExp = RegExp(r'src="([^"]+)"');
-          final match = urlRegExp.firstMatch(iframeHtml);
-          String? url = match?.group(1);
+    listOfMedia.clear();
+    mediaSliders.clear();
+    // Check for 'images' array and process it
+    if (widget.foundedThings != null && widget.foundedThings.containsKey('images')) {
+      var imageMedia = widget.foundedThings['images'];
+      if (imageMedia is List) {
+        for (var item in imageMedia) {
+          if (item is Map<String, dynamic> && item.containsKey('name')) {
+            String imageUrl = item['name'];
+            String mediaType = item['media_type'] ?? 'Image';
 
-          // Check if a valid URL was extracted and it's a Spotify embed link
-          if (url != null && url.contains('https://')) {
-            var controller = WebViewController()
-              ..setJavaScriptMode(JavaScriptMode.unrestricted)
-              ..setNavigationDelegate(
-                NavigationDelegate(
-                  onProgress: (int progress) {
-                    // Update loading bar.
-                  },
-                  onPageStarted: (String url) {},
-                  onPageFinished: (String url) {},
-                  onHttpError: (HttpResponseError error) {},
-                  onWebResourceError: (WebResourceError error) {},
-                  onNavigationRequest: (NavigationRequest request) {
-                    if (request.url.startsWith('https://')) {
-                      _launchURL(request.url);
-                      return NavigationDecision.prevent;
-                    }
-                    return NavigationDecision.navigate;
-                  },
-                ),
-              )
-              ..loadRequest(Uri.parse(url));
-
-            controllers.add(controller);
+            if (mediaType == 'Image') {
+              // Add image data to listOfMedia
+              listOfMedia.add({
+                'url': '$baseUrlImage$imageUrl',
+                'type': mediaType,
+              });
+            }
           }
-
-          listOfMedia.add({
-            'url': '$baseUrlImage${item['name']}',
-            'type': item['media_type']
-          });
         }
       }
     }
+
+    // Check for 'musics' array and process it
+    if (widget.foundedThings != null && widget.foundedThings.containsKey('musics')) {
+      var musicMedia = widget.foundedThings['musics'];
+      if (musicMedia is List) {
+        for (var item in musicMedia) {
+          if (item is Map<String, dynamic> && item.containsKey('name')) {
+            String musicUrl = item['name'];
+            String mediaType = item['media_type'] ?? 'Music';
+
+            if (mediaType == 'Music') {
+              // Check if the URL is an iframe and extract the src if necessary
+              if (musicUrl.contains('<iframe')) {
+                final srcMatch = RegExp(r'src="([^"]+)"').firstMatch(musicUrl);
+                if (srcMatch != null) {
+                  musicUrl = srcMatch.group(1)!;
+                } else {
+                  debugPrint("No src found in iframe: $musicUrl");
+                  continue;
+                }
+              }
+
+              // Handle YouTube Music Links
+              if (musicUrl.contains('youtube.com') || musicUrl.contains('youtu.be')) {
+                final videoId = extractVideoId(musicUrl);
+                if (videoId != null) {
+                  var youtubeController = YoutubePlayerController.fromVideoId(
+                    videoId: videoId,
+                    params: const YoutubePlayerParams(
+                      showFullscreenButton: false,
+                    ),
+                  );
+                  youtubeControllers.add(youtubeController);
+
+                  // listOfMedia.add({
+                  //   'url': "https://www.youtube.com/embed/$videoId",
+                  //   'type': mediaType,
+                  // });
+                }
+              }
+              // Handle Spotify Links
+              else if (musicUrl.contains('spotify.com')) {
+                // Convert to embed URL if needed
+                if (!musicUrl.contains('/embed/')) {
+                  musicUrl = musicUrl.replaceFirst('open.spotify.com/track/', 'open.spotify.com/embed/track/');
+                  musicUrl = musicUrl.split('?')[0]; // Remove query parameters
+                }
+
+                var spotifyController = WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onProgress: (int progress) {},
+                      onPageStarted: (String url) {},
+                      onPageFinished: (String url) {},
+                      onHttpError: (HttpResponseError error) {},
+                      onWebResourceError: (WebResourceError error) {},
+                      onNavigationRequest: (NavigationRequest request) {
+                        if (request.url.startsWith('https://')) {
+                          _launchURL(request.url);
+                          return NavigationDecision.prevent;
+                        }
+                        return NavigationDecision.navigate;
+                      },
+                    ),
+                  )
+                  ..loadRequest(Uri.parse(musicUrl));
+                controllers.add(spotifyController);
+
+                // listOfMedia.add({
+                //   'url': musicUrl,
+                //   'type': mediaType,
+                // });
+              } else {
+                debugPrint("Unsupported music platform or URL: $musicUrl");
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  String? extractVideoId(String url) {
+    // Check for regular YouTube and shortened YouTube URLs
+    final regularRegExp = RegExp(r'(?<=v=|\/)([0-9A-Za-z_-]{11})');
+    final shortenedRegExp = RegExp(r'youtu\.be\/([0-9A-Za-z_-]{11})');
+
+    if (regularRegExp.hasMatch(url)) {
+      return regularRegExp.firstMatch(url)?.group(0);
+    } else if (shortenedRegExp.hasMatch(url)) {
+      return shortenedRegExp.firstMatch(url)?.group(1);
+    } else if (url.contains('embed/')) {
+      return YoutubePlayerController.convertUrlToId(url);
+    }
+
+    return null;
   }
 
   Future<void> _launchURL(String urls) async {
@@ -174,6 +252,9 @@ class _FoundedThingsState extends State<FoundedThings>
   @override
   void dispose() {
     audioPlayer?.dispose();
+    for (var controller in youtubeControllers) {
+      controller.close();
+    }
     for (var controller in controllers) {
       // Example of navigating to a blank page
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -277,38 +358,41 @@ class _FoundedThingsState extends State<FoundedThings>
     thingstoController.initializeLikes(widget.foundedThings["likes"]);
     _center = LatLng(initialLatitude, initialLongitude);
     // _currentLocation = LatLng(latitude, longitude);
-    List<Widget> mediaSliders = listOfMedia.map((item) {
-      if (item['type'] == 'Image') {
-        return Image.network(
-          item['url'],
-          width: MediaQuery.of(context).size.width,
-          height: 272,
-          fit: BoxFit.fill,
-          loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent? loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            } else {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: AppColor.primaryColor,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            }
-          },
-        );
-      } else if (item['type'] == 'Music') {
-        return Padding(
+    if (listOfMedia.isNotEmpty) {
+      mediaSliders = listOfMedia.map((item) {
+        if (item['type'] == 'Image') {
+          return Image.network(
+            item['url'],
+            width: MediaQuery.of(context).size.width,
+            height: 272,
+            fit: BoxFit.fill,
+            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor.primaryColor,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              }
+            },
+          );
+        }
+        return const SizedBox.shrink();
+      }).toList();
+    } else {
+      mediaSliders.add(
+        Padding(
           padding: const EdgeInsets.all(0.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(0),
-            child: widget.foundedThings['thumbnail'] !=null
+            child: widget.foundedThings?['thumbnail'] != null
                 ? Image.network(
-              '$baseUrlImage${widget.foundedThings['thumbnail']}',
+              '$baseUrlImage${widget.foundedThings?['thumbnail']}',
               width: Get.width,
               height: Get.height * 0.13,
               fit: BoxFit.fill,
@@ -320,18 +404,15 @@ class _FoundedThingsState extends State<FoundedThings>
                   fit: BoxFit.fill,
                 );
               },
-              loadingBuilder:
-                  (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) {
                   return child;
                 }
                 return Center(
-                  child:
-                  CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     color: AppColor.primaryColor,
                     value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 );
@@ -344,47 +425,10 @@ class _FoundedThingsState extends State<FoundedThings>
               fit: BoxFit.fill,
             ),
           ),
-        );
-
-        //   Center(
-        //   child:
-        //   Column(
-        //     children: [
-        //       SizedBox(height: Get.height * 0.05,),
-        //       SvgPicture.asset(
-        //         AppAssets.music,
-        //         width: 100,
-        //         height: 100,
-        //       ),
-        //       SizedBox(height: Get.height * 0.05,),
-        //       LabelField(
-        //         text: '${position?.inMinutes ?? 0}:${position?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'} / ${duration?.inMinutes ?? 0}:${duration?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'}',
-        //       ),
-        //       SizedBox(height: Get.height * 0.02,),
-        //       GestureDetector(
-        //           onTap: () {
-        //             _initAudioPlayer(item['url']);
-        //             playPause(item['url']);
-        //           },
-        //           child: isPlayingMap[0] == true
-        //               ? const Icon(
-        //             Icons.stop_circle_sharp,
-        //             size: 55,
-        //             color: AppColor.primaryColor,
-        //           )
-        //               : const Icon(
-        //             Icons.play_arrow_rounded,
-        //             size: 55,
-        //             color: AppColor.primaryColor,
-        //           )
-        //       ),
-        //     ],
-        //   ),
-        // );
-      } else {
-        return Container();
-      }
-    }).toList();
+        ),
+      );
+    }
+    debugPrint("listOfMedia $listOfMedia");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -594,7 +638,7 @@ class _FoundedThingsState extends State<FoundedThings>
               // ),
               source.isNotEmpty && source.any((sources) => sources["name"] != "")
                   ? const LabelField(
-                text: "Sources & Links",
+                text: "sourcesAndLinks",
                 fontSize: 20,
               )
                   : const SizedBox(),
@@ -658,27 +702,53 @@ class _FoundedThingsState extends State<FoundedThings>
                 SizedBox(
                   height: Get.height * 0.015,
                 ),
-              controllers.isNotEmpty
-                  ? const LabelField(
-                text: "Extract:",
-                fontSize: 20,
-              )
-                  : const SizedBox(),
-              if (controllers.isNotEmpty) SizedBox(height: Get.height * 0.015),
+              if (widget.foundedThings != null && widget.foundedThings.containsKey('musics') && widget.foundedThings['musics'] != null && widget.foundedThings['musics'].isNotEmpty)
+                widget.foundedThings['musics'][0]["media_type"] == "Music"
+                    ? const LabelField(
+                  text: "extract",
+                  fontSize: 20,
+                )
+                    : const SizedBox(),
+              if (widget.foundedThings != null && widget.foundedThings.containsKey('musics') )
+                SizedBox(height: Get.height * 0.015),
               for (int i = 0; i < controllers.length; i++)
-                SizedBox(
-                  height: 100,
-                  child: WebViewWidget(
-                    controller: controllers[i],
+                if (widget.foundedThings != null && widget.foundedThings.containsKey('musics') && widget.foundedThings['musics'] != null && widget.foundedThings['musics'].isNotEmpty)
+                  SizedBox(
+                    height:  widget.foundedThings['musics'][0]["media_type"] == "Music" ? 100 : 0,
+                    child: WebViewWidget(
+                      controller: controllers[i],
+                    ),
                   ),
-                ),
-              if (controllers.isNotEmpty)
-                SizedBox(
-                  height: Get.height * 0.015,
-                ),
+              if (widget.foundedThings != null && widget.foundedThings.containsKey('musics') && widget.foundedThings['musics'] != null && widget.foundedThings['musics'].isNotEmpty)
+                if (youtubeControllers != null &&  widget.foundedThings['musics'][0]["media_type"] == "Music")
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          itemCount: youtubeControllers.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: YoutubePlayer(
+                                controller: youtubeControllers[index],
+                                aspectRatio: 16 / 9,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+              if (widget.foundedThings != null && widget.foundedThings.containsKey('musics') && widget.foundedThings['musics'] != null && widget.foundedThings['musics'].isNotEmpty)
+                if ( widget.foundedThings['musics'][0]["media_type"] == "Music")
+                  SizedBox(
+                    height: Get.height * 0.015,
+                  ),
               widget.foundedThings["location"] != null && widget.foundedThings["location"] != ""
                   ? const LabelField(
-                text: "Location",
+                text: "location",
                 fontSize: 20,
               )
                   : const SizedBox(),
@@ -746,7 +816,7 @@ class _FoundedThingsState extends State<FoundedThings>
                                 height: 10,
                               ),
                               const LabelField(
-                                text: "Add Photo/Proof of your thing",
+                                text: "addPhotoProof",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: AppColor.hintColor,
@@ -774,8 +844,8 @@ class _FoundedThingsState extends State<FoundedThings>
               widget.foundedThings["confirm_by_moderator"] == "No"
                   ? Obx(() => LargeButton(
                 text: thingstoController.isValidate.value
-                    ?  thingstoController.isLoading1.value ? "Please Wait..." : "Validated thing"
-                    : thingstoController.isLoading1.value ? "Please Wait..." : "Validate this thing",
+                    ?  thingstoController.isLoading1.value ? "please_wait" : "validatedThing"
+                    : thingstoController.isLoading1.value ? "please_wait" : "validateThisThing",
                 containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                 onTap: () {
                   !thingstoController.isValidate.value ?  thingstoController.validateThings(widget.foundedThings["things_id"].toString(), "thingsto", context) : null;
@@ -783,17 +853,17 @@ class _FoundedThingsState extends State<FoundedThings>
               ),)
                   :  showValidate
                   ? LargeButton(
-                text: "Validated thing",
+                text: "validatedThing",
                 containerColor: const Color(0xffC4A484),
                 onTap: () {},
               ) :  showValidateButton
                   ? LargeButton(
-                text: "Things being moderated",
+                text: "thingsBeingModerated",
                 containerColor: const Color(0xffC4A484),
                 onTap: () {},
               )
                   : Obx(() => LargeButton(
-                  text: thingstoController.isLoading1.value ? "Please Wait..." : "Validate thing, send to moderation",
+                  text: thingstoController.isLoading1.value ? "please_wait" : "validateThingSendToModeration",
                   onTap: () {
                     thingstoController.moderateCheck.value = true;
                     if (thingstoController.imageFile.value != null) {
@@ -804,12 +874,12 @@ class _FoundedThingsState extends State<FoundedThings>
                       );
                     } else {
                       CustomSnackbar.show(title: "",
-                          message: "Add Photo Proof of your thing");
+                          message: "addPhotoProofOfYourThing");
                     }
                   }),),
             ],
           ),
-        )
+        ),
       ],
     );
   }

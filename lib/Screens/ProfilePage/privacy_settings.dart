@@ -84,7 +84,7 @@ class _PrivacySettingState extends State<PrivacySetting> with TickerProviderStat
       body: Column(
         children: [
           BackButtonBar(
-            title: "Privacy Settings",
+            title: "privacy_settings",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -104,7 +104,7 @@ class _PrivacySettingState extends State<PrivacySetting> with TickerProviderStat
                       height: Get.height * 0.07,
                     ),
                     const LabelField(
-                      text: 'Enable Profile Privacy',
+                      text: 'enable_profile_privacy',
                       fontSize: 18,
                     ),
                     SizedBox(
@@ -141,7 +141,7 @@ class _PrivacySettingState extends State<PrivacySetting> with TickerProviderStat
                           width: 10,
                         ),
                         LabelField(
-                          text: "Public",
+                          text: "public",
                           fontSize: 16,
                           color: _isPublicChecked ? AppColor.labelTextColor : AppColor.hintColor,
                           fontWeight: FontWeight.w400,
@@ -182,7 +182,7 @@ class _PrivacySettingState extends State<PrivacySetting> with TickerProviderStat
                           width: 10,
                         ),
                         LabelField(
-                          text: "Private",
+                          text: "private",
                           fontSize: 16,
                           color: _isSecretChecked ? AppColor.labelTextColor : AppColor.hintColor,
                           fontWeight: FontWeight.w400,
@@ -195,11 +195,11 @@ class _PrivacySettingState extends State<PrivacySetting> with TickerProviderStat
                     Obx(
                           () => updateProfileController.isLoading.value
                           ? LargeButton(
-                        text: "Please Wait...",
+                        text: "please_wait",
                         onTap: () {},
                       )
                           : LargeButton(
-                        text: "Apply",
+                        text: "apply",
                         onTap: () {
                           updateProfileController.updatePrivacy(
                             profilePrivacy: _isPublicChecked ? "Public" : "Private",

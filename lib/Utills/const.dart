@@ -12,4 +12,4 @@ String? shareAndroid;
 String? shareIos;
 String? referralBonus;
 String? referralBonusLimit;
-String? languages;
+// String? languages;

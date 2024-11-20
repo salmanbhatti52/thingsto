@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -57,30 +58,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: Obx(() {
                 if (notificationsController.isLoading.value &&
                     notificationsController.cachedNotifications.isEmpty) {
-                  return Column(
-                    children: [
-                      const SizedBox(height: 15,),
-                      Shimmers2(
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: Column(
+                      children: List.generate(5, (index) => Shimmers2(
                         width: Get.width,
                         height: Get.height * 0.12,
-                      ),
-                      Shimmers2(
-                        width: Get.width,
-                        height: Get.height * 0.12,
-                      ),
-                      Shimmers2(
-                        width: Get.width,
-                        height: Get.height * 0.12,
-                      ),
-                      Shimmers2(
-                        width: Get.width,
-                        height: Get.height * 0.12,
-                      ),
-                      Shimmers2(
-                        width: Get.width,
-                        height: Get.height * 0.12,
-                      ),
-                    ],
+                      )),
+                    ),
                   );
                 }
                 // if (thingstoController.isError.value) {
@@ -111,7 +96,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   itemBuilder: (BuildContext context, i) {
                     int reversedIndex = notificationsController.cachedNotifications.length - 1 - i;
                     final notifications = notificationsController.cachedNotifications[reversedIndex];
-                    Map<String, dynamic> senderData = notifications["sender_data"];
+                    Map<String, dynamic> senderData = notifications["sender_data"] ?? {} ;
                     final dateAdded = notifications['date_added'];
                     final formattedDate = _formatDate(dateAdded);
                     return GestureDetector(

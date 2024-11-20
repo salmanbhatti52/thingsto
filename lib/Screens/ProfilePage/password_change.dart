@@ -25,7 +25,7 @@ class PasswordChangePage extends StatelessWidget {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Change Password",
+            title: "change_password",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -47,7 +47,7 @@ class PasswordChangePage extends StatelessWidget {
                         height: Get.height * 0.07,
                       ),
                       const LabelField(
-                        text: 'Old Password',
+                        text: 'old_password',
                       ),
                       const SizedBox(
                         height: 8,
@@ -72,7 +72,7 @@ class PasswordChangePage extends StatelessWidget {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'New Password',
+                        text: 'newPassword',
                       ),
                       const SizedBox(
                         height: 8,
@@ -95,7 +95,7 @@ class PasswordChangePage extends StatelessWidget {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Confirm New Password',
+                        text: 'confirmNewPassword',
                       ),
                       const SizedBox(
                         height: 8,
@@ -122,11 +122,11 @@ class PasswordChangePage extends StatelessWidget {
                       Obx(
                             () => settingController.isLoading.value
                             ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                             : LargeButton(
-                          text: "Confirm",
+                          text: "confirm",
                           onTap: () {
                       if (formKey.currentState!.validate()) {
                         settingController.changePassword(oldPassword: oldPasswordController.text, newPassword: passwordController.text, confirmNewPassword: confirmPasswordController.text,);

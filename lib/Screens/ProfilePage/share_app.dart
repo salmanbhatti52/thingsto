@@ -42,7 +42,7 @@ class _ShareAppState extends State<ShareApp> {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Share App",
+            title: "share_app",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -57,7 +57,7 @@ class _ShareAppState extends State<ShareApp> {
               children: [
                 const LabelField(
                   text:
-                      "Copy the link below and share it with\nyour friends to earn a referral bonus.",
+                      "referral_message",
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
                   maxLIne: 4,
@@ -83,8 +83,8 @@ class _ShareAppState extends State<ShareApp> {
                         .then(
                       (_) {
                         CustomSnackbar.show(
-                          title: "Share App",
-                          message: "Link Copied",
+                          title: "share_app",
+                          message: "link_copied",
                         );
                       },
                     );
@@ -103,7 +103,7 @@ class _ShareAppState extends State<ShareApp> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Copy Link",
+                            "copy_link",
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

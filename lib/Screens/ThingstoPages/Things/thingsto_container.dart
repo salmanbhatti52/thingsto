@@ -57,35 +57,35 @@ class ThingstoContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         child: things['thumbnail'] !=null
                             ? Image.network(
-                            '$baseUrlImage${things['thumbnail']}',
-                          width: Get.width,
-                          height: Get.height * 0.13,
-                          fit: BoxFit.fill,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            return Image.network(
-                              AppAssets.dummyPic,
+                              '$baseUrlImage${things['thumbnail']}',
                               width: Get.width,
                               height: Get.height * 0.13,
                               fit: BoxFit.fill,
-                            );
-                          },
-                          loadingBuilder:
-                              (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) {
-                              return child;
-                            }
-                            return Center(
-                              child:
-                              CircularProgressIndicator(
-                                color: AppColor.primaryColor,
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                        )
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                return Image.network(
+                                  AppAssets.dummyPic,
+                                  width: Get.width,
+                                  height: Get.height * 0.13,
+                                  fit: BoxFit.fill,
+                                );
+                              },
+                              loadingBuilder:
+                                  (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+                                return Center(
+                                  child:
+                                  CircularProgressIndicator(
+                                    color: AppColor.primaryColor,
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            )
                             : Column(
                           children: [
                             SizedBox(height: Get.height * 0.05,),
@@ -107,7 +107,7 @@ class ThingstoContainer extends StatelessWidget {
                           interFont: true,
                           maxLIne: 1,
                         ),
-                        things['tags'] != null && things['tags'].isNotEmpty ||  things['location'] != null ? Container(
+                        things['tags'] != null && things['tags'].isNotEmpty && things['tags'][0]["name"] != "" || things['location'] != null ? Container(
                           width: Get.width * 0.37,
                           height: 55,
                           padding: const EdgeInsets.only(left: 20),

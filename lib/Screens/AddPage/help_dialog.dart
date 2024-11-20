@@ -53,8 +53,7 @@ class HelpDialog extends StatelessWidget {
                   ),
                 ),
                 const LabelField(
-                  text:
-                  "Rules for Publishing Things",
+                  text: "rules_for_publishing",
                   fontSize: 18,
                 ),
                 SizedBox(
@@ -65,8 +64,7 @@ class HelpDialog extends StatelessWidget {
                   child: Column(
                     children: [
                       const LabelField(
-                        text:
-                        "1. Items submitted must comply with our charter and our conditions of use.",
+                        text: "rule_1",
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
                         color: AppColor.lightBrown,
@@ -77,7 +75,7 @@ class HelpDialog extends StatelessWidget {
                       ),
                       const LabelField(
                         text:
-                        "2. In particular, the thing proposed must not already been published and must not be contrary to morality or the law.",
+                        "rule_2",
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
                         color: AppColor.lightBrown,
@@ -93,7 +91,7 @@ class HelpDialog extends StatelessWidget {
                 LargeButton(
                   width: Get.width * 0.2,
                   height : Get.height * 0.045,
-                  text: "Ok",
+                  text: "ok",
                   onTap: () {
                     Get.back();
                   },
@@ -156,7 +154,7 @@ class PrivacyDialog extends StatelessWidget {
                 ),
                 const LabelField(
                   text:
-                  "Profile Privacy",
+                  "profilePrivacy",
                   fontSize: 18,
                 ),
                 SizedBox(
@@ -165,8 +163,7 @@ class PrivacyDialog extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
                   child: LabelField(
-                    text:
-                    "You can not view profile of selected user as it is private. Profile privacy must be public to visit any user's profile.",
+                    text: "profilePrivacyMessage",
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
                     color: AppColor.lightBrown,
@@ -179,7 +176,7 @@ class PrivacyDialog extends StatelessWidget {
                 LargeButton(
                   width: Get.width * 0.23,
                   height : Get.height * 0.045,
-                  text: "Ok",
+                  text: "ok",
                   onTap: () {
                     Get.back();
                   },

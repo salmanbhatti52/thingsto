@@ -14,11 +14,11 @@ class LanguageController extends GetxController {
   var language = <String>[].obs;
   // var updateLanguage = [].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    getSystemLanguages();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   getSystemLanguages();
+  // }
 
   /* Get Languages  Function */
 
@@ -64,8 +64,8 @@ class LanguageController extends GetxController {
         // var data = jsonDecode(response.body)['data'] as List;
         // updateLanguage.value = data;
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Language Update successfully.",
+          title: 'success',
+          message: "language_update_success",
         );
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 0,),
@@ -75,8 +75,8 @@ class LanguageController extends GetxController {
       } else {
         debugPrint(languageUpdateData['status']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "Something wrong",
+          title: 'error',
+          message: "something_wrong",
         );
       }
     } catch (e) {

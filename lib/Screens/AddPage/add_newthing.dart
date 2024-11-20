@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,7 +14,10 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/AddPage/human_verification.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
+import 'package:thingsto/Widgets/Text.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
+import 'package:thingsto/Widgets/TextFieldValidation.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/custom_dropdown.dart';
@@ -75,6 +78,8 @@ class _AddNewThingsState extends State<AddNewThings>
   String city = "";
   String postCode = "";
   String placesId = "";
+  String randomString = "";
+  TextEditingController controller = TextEditingController();
 
   Future<void> getUserThings() async {
     await addThingsController.getAllCategory();
@@ -89,6 +94,7 @@ class _AddNewThingsState extends State<AddNewThings>
   @override
   void initState() {
     super.initState();
+    buildCaptcha();
     googleApiKey = (prefs.getString('geo_api_key').toString());
     debugPrint("googleApiKey $googleApiKey");
     _placesService.initialize(apiKey: googleApiKey.toString());
@@ -99,6 +105,22 @@ class _AddNewThingsState extends State<AddNewThings>
       vsync: this,
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  void buildCaptcha() {
+    const letter =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const length = 6;
+    final random = Random();
+    randomString = String.fromCharCodes(
+      Iterable.generate(
+        length,
+            (_) => letter.codeUnitAt(
+          random.nextInt(letter.length),
+        ),
+      ),
+    );
+    setState(() {});
   }
 
   void _toggleCheckbox() {
@@ -135,7 +157,7 @@ class _AddNewThingsState extends State<AddNewThings>
       body: Column(
         children: [
           BackButtonBar(
-            title: "Add New Thing",
+            title: "add_new_thing",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -176,29 +198,29 @@ class _AddNewThingsState extends State<AddNewThings>
                     child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            AppAssets.downward,
-                            width: Get.width * 0.035,
-                          ),
-                          const SizedBox(width: 5,),
-                          const LabelField(
-                            text: 'select a category first',
-                            fontSize: 12,
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: [
+                      //     Image.asset(
+                      //       AppAssets.downward,
+                      //       width: Get.width * 0.035,
+                      //     ),
+                      //     const SizedBox(width: 5,),
+                      //     const LabelField(
+                      //       text: 'select a category first',
+                      //       fontSize: 12,
+                      //     ),
+                      //   ],
+                      // ),
                       const LabelField(
-                        text: 'Category',
+                        text: 'category',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomDropdown(
                         itemList: itemListForCategory,
-                        hintText: "Select Category",
+                        hintText: "selectCategory",
                         onChanged: (value) {
                           setState(() {
                             selectCategory = value;
@@ -247,14 +269,14 @@ class _AddNewThingsState extends State<AddNewThings>
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          const LabelField(
-                           text: 'Subcategory',
+                           text: 'subcategory',
                          ),
                          const SizedBox(
                            height: 8,
                          ),
                          CustomDropdown(
                            itemList: itemListForSubCategory,
-                           hintText: "Select Subcategory",
+                           hintText: "selectSubcategory",
                            onChanged: (value) {
                              setState(() {
                                selectSubCategory = value;
@@ -296,14 +318,14 @@ class _AddNewThingsState extends State<AddNewThings>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const LabelField(
-                              text: 'Sub child category',
+                              text: 'subChildCategory',
                             ),
                             const SizedBox(
                               height: 8,
                             ),
                             CustomDropdown(
                               itemList: itemListForThirdCategory,
-                              hintText: "Select Sub child category",
+                              hintText: "selectSubChildCategory",
                               onChanged: (value) {
                                 setState(() {
                                   selectThirdCategory = value;
@@ -333,14 +355,14 @@ class _AddNewThingsState extends State<AddNewThings>
                           ],
                         ),
                       const LabelField(
-                        text: 'Thing Name',
+                        text: 'thing_name',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: thingNameController,
-                        hintText: "Thing Name here",
+                        hintText: "thing_name_here",
                         // validator: validateEmail,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
@@ -350,16 +372,19 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'No. of points the thing should earn',
+                        text: 'points_to_earn',
+                        maxLIne: 1,
+                        align: TextAlign.left,
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: pointsController,
-                        hintText: "Points here",
+                        hintText: "points_here",
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
+                        validator: validateNumber,
                         showSuffix: false,
                       ),
                       const SizedBox(
@@ -370,7 +395,7 @@ class _AddNewThingsState extends State<AddNewThings>
                           crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const LabelField(
-                            text: 'Country',
+                            text: 'country',
                           ),
                           const SizedBox(
                             height: 8,
@@ -381,7 +406,7 @@ class _AddNewThingsState extends State<AddNewThings>
                             height: 60,
                           ) : CustomDropdown(
                             itemList: itemListForCountries,
-                            hintText: "Select Country",
+                            hintText: "select_country",
                             onChanged: (value) {
                               setState(() {
                                 selectCountry = value;
@@ -465,7 +490,7 @@ class _AddNewThingsState extends State<AddNewThings>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const LabelField(
-                              text: 'City',
+                              text: 'city',
                             ),
                             const SizedBox(
                               height: 8,
@@ -477,7 +502,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 height: 60,
                               ) : CustomDropdown(
                                 itemList: itemListForCities,
-                                hintText: "Select City",
+                                hintText: "select_city",
                                 onChanged: (value) {
                                   setState(() {
                                     selectCity = value;
@@ -494,7 +519,7 @@ class _AddNewThingsState extends State<AddNewThings>
                           ],
                         ),
                       const LabelField(
-                        text: 'Location',
+                        text: 'location',
                       ),
                       const SizedBox(
                         height: 8,
@@ -505,7 +530,7 @@ class _AddNewThingsState extends State<AddNewThings>
                             controller: locationController.text.isNotEmpty
                                 ? locationController
                                 : _currentAddress1,
-                            hintText: "Location here",
+                            hintText: "location_here",
                             suffixImage: AppAssets.location,
                             suffixColor: AppColor.blackColor,
                             suffixTap: () async {
@@ -658,7 +683,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Description of the thing',
+                        text: 'thing_description',
                       ),
                       const SizedBox(
                         height: 8,
@@ -693,7 +718,7 @@ class _AddNewThingsState extends State<AddNewThings>
                               top: 0.0,
                               left: 12,
                             ),
-                            hintText: "Write here.....",
+                            hintText: easy.tr("write_here"),
                             hintStyle: GoogleFonts.poppins(
                               fontSize: 14,
                               color: AppColor.hintColor,
@@ -706,7 +731,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Thumbnail',
+                        text: 'thumbnail',
                       ),
                       const SizedBox(
                         height: 8,
@@ -733,7 +758,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                       height: 10,
                                     ),
                                     const LabelField(
-                                      text: "Add thumbnail",
+                                      text: "add_thumbnail",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: AppColor.hintColor,
@@ -758,7 +783,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Add Image',
+                        text: 'add_image',
                       ),
                       const SizedBox(
                         height: 8,
@@ -802,7 +827,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                       height: 10,
                                     ),
                                     const LabelField(
-                                      text: "Upload Photos (upto 5)",
+                                      text: "upload_photos",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: AppColor.hintColor,
@@ -817,7 +842,7 @@ class _AddNewThingsState extends State<AddNewThings>
                       const Padding(
                         padding: EdgeInsets.only(top: 18, bottom: 10),
                         child: LabelField(
-                          text: "Add Music link",
+                          text: "add_music_link",
                         ),
                       ),
                       if(selectCategory == "Music")
@@ -884,7 +909,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                         top: 0.0,
                                         left: 12,
                                       ),
-                                      hintText: "Enter music link",
+                                      hintText: easy.tr("enter_music_link"),
                                       hintStyle: GoogleFonts.poppins(
                                         fontSize: 14,
                                         color: AppColor.hintColor,
@@ -899,9 +924,15 @@ class _AddNewThingsState extends State<AddNewThings>
                                     onTap:(){
                                       String link = musicController.text.trim();
                                       if (link.isEmpty) {
-                                        return CustomSnackbar.show(title: "Error", message: "Please add music link before adding");
+                                        return CustomSnackbar.show(title: "error", message: "add_music_before");
                                       } else {
-                                        addThingsController.addAudio(link);
+                                        String processedLink = addThingsController.processSpotifyUrl(link);
+                                        String platform = processedLink.contains("spotify") ? "Spotify" : "Youtube";
+                                        addThingsController.addAudio(processedLink, platform);
+                                        debugPrint("Original Link: $link");
+                                        debugPrint("Processed Link: $processedLink");
+                                        debugPrint("platform: $platform");
+                                        debugPrint("Audio List: ${addThingsController.audio}");
                                         musicController.clear();
                                       }
                                     },
@@ -953,6 +984,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 itemCount: addThingsController.audio.length,
                                 scrollDirection: Axis.vertical,
                                 itemBuilder: (context, index) {
+                                  final audioItem = addThingsController.audio[index];
                                   return Container(
                                     margin: const EdgeInsets.only(bottom: 5),
                                     decoration: BoxDecoration(
@@ -964,7 +996,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Expanded(child: LabelField(maxLIne: 3, align: TextAlign.left, text: addThingsController.audio[index], color: AppColor.whiteColor,)),
+                                          Expanded(child: LabelField(maxLIne: 3, align: TextAlign.left, text: "${audioItem['link']}", color: AppColor.whiteColor,)),
                                           GestureDetector(
                                             onTap: () {
                                               addThingsController.deleteAudio(index);
@@ -1019,7 +1051,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Other Sources/ Links',
+                        text: 'other_sources_links',
                       ),
                       const SizedBox(
                         height: 8,
@@ -1071,7 +1103,7 @@ class _AddNewThingsState extends State<AddNewThings>
                                 onTap:(){
                                   String link = linkController.text.trim();
                                   if (link.isEmpty) {
-                                    return CustomSnackbar.show(title: "Error", message: "Please add link before adding");
+                                    return CustomSnackbar.show(title: "error", message: "add_link_before");
                                   } else {
                                     if (!link.startsWith('https://')) {
                                       link = 'https://$link';
@@ -1136,7 +1168,7 @@ class _AddNewThingsState extends State<AddNewThings>
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Tags',
+                        text: 'tags',
                       ),
                       const SizedBox(
                         height: 8,
@@ -1147,7 +1179,7 @@ class _AddNewThingsState extends State<AddNewThings>
                             height: 40,
                             width: Get.width * 0.3,
                             controller: textController,
-                            hintText: "Add Tags",
+                            hintText: "add_tags",
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
                             showSuffix: false,
@@ -1157,7 +1189,7 @@ class _AddNewThingsState extends State<AddNewThings>
                             child: IconButton(
                               onPressed: (){
                                 if (textController.text.isEmpty) {
-                                  return CustomSnackbar.show(title: "Error", message: "Please type tag before adding");
+                                  return CustomSnackbar.show(title: "error", message: "type_tag_before");
                                 } else {
                                   addThingsController.addTag(textController.text);
                                   textController.clear();
@@ -1258,7 +1290,7 @@ class _AddNewThingsState extends State<AddNewThings>
                             width: 10,
                           ),
                           const LabelField(
-                            text: "Confirmed by a moderator",
+                            text: "moderator_confirmed",
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: AppColor.lightBrown,
@@ -1268,67 +1300,176 @@ class _AddNewThingsState extends State<AddNewThings>
                       const SizedBox(
                         height: 18,
                       ),
+                     _isChecked
+                         ? const SizedBox()
+                         : Column(
+                       mainAxisSize: MainAxisSize.min,
+                       children: [
+                         Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                           children: [
+                             const LabelField(
+                               text: "human_verification",
+                             ),
+                             SizedBox(
+                               height: Get.height * 0.015,
+                             ),
+                             Row(
+                               children: [
+                                 CustomTextFormField(
+                                   width: Get.width * 0.41,
+                                   controller: controller,
+                                   hintText: "enter_captcha",
+                                   showSuffix: false,
+                                   onChanged: (v) {
+                                     setState(() {
+                                       _isVerfied = false;
+                                     });
+                                   },
+                                 ),
+                                 Padding(
+                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                   child: Container(
+                                     padding:
+                                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                     decoration: BoxDecoration(
+                                       color: AppColor.secondaryColor,
+                                       borderRadius: BorderRadius.circular(10),
+                                       border: Border.all(
+                                         color: AppColor.borderColor,
+                                         width: 1.0,
+                                       ),
+                                     ),
+                                     // height: Get.height * 0.085,
+                                     child: LabelField(
+                                       text: randomString,
+                                       fontSize: 16,
+                                       color: AppColor.lightBrown,
+                                     ),
+                                   ),
+                                 ),
+                                 GestureDetector(
+                                   onTap: buildCaptcha,
+                                   child: Image.asset(
+                                     AppAssets.captcha,
+                                     width: 30,
+                                     height: 30,
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ],
+                         ),
+                       ],
+                     ),
+                      SizedBox(
+                        height: _isChecked ?  0 : 18,
+                      ),
                       Obx(
                             () => addThingsController.isLoading.value
                             ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                             : LargeButton(
-                              text: "Add Thing",
+                              text: "add_thing",
                               onTap: ()  {
                                 if (formKey.currentState!.validate()) {
-
-                                   if(selectCategoryId == null ||
-                                       thingNameController.text.isEmpty ||
-                                       pointsController.text.isEmpty ||
-                                       locationController.text.isEmpty ||
-                                       selectCountryId == null ||
-                                       descController.text.isEmpty){
+                                   if(selectCategoryId == null) {
                                      CustomSnackbar.show(
-                                       title: 'Error',
-                                       message: "All fields are required",
+                                       title: 'error',
+                                       message: "select_category",
+                                     );
+                                   } else if(thingNameController.text.isEmpty) {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "add_thing_name",
+                                     );
+                                   }else if(pointsController.text.isEmpty) {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "add_points",
+                                     );
+                                   } else if(descController.text.isEmpty) {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "add_description",
+                                     );
+                                   } else if(addThingsController.imageFile.value == null) {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "please_add_thumbnail",
+                                     );
+                                   } else if(selectCategory != "Music") {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "add_images",
+                                     );
+                                   }else if (selectCategory == "Music" && addThingsController.audio.isEmpty) {
+                                     CustomSnackbar.show(
+                                       title: 'error',
+                                       message: "add_audio_link",
                                      );
                                    } else {
-                                     if(_isChecked){
-                                       addThingsController.addThings(
-                                         categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                         name: thingNameController.text.toString(),
-                                         earnPoints: pointsController.text.toString(),
-                                         location: locationController.text.toString(),
-                                         longitude: longitude.toString(),
-                                         lattitude: latitude.toString(),
-                                         countryId: selectCountryId.toString(),
-                                         placeId: placesId.toString(),
-                                         stateId: selectStatesId.toString(),
-                                         cityId: selectCityId.toString(),
-                                         confirmModerator: _isChecked ? "Yes" : "No",
-                                         description: descController.text.toString(),
-                                       );
-                                     } else {
-                                       if(_isVerfied) {
-                                         addThingsController.addThings(
-                                           categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
-                                           name: thingNameController.text.toString(),
-                                           earnPoints: pointsController.text.toString(),
-                                           location: locationController.text.toString(),
-                                           longitude: longitude.toString(),
-                                           lattitude: latitude.toString(),
-                                           countryId: selectCountryId.toString(),
-                                           placeId: placesId.toString(),
-                                           stateId: selectStatesId.toString(),
-                                           cityId: selectCityId.toString(),
-                                           confirmModerator: _isChecked ? "Yes" : "No",
-                                           description: descController.text.toString(),
-                                         );
+                                     _isVerfied = controller.text == randomString;
+                                     if(controller.text.isNotEmpty){
+                                       if(_isChecked || _isVerfied) {
+                                         if (_isVerfied) {
+                                           addThingsController.addThings(
+                                             categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                             name: thingNameController.text.toString(),
+                                             earnPoints: pointsController.text.toString(),
+                                             location: locationController.text.toString(),
+                                             longitude: longitude.toString(),
+                                             lattitude: latitude.toString(),
+                                             countryId: selectCountryId != null ? selectCountryId.toString() : "",
+                                             placeId: placesId.toString(),
+                                             stateId: selectStatesId.toString(),
+                                             cityId: selectCityId != null ? selectCityId.toString() : "",
+                                             confirmModerator: _isChecked ? "Yes" : "No",
+                                             description: descController.text.toString(),
+                                           );
+                                         } else {
+                                           CustomSnackbar.show(
+                                             title: "error",
+                                             message: "correct_captcha",
+                                           );
+                                         }
+                                         setState(() {});
                                        } else {
-                                         showDialog(
-                                           context: context,
-                                           barrierColor: Colors.grey.withOpacity(0.4),
-                                           barrierDismissible: true,
-                                           builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
+                                         CustomSnackbar.show(
+                                           title: 'error',
+                                           message: "correct_captcha",
                                          );
+                                         // if(_isVerfied) {
+                                         //   addThingsController.addThings(
+                                         //     categoriesId: selectThirdCategoryId != null ? selectThirdCategoryId.toString() : selectSubCategoryId != null ? selectSubCategoryId.toString() : selectCategoryId.toString(),
+                                         //     name: thingNameController.text.toString(),
+                                         //     earnPoints: pointsController.text.toString(),
+                                         //     location: locationController.text.toString(),
+                                         //     longitude: longitude.toString(),
+                                         //     lattitude: latitude.toString(),
+                                         //     countryId: selectCountryId != null ? selectCountryId.toString() : "",
+                                         //     placeId: placesId.toString(),
+                                         //     stateId: selectStatesId.toString(),
+                                         //     cityId: selectCityId != null ? selectCityId.toString() : "",
+                                         //     confirmModerator: _isChecked ? "Yes" : "No",
+                                         //     description: descController.text.toString(),
+                                         //   );
+                                         // } else {
+                                         //   showDialog(
+                                         //     context: context,
+                                         //     barrierColor: Colors.grey.withOpacity(0.4),
+                                         //     barrierDismissible: true,
+                                         //     builder: (BuildContext context) => HumanVerification(verified: humanVerification,),
+                                         //   );
+                                         // }
                                        }
+                                     } else {
+                                       CustomSnackbar.show(
+                                         title: 'error',
+                                         message: "enter_captcha_warning",
+                                       );
                                      }
                                    }
                                 }

@@ -27,6 +27,11 @@
       <string>sms</string>
       <string>tel</string>
     </array>
+    <key>CFBundleLocalizations</key>
+    <array>
+    	<string>en</string>
+    	<string>nb</string>
+    </array>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to upload audio files.</string>
 	<key>NSCameraUsageDescription</key>

@@ -474,7 +474,7 @@ class ThingstoController extends GetxController {
         isValidate.value = !isValidate.value;
         things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto(usersCustomersId: userID.toString());
         Get.back();
-        CustomSnackbar.show(title: "Success", message: "Things Validated");
+        CustomSnackbar.show(title: "success", message: "things_validated");
         showSuccessAnimation(ctx);
       } else {
         debugPrint(validateData['status']);
@@ -531,7 +531,7 @@ class ThingstoController extends GetxController {
         // isValidate.value = !isValidate.value;
         things == "thingsto" ? getThingsto(checkValue: "No") :  getTopThingsto(usersCustomersId: userID.toString());
         Get.back();
-        CustomSnackbar.show(title: "Success", message: "Things send to Validation");
+        CustomSnackbar.show(title: "success", message: "things_send_to_validation");
         showSuccessAnimation(ctx);
         // Get.off(
         //       () => const MyBottomNavigationBar(initialIndex: 2,),

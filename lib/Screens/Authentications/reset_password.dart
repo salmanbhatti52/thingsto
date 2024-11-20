@@ -42,14 +42,14 @@ class PasswordChange extends StatelessWidget {
                 height: Get.height * 0.05,
               ),
               const MyText(
-                text: "Reset Password",
+                text: "resetPassword",
               ),
               SizedBox(
                 height: Get.height * 0.02,
               ),
               const LabelField(
                 text:
-                'Create a new password now.',
+                'createNewPassword',
                 color: AppColor.lightBrown,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -67,7 +67,7 @@ class PasswordChange extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const LabelField(
-                        text: 'New Password',
+                        text: 'newPassword',
                       ),
                       const SizedBox(
                         height: 8,
@@ -88,7 +88,7 @@ class PasswordChange extends StatelessWidget {
                       ),
                       const SizedBox(height: 18,),
                       const LabelField(
-                        text: 'Confirm New Password',
+                        text: 'confirmNewPassword',
                       ),
                       const SizedBox(
                         height: 8,
@@ -115,11 +115,11 @@ class PasswordChange extends StatelessWidget {
                       Obx(
                             () => authController.isLoading.value
                             ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                             : LargeButton(
-                          text: "Save",
+                          text: "save",
                           onTap: () {
                             if (formKey.currentState!.validate()) {
                                 authController.modifyPassword(

@@ -46,7 +46,7 @@ class SignupPage extends StatelessWidget {
                   height: Get.height * 0.03,
                 ),
                 const MyText(
-                  text: "Signup",
+                  text: "signup",
                 ),
                 SizedBox(
                   height: Get.height * 0.04,
@@ -61,20 +61,15 @@ class SignupPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const LabelField(
-                          text: 'First Name',
+                          text: 'firstName',
                         ),
                         const SizedBox(
                           height: 8,
                         ),
                         CustomTextFormField(
                           controller: firstNameController,
-                          hintText: "First Name here",
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'First Name is required';
-                            }
-                            return null;
-                          },
+                          hintText: "first_name_here",
+                          validator: validateFName,
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
@@ -83,20 +78,15 @@ class SignupPage extends StatelessWidget {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Last Name',
+                          text: 'lastName',
                         ),
                         const SizedBox(
                           height: 8,
                         ),
                         CustomTextFormField(
                           controller: lastNameController,
-                          hintText: "Last Name here",
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Last Name is required';
-                            }
-                            return null;
-                          },
+                          hintText: "last_name_here",
+                          validator: validateLName,
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
@@ -105,7 +95,7 @@ class SignupPage extends StatelessWidget {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Email',
+                          text: 'email',
                         ),
                         const SizedBox(
                           height: 8,
@@ -122,20 +112,15 @@ class SignupPage extends StatelessWidget {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Referral Code',
+                          text: 'referralCode',
                         ),
                         const SizedBox(
                           height: 8,
                         ),
                         CustomTextFormField(
                           controller: referralCodeController,
-                          hintText: "Referral code here",
-                          validator:(value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Referral Code is required';
-                            }
-                            return null;
-                          },
+                          hintText: "referral_code_here",
+                          validator: validateRCode,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
@@ -144,7 +129,7 @@ class SignupPage extends StatelessWidget {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Password',
+                          text: 'password',
                         ),
                         const SizedBox(
                           height: 8,
@@ -167,7 +152,7 @@ class SignupPage extends StatelessWidget {
                           height: 18,
                         ),
                         const LabelField(
-                          text: 'Confirm Password',
+                          text: 'confirmPassword',
                         ),
                         const SizedBox(
                           height: 8,
@@ -198,11 +183,11 @@ class SignupPage extends StatelessWidget {
                 Obx(
                   () => authController.isLoading.value
                       ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                       : LargeButton(
-                          text: "Signup",
+                          text: "signup",
                           onTap: () async {
                             if (formKey.currentState!.validate()) {
                               if (passwordController.text == confirmPasswordController.text) {
@@ -216,8 +201,8 @@ class SignupPage extends StatelessWidget {
                                 );
                               } else {
                                 CustomSnackbar.show(
-                                  title: 'Error',
-                                  message: "Password do not matched",
+                                  title: 'error',
+                                  message: "passwordNotMatched",
                                 );
                               }
                             }
@@ -231,10 +216,13 @@ class SignupPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const LabelField(
-                      text: "Already have an account? ",
+                      text: "alreadyHaveAccount",
                       fontWeight: FontWeight.w400,
                       color: AppColor.lightBrown,
                     ),
+                    const LabelField(
+                      text: " ",
+                     ),
                     GestureDetector(
                       onTap: () {
                         Get.to(
@@ -244,7 +232,7 @@ class SignupPage extends StatelessWidget {
                         );
                       },
                       child: const LabelField(
-                        text: "Login",
+                        text: "login_title",
                         color: AppColor.primaryColor,
                       ),
                     ),

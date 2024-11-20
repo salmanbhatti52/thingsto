@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
@@ -60,12 +61,17 @@ class SettingContainer extends StatelessWidget {
                       const SizedBox(
                         height: 2,
                       ),
-                      LabelField(
-                        text: text1,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.lightBrown,
-                      ),
+                      Container(
+                        width: Get.width * 0.63,
+                        child: LabelField(
+                          text: text1,
+                          maxLIne: 1,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.lightBrown,
+                          align: TextAlign.left,
+                        ),
+                      )
                     ],
                   ),
                 ],

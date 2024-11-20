@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Column(
         children: [
           HomeBar(
-            title: "Profile",
+            title: "profile",
             titleTrue: true,
             icon2: AppAssets.setting,
             onClick: () {
@@ -340,7 +340,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: Get.height * 0.02,
                       ),
                       const LabelField(
-                        text: 'Select Active Title',
+                        text: 'select_active_title',
                       ),
                       const SizedBox(
                         height: 10,
@@ -353,7 +353,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: 60,
                         ) : CustomDropdown(
                           itemList: itemListForTitle,
-                          hintText: itemListForTitle.isEmpty ? "No active title found.." : "Select Title",
+                          hintText: itemListForTitle.isEmpty ? "no_active_title" : "select_title",
                           onChanged: (value) {
                             setState(() {
                               selectTitle = value;
@@ -371,7 +371,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Select Badge',
+                        text: 'select_badge',
                       ),
                       const SizedBox(
                         height: 10,
@@ -383,7 +383,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: 60,
                         ) : CustomDropdown(
                           itemList: itemListForBadge,
-                          hintText: itemListForBadge.isEmpty ? "No active badge found.." : "Select Badge",
+                          hintText: itemListForBadge.isEmpty ? "no_active_badge" : "select_badge",
                           onChanged: (value) {
                             setState(() {
                               selectBadge = value;
@@ -405,11 +405,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             ? const Shimmers2(
                           width: 1,
                           height: 1,
-                        ) :  Column(
+                        ) :  quote["quote"] != null ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const LabelField(
-                              text: 'Quote',
+                              text: 'quote',
                             ),
                             const SizedBox(
                               height: 10,
@@ -425,10 +425,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: Get.height * 0.02,
                               ),
                           ],
-                        );
+                        ) : const SizedBox();
                       }),
                       const LabelField(
-                        text: 'My favorites',
+                        text: 'my_favorites',
                         fontSize: 18,
                       ),
                       SizedBox(
@@ -462,7 +462,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 28.0),
                                 child: LabelField(
-                                  text: 'Favorites Things not found',
+                                  text: 'favorites_not_found',
                                 ),
                               ),
                             );
@@ -477,7 +477,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: Get.height * 0.02,
                       ),
                       const LabelField(
-                        text: 'History of Things',
+                        text: 'historyOfThings',
                         fontSize: 18,
                       ),
                       SizedBox(
@@ -511,7 +511,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 28.0),
                                 child: LabelField(
-                                  text: 'Things not found',
+                                  text: 'things_not_found',
                                 ),
                               ),
                             );
@@ -526,7 +526,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: Get.height * 0.02,
                       ),
                       const LabelField(
-                        text: 'Summary of stats for each category',
+                        text: 'summaryOfStatsForEachCategory',
                         fontSize: 18,
                         align: TextAlign.left,
                       ),
@@ -557,7 +557,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           if (getProfileController.cachedCategoriesStats.isEmpty) {
                             return const Center(
                               child: Text(
-                                'Summary Stats of Categories not available',
+                                'summaryStatsOfCategoriesNotAvailable',
                                 style: TextStyle(
                                   color: AppColor.blackColor,
                                   fontSize: 16,

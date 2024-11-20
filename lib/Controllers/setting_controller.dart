@@ -51,14 +51,14 @@ class SettingController extends GetxController {
       if (deleteData['status'] == 'success') {
         Get.back();
         CustomSnackbar.show(
-          title: 'Success',
+          title: 'success',
           message: deleteData['message'],
         );
       } else {
         Get.back();
         debugPrint(deleteData['message']);
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: deleteData['message'],
         );
       }
@@ -95,13 +95,13 @@ class SettingController extends GetxController {
       debugPrint("changePasswordData $changePasswordData");
       if (changePasswordData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Password change successfully.",
+          title: 'success',
+          message: "password_change_success",
         );
       } else {
         debugPrint(changePasswordData['message']);
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: changePasswordData['message'],
         );
       }
@@ -135,13 +135,13 @@ class SettingController extends GetxController {
       debugPrint("referralData $referralData");
       if (referralData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
+          title: 'success',
           message: referralData['message'],
         );
       } else {
         debugPrint(referralData['message']);
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: referralData['message'],
         );
       }
@@ -210,13 +210,13 @@ class SettingController extends GetxController {
       debugPrint("subData $subData");
       if (subData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
+          title: 'success',
           message: subData['message'],
         );
       } else {
         debugPrint(subData['message']);
         CustomSnackbar.show(
-          title: 'Error',
+          title: 'error',
           message: subData['message'],
         );
       }

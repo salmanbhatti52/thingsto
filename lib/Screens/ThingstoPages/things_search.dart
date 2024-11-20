@@ -121,13 +121,15 @@ class ThingsSearch extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         LabelField(
-                          text: "${members['name']}",
+                          text: "${members['name']}".length > 20
+                        ? "${"${members['name']}".substring(0, 20)}..."
+                        : "${members['name']}",
                           fontSize: 16,
                         ),
                         SizedBox(
                           width: Get.width * 0.55,
                           child: LabelField(
-                            text: members['location'] != null ? "${members['location']}" : "No Locations",
+                            text: members['location'] != null ? "${members['location']}" : "noLocations",
                             fontSize: 14,
                             maxLIne: 1,
                             fontWeight: FontWeight.w400,

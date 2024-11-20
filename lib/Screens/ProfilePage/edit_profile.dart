@@ -12,6 +12,7 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/TextFields.dart';
 import 'package:thingsto/Widgets/app_bar.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class EditProfile extends StatefulWidget {
@@ -55,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Edit Profile",
+            title: "edit_profile",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -139,14 +140,14 @@ class _EditProfileState extends State<EditProfile> {
                         height: Get.height * 0.025,
                       ),
                       const LabelField(
-                        text: 'Pseudo',
+                        text: 'pseudo',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: surNameController,
-                        hintText: "Pseudo here",
+                        hintText: "pseudo_here",
                         // validator: validateEmail,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
@@ -156,14 +157,14 @@ class _EditProfileState extends State<EditProfile> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'First Name',
+                        text: 'firstName',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: firstNameController,
-                        hintText: "First Name here",
+                        hintText: "first_name_here",
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
                         showSuffix: false,
@@ -172,14 +173,14 @@ class _EditProfileState extends State<EditProfile> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Last Name',
+                        text: 'lastName',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomTextFormField(
                         controller: lastNameController,
-                        hintText: "Last Name here",
+                        hintText: "last_name_here",
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.done,
                         showSuffix: false,
@@ -188,14 +189,14 @@ class _EditProfileState extends State<EditProfile> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Age',
+                        text: 'age',
                       ),
                       const SizedBox(
                         height: 8,
                       ),
                       CustomDropdown(
                         itemList: itemListForAge,
-                        hintText: selectAge != null ? selectAge.toString() : "Select Age",
+                        hintText: selectAge != null ? selectAge.toString() : "select_age",
                         onChanged: (value) {
                           selectAge = value;
                           debugPrint("selectAge: $selectAge");
@@ -205,7 +206,7 @@ class _EditProfileState extends State<EditProfile> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Email',
+                        text: 'email',
                       ),
                       const SizedBox(
                         height: 8,
@@ -221,7 +222,7 @@ class _EditProfileState extends State<EditProfile> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Quote',
+                        text: 'quote',
                       ),
                       const SizedBox(
                         height: 8,
@@ -256,7 +257,7 @@ class _EditProfileState extends State<EditProfile> {
                               top: 0.0,
                               left: 12,
                             ),
-                            hintText: "Add quote",
+                            hintText: easy.tr("add_quote"),
                             hintStyle: GoogleFonts.poppins(
                               fontSize: 14,
                               color: AppColor.hintColor,
@@ -271,11 +272,11 @@ class _EditProfileState extends State<EditProfile> {
                       Obx(
                             () => updateProfileController.isLoading.value
                             ? LargeButton(
-                          text: "Please Wait...",
+                          text: "please_wait",
                           onTap: () {},
                         )
                             : LargeButton(
-                          text: "Save Changes",
+                          text: "save_changes",
                           onTap: () {
                             if (formKey.currentState!.validate()) {
                               if (selectAge != null) {
@@ -291,8 +292,8 @@ class _EditProfileState extends State<EditProfile> {
                                 );
                               } else {
                                 CustomSnackbar.show(
-                                  title: 'Error',
-                                  message: "Please Select Age",
+                                  title: 'error',
+                                  message: "please_select_age",
                                 );
                               }
                             }
@@ -366,7 +367,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedItem ?? widget.hintText,
+              _selectedItem ?? easy.tr(widget.hintText),
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: AppColor.hintColor,
@@ -473,7 +474,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
             CupertinoButton(
-              child: Text('Done', style: GoogleFonts.poppins()),
+              child: Text(
+                  easy.tr('done'),
+                  style: GoogleFonts.poppins()),
               onPressed: () {
                 Navigator.of(context).pop();
               },

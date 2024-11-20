@@ -40,14 +40,14 @@ class _FindThingsState extends State<FindThings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const LabelField(
-                    text: 'I’m looking around',
+                    text: 'looking_around',
                   ),
                   const SizedBox(
                     height: 8,
                   ),
                   CustomTextFormField(
                     controller: controller,
-                    hintText: "search city",
+                    hintText: "search_city",
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     showSuffix: false,
@@ -131,7 +131,7 @@ class _FindThingsState extends State<FindThings> {
         if (!homeController.isLastItemShown.value)
           selectCityId != null
             ? LargeButton(
-          text: "FIND IT",
+          text: "find_it",
           onTap: () {
             if (formKey.currentState!.validate()) {
               if (selectCityId != null && selectCityId!.isNotEmpty) {
@@ -148,7 +148,7 @@ class _FindThingsState extends State<FindThings> {
                   }
                 }
               } else {
-                CustomSnackbar.show(title: "Error", message: "Please select all fields");
+                CustomSnackbar.show(title: "error", message: "select_all_fields");
               }
             }
           },

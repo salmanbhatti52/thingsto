@@ -51,7 +51,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
           child: Column(
             children: [
               BackButtonBar(
-                title: "Thingsto",
+                title: "thingsto",
                 onBack: (){
                   Get.back();
                   thingstoController.hasRunFoundedThings.value = false;
@@ -67,7 +67,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                   children: [
                     CustomTextFormField(
                       controller: searchController,
-                      hintText: "Search for a thing",
+                      hintText: "search_for_a_thing",
                       // validator: validateEmail,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
@@ -92,7 +92,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                       height: Get.height * 0.02,
                     ),
                     const LabelField(
-                      text: "Things to",
+                      text: "thingsto",
                       fontSize: 21,
                       color: AppColor.blackColor,
                       interFont: true,
@@ -231,7 +231,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                 maxLIne: 1,
                                               ),
                                             ),
-                                            things['tags'] != null && things['tags'].isNotEmpty ||  things['location'] != null
+                                            things['tags'] != null && things['tags'].isNotEmpty && things['tags'][0]["name"] != "" ||  things['location'] != null
                                                 ? Container(
                                               width: Get.width,
                                               height: 55,

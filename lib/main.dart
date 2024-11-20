@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -11,6 +13,8 @@ import 'Utills/const.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  await GetStorage.init();
   OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
   OneSignal.shared.setAppId("60c86bbb-36cd-406a-b336-2a88bbd68402");
   prefs = await SharedPreferences.getInstance();
@@ -18,7 +22,20 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(const MyApp());
+  final box = GetStorage();
+  String? languageCode = box.read('languageCode') ?? 'en';
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('fr'), // French
+      ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      startLocale: Locale(languageCode),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -35,6 +52,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Thingsto',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.deviceLocale,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.primaryColor),
         useMaterial3: true,

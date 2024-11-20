@@ -136,7 +136,7 @@ class _HumanVerificationState extends State<HumanVerification> {
                       horizontal: 16.0, vertical: 15),
                   child: CustomTextFormField(
                     controller: controller,
-                    hintText: "Enter Captcha",
+                    hintText: "enter_captcha",
                     showSuffix: false,
                     onChanged: (v) {
                       setState(() {

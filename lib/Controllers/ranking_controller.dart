@@ -41,7 +41,7 @@ class RankingController extends GetxController {
       debugPrint("getRankUserData $getRankUserData");
       if (getRankUserData['status'] == 'success') {
         List<dynamic> sortedData = getRankUserData['data'];
-        sortedData.sort((a, b) => b['total_points'].compareTo(a['total_points']));
+        sortedData.sort((a, b) => b['points'].compareTo(a['points']));
         rankUser.value = sortedData;
         cachedRankUser.value = sortedData;
         isRank.value = true;

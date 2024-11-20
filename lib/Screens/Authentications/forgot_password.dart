@@ -36,14 +36,14 @@ class ForgotPassword extends StatelessWidget {
                 height: Get.height * 0.05,
               ),
               const MyText(
-                text: "Forgot Password",
+                text: "forgot_password",
               ),
               SizedBox(
                 height: Get.height * 0.02,
               ),
               const LabelField(
                 text:
-                    'Confirm your email, we wil send you a verification code to verify your email.',
+                    'confirmEmailText',
                 color: AppColor.lightBrown,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -61,7 +61,7 @@ class ForgotPassword extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const LabelField(
-                        text: 'Email',
+                        text: 'email',
                       ),
                       const SizedBox(
                         height: 8,
@@ -85,12 +85,12 @@ class ForgotPassword extends StatelessWidget {
                 () => authController.isLoading.value
                     ? LargeButton(
                         width: Get.width * 0.85,
-                        text: "Please Wait...",
+                        text: "please_wait",
                         onTap: () {},
                       )
                     : LargeButton(
                         width: Get.width * 0.85,
-                        text: "Confirm",
+                        text: "confirm",
                         onTap: () {
                           if (formKey.currentState!.validate()) {
                             authController.forgotPassword(

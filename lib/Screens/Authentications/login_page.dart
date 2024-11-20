@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/auth_controllers.dart';
-import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/Authentications/forgot_password.dart';
@@ -19,7 +18,6 @@ class LoginPage extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
-  final LanguageController languageController = Get.put(LanguageController());
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +40,8 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-                Obx(() => MyText(
-                  text: languageController.phrases["login"] ?? "Login",
-                ),
+                const MyText(
+                  text: "login_title",
                 ),
                 SizedBox(
                   height: Get.height * 0.05,
@@ -58,26 +55,26 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() => LabelField(
-                          text: languageController.phrases["email"] ?? "Email",
-                        ),),
+                        const LabelField(
+                          text: "email",
+                        ),
                         const SizedBox(
                           height: 8,
                         ),
-                        Obx(() => CustomTextFormField(
+                        CustomTextFormField(
                           controller: emailController,
-                          hintText: languageController.phrases["username@gmail.com"] ?? "username@gmail.com",
+                          hintText: "username@gmail.com",
                           validator: validateEmail,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           showSuffix: false,
-                        ),),
+                        ),
                         const SizedBox(
                           height: 18,
                         ),
-                        Obx(() => LabelField(
-                          text: languageController.phrases["password"] ?? "Password",
-                        ),),
+                        const LabelField(
+                          text: "password",
+                        ),
                         const SizedBox(
                           height: 8,
                         ),
@@ -107,18 +104,27 @@ class LoginPage extends StatelessWidget {
                                 transition: Transition.rightToLeft,
                               );
                             },
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Obx(() => LabelField(
-                                  text: languageController.phrases["forgot_password?"] ?? "Forgot Password?",
+                                LabelField(
+                                  text: "forgot_password",
                                   fontWeight: FontWeight.w400,
                                   color: AppColor.lightBrown,
-                                ),),
-                                Obx(() => LabelField(
-                                  text: languageController.phrases["reset?"] ?? " Reset",
+                                ),
+                                LabelField(
+                                  text: "?",
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.lightBrown,
+                                ),
+                                LabelField(
+                                  text: " ",
                                   color: AppColor.primaryColor,
-                                ),),
+                                ),
+                                LabelField(
+                                  text: "reset",
+                                  color: AppColor.primaryColor,
+                                ),
                               ],
                             ),
                           ),
@@ -133,11 +139,11 @@ class LoginPage extends StatelessWidget {
                 Obx(
                       () => authController.isLoading.value
                       ? LargeButton(
-                    text: "Please Wait...",
+                    text: "please_wait",
                     onTap: () {},
                   )
                       : LargeButton(
-                    text: languageController.phrases["login"] ?? "Login",
+                    text: "login_title",
                     onTap: () {
                       if (formKey.currentState!.validate()) {
                         authController.login(
@@ -155,9 +161,12 @@ class LoginPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const LabelField(
-                      text: "Don't have an account? ",
+                      text: "dont_have_account",
                       fontWeight: FontWeight.w400,
                       color: AppColor.lightBrown,
+                    ),
+                    const LabelField(
+                      text: " ",
                     ),
                     GestureDetector(
                       onTap: () {
@@ -168,7 +177,7 @@ class LoginPage extends StatelessWidget {
                         );
                       },
                       child: const LabelField(
-                        text: "Signup",
+                        text: "signup",
                         color: AppColor.primaryColor,
                       ),
                     ),

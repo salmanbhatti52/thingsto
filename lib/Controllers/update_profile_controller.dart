@@ -115,8 +115,8 @@ class UpdateProfileController extends GetxController {
         var userData = updateData['data'][0];
         await prefs.setString('surName', userData['sur_name']);
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Profile Update successfully.",
+          title: 'success',
+          message: "profile_update_success",
         );
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 4,),
@@ -126,8 +126,8 @@ class UpdateProfileController extends GetxController {
       } else {
         debugPrint(updateData['message']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "Some thing wrong",
+          title: 'error',
+          message: "something_wrong",
         );
       }
     } catch (e) {
@@ -143,6 +143,8 @@ class UpdateProfileController extends GetxController {
     String? usersCustomersId,
     required String notifications,
     required String notificationsEmail,
+    required String thingAddition,
+    required String thingValidation,
   }) async {
     try {
       isLoading.value = true;
@@ -152,6 +154,8 @@ class UpdateProfileController extends GetxController {
         "users_customers_id": userID.toString(),
         "notifications":  notifications.toString(),
         "notifications_email": notificationsEmail.toString(),
+        "things_approval_notifications": thingAddition.toString(),
+        "things_validation_notifications": thingValidation.toString(),
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(updateProfileNotificationsApiUrl),
@@ -161,8 +165,8 @@ class UpdateProfileController extends GetxController {
       debugPrint("updateData $updateData");
       if (updateData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Notifications Update successfully.",
+          title: 'success',
+          message: "notifications_update_success",
         );
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 4,),
@@ -172,8 +176,8 @@ class UpdateProfileController extends GetxController {
       } else {
         debugPrint(updateData['message']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "Some thing wrong",
+          title: 'error',
+          message: "something_wrong",
         );
       }
     } catch (e) {
@@ -205,8 +209,8 @@ class UpdateProfileController extends GetxController {
       debugPrint("updateData $updateData");
       if (updateData['status'] == 'success') {
         CustomSnackbar.show(
-          title: 'Success',
-          message: "Privacy Update successfully.",
+          title: 'success',
+          message: "privacy_update_success",
         );
         Get.off(
               () => const MyBottomNavigationBar(initialIndex: 4,),
@@ -216,8 +220,8 @@ class UpdateProfileController extends GetxController {
       } else {
         debugPrint(updateData['message']);
         CustomSnackbar.show(
-          title: 'Error',
-          message: "Some thing wrong",
+          title: 'error',
+          message: "something_wrong",
         );
       }
     } catch (e) {

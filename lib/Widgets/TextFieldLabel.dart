@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -24,7 +25,7 @@ class LabelField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      text.tr(),
       maxLines: maxLIne,
       style: interFont ? GoogleFonts.inter(
         color: color,

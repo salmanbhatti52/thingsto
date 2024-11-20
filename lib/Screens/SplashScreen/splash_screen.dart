@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   String isLogin = 'false';
 
   final AuthController authController = Get.put(AuthController());
-  final LanguageController languageController = Get.put(LanguageController());
+  // final LanguageController languageController = Get.put(LanguageController());
 
   @override
   void initState() {
@@ -33,11 +33,11 @@ class _SplashScreenState extends State<SplashScreen> {
   init() async {
     prefs = await SharedPreferences.getInstance();
     isLogin = (prefs.getString('isLogin')) ?? 'false';
-    languages = prefs.getString('language') ?? '';
-    debugPrint("languages: $languages");
+    // languages = prefs.getString('language') ?? '';
+    // debugPrint("languages: $languages");
     if (isLogin == "false") {
       await authController.fetchSystemSettings();
-      await languageController.languagesPhrase(language: languages.toString());
+      // await languageController.languagesPhrase(language: languages.toString());
     }
     Future.delayed(const Duration(seconds: 1), () async {
       Get.offAll(

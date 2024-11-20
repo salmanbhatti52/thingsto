@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -46,7 +47,7 @@ class LargeButton extends StatelessWidget {
         child: Center(
           child: Text(
             maxLines: maxLIne,
-            text,
+            text.tr(),
             textAlign: align,
             style: GoogleFonts.poppins(
               fontSize: fontSize,

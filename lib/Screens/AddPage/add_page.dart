@@ -36,7 +36,7 @@ class _AddPageState extends State<AddPage> {
       body: Column(
         children: [
           Obx(() => HomeBar(
-            title: "Add Things",
+            title: "add_thing",
             titleTrue: true,
             icon2: AppAssets.notify,
             hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
@@ -76,15 +76,14 @@ class _AddPageState extends State<AddPage> {
           Column(
             children: [
               const LabelField(
-                text: "A new thing to discover?\nAdd It!",
+                text: "add_thing_description",
                 fontSize: 18,
               ),
               SizedBox(
                 height: Get.height * 0.022,
               ),
               const LabelField(
-                text:
-                "Complete the information and click on\n“Send”,  the new thing will be published\nsoon.",
+                text: "complete_and_send",
                 fontWeight: FontWeight.w400,
                 color: AppColor.lightBrown,
               ),
@@ -94,7 +93,7 @@ class _AddPageState extends State<AddPage> {
               LargeButton(
                 width: Get.width * 0.45,
                 height : Get.height * 0.047,
-                text: "Propose a Thing",
+                text: "propose_thing",
                 onTap: () {
                   Get.to(
                         () => const AddNewThings(),

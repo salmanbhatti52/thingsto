@@ -18,7 +18,7 @@ class DeleteAccountPage extends StatelessWidget {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Delete Account",
+            title: "delete_account",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -40,14 +40,14 @@ class DeleteAccountPage extends StatelessWidget {
                     Column(
                       children: [
                         const LabelField(
-                          text: "Are you sure, you want to delete your account?",
+                          text: "delete_account_confirmation",
                           fontSize: 24,
                         ),
                         SizedBox(
                           height: Get.height * 0.04,
                         ),
                         const LabelField(
-                          text: "If you delete your account then it won’t be recovered and all your data will be deleted.",
+                          text: "delete_account_warning",
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                           maxLIne: 4,
@@ -63,11 +63,11 @@ class DeleteAccountPage extends StatelessWidget {
                     Obx(
                           () => settingController.isLoading.value
                           ? LargeButton(
-                        text: "Please Wait...",
+                        text: "please_wait",
                         onTap: () {},
                       )
                           : LargeButton(
-                        text: "Confirm",
+                        text: "confirm",
                         onTap: () {
                             settingController.deleteAccount();
                         },

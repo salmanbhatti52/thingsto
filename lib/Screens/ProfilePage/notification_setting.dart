@@ -14,76 +14,126 @@ class NotificationSetting extends StatefulWidget {
   State<NotificationSetting> createState() => _NotificationSettingState();
 }
 
-class _NotificationSettingState extends State<NotificationSetting> with TickerProviderStateMixin {
-
+class _NotificationSettingState extends State<NotificationSetting>
+    with TickerProviderStateMixin {
   bool _isNotificationChecked = false;
   bool _isEmailChecked = false;
+  bool _isThingAdditionChecked = false;
+  bool _isThingValidationChecked = false;
+
   late AnimationController _notificationController;
   late AnimationController _emailController;
+  late AnimationController _thingAdditionController;
+  late AnimationController _thingValidationController;
+
   late Animation<double> _notificationAnimation;
   late Animation<double> _emailAnimation;
+  late Animation<double> _thingAdditionAnimation;
+  late Animation<double> _thingValidationAnimation;
+
   UpdateProfileController updateProfileController =
-  Get.put(UpdateProfileController());
+      Get.put(UpdateProfileController());
 
   @override
   void initState() {
     super.initState();
     debugPrint(widget.getProfile['notifications']);
     debugPrint(widget.getProfile['notifications_email']);
-    widget.getProfile['notifications'] == "Yes" ?  _isNotificationChecked = true : _isNotificationChecked = false;
-    widget.getProfile['notifications_email'] == "Yes" ?  _isEmailChecked = true : _isEmailChecked = false;
-    _notificationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _notificationAnimation = CurvedAnimation(parent: _notificationController, curve: Curves.easeInOut);
+    debugPrint(widget.getProfile['things_approval_notifications']);
+    debugPrint(widget.getProfile['things_validation_notifications']);
+    widget.getProfile['notifications'] == "Yes"
+        ? _isNotificationChecked = true
+        : _isNotificationChecked = false;
+    widget.getProfile['notifications_email'] == "Yes"
+        ? _isEmailChecked = true
+        : _isEmailChecked = false;
+    widget.getProfile['things_approval_notifications'] == "Yes"
+        ? _isThingAdditionChecked = true
+        : _isThingAdditionChecked = false;
+    widget.getProfile['things_validation_notifications'] == "Yes"
+        ? _isThingValidationChecked = true
+        : _isThingValidationChecked = false;
 
-    _emailController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _emailAnimation = CurvedAnimation(parent: _emailController, curve: Curves.easeInOut);
-    if (_isNotificationChecked) {
-      _notificationController.forward();
-    } else {
-      _notificationController.reverse();
-    }
-    if (_isEmailChecked) {
-      _emailController.forward();
-    } else {
-      _emailController.reverse();
-    }
+    _notificationController = _createController();
+    _notificationAnimation =
+        _createAnimation(_notificationController, _isNotificationChecked);
+
+    _emailController = _createController();
+    _emailAnimation = _createAnimation(_emailController, _isEmailChecked);
+
+    _thingAdditionController = _createController();
+    _thingAdditionAnimation =
+        _createAnimation(_thingAdditionController, _isThingAdditionChecked);
+
+    _thingValidationController = _createController();
+    _thingValidationAnimation =
+        _createAnimation(_thingValidationController, _isThingValidationChecked);
   }
 
+  AnimationController _createController() {
+    return AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+  }
+
+  Animation<double> _createAnimation(
+      AnimationController controller, bool isChecked) {
+    final animation =
+        CurvedAnimation(parent: controller, curve: Curves.easeInOut);
+    if (isChecked) {
+      controller.forward();
+    } else {
+      controller.reverse();
+    }
+    return animation;
+  }
+
+  // Toggle functions
   void _toggleNotificationCheckbox() {
     setState(() {
       _isNotificationChecked = !_isNotificationChecked;
-      if (_isNotificationChecked) {
-        _notificationController.forward();
-      } else {
-        _notificationController.reverse();
-      }
+      _toggleAnimation(_notificationController, _isNotificationChecked);
     });
   }
 
   void _toggleEmailCheckbox() {
     setState(() {
       _isEmailChecked = !_isEmailChecked;
-      if (_isEmailChecked) {
-        _emailController.forward();
-      } else {
-        _emailController.reverse();
-      }
+      _toggleAnimation(_emailController, _isEmailChecked);
     });
+  }
+
+  void _toggleThingAdditionCheckbox() {
+    setState(() {
+      _isThingAdditionChecked = !_isThingAdditionChecked;
+      _toggleAnimation(_thingAdditionController, _isThingAdditionChecked);
+    });
+  }
+
+  void _toggleThingValidationCheckbox() {
+    setState(() {
+      _isThingValidationChecked = !_isThingValidationChecked;
+      _toggleAnimation(_thingValidationController, _isThingValidationChecked);
+    });
+  }
+
+  void _toggleAnimation(AnimationController controller, bool isChecked) {
+    if (isChecked) {
+      controller.forward();
+    } else {
+      controller.reverse();
+    }
   }
 
   @override
   void dispose() {
     _notificationController.dispose();
     _emailController.dispose();
+    _thingAdditionController.dispose();
+    _thingValidationController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +142,7 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
       body: Column(
         children: [
           BackButtonBar(
-            title: "Notifications Settings",
+            title: "notifications_settings",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -108,113 +158,34 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: Get.height * 0.07,
-                    ),
-                    const LabelField(
-                      text: 'Enable Notification',
-                      fontSize: 18,
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.03,
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleNotificationCheckbox,
-                          child: Container(
-                            width: 26,
-                            height: 23,
-                            decoration: BoxDecoration(
-                              color: AppColor.secondaryColor,
-                              border: Border.all(
-                                color: _isNotificationChecked ? AppColor.primaryColor : AppColor.borderColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: FadeTransition(
-                                opacity: _notificationAnimation,
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        LabelField(
-                          text: "Notification",
-                          fontSize: 16,
-                          color: _isNotificationChecked ? AppColor.labelTextColor : AppColor.hintColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.03,
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleEmailCheckbox,
-                          child: Container(
-                            width: 26,
-                            height: 23,
-                            decoration: BoxDecoration(
-                              color: AppColor.secondaryColor,
-                              border: Border.all(
-                                color: _isEmailChecked ? AppColor.primaryColor : AppColor.borderColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Center(
-                              child: FadeTransition(
-                                opacity: _emailAnimation,
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        LabelField(
-                          text: "Email Alerts",
-                          fontSize: 16,
-                          color: _isEmailChecked ? AppColor.labelTextColor : AppColor.hintColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: Get.height * 0.55,
-                    ),
+                    SizedBox(height: Get.height * 0.07),
+                    _buildCheckboxRow("enable_notification", _isNotificationChecked, _toggleNotificationCheckbox, _notificationAnimation),
+                    SizedBox(height: Get.height * 0.03),
+                    _buildCheckboxRow("email_alerts", _isEmailChecked, _toggleEmailCheckbox, _emailAnimation),
+                    SizedBox(height: Get.height * 0.03),
+                    _buildCheckboxRow("thing_addition", _isThingAdditionChecked, _toggleThingAdditionCheckbox, _thingAdditionAnimation),
+                    SizedBox(height: Get.height * 0.03),
+                    _buildCheckboxRow("thing_validation", _isThingValidationChecked, _toggleThingValidationCheckbox, _thingValidationAnimation),
+                    SizedBox(height: Get.height * 0.5),
                     Obx(
-                          () => updateProfileController.isLoading.value
+                      () => updateProfileController.isLoading.value
                           ? LargeButton(
-                        text: "Please Wait...",
-                        onTap: () {},
-                      )
+                              text: "please_wait",
+                              onTap: () {},
+                            )
                           : LargeButton(
-                        text: "Apply",
-                        onTap: () {
-                              updateProfileController.updateNotifications(
-                                notifications: _isNotificationChecked ? "Yes" : "No",
-                                notificationsEmail: _isEmailChecked ? "Yes" : "No",
-                              );
-                        },
-                      ),
+                              text: "apply",
+                              onTap: () {
+                                updateProfileController.updateNotifications(
+                                  notifications:
+                                      _isNotificationChecked ? "Yes" : "No",
+                                  notificationsEmail:
+                                      _isEmailChecked ? "Yes" : "No",
+                                  thingAddition: _isThingAdditionChecked ? "Yes" : "No",
+                                  thingValidation: _isThingValidationChecked ? "Yes" : "No",
+                                );
+                              },
+                            ),
                     ),
                     SizedBox(
                       height: Get.height * 0.02,
@@ -226,6 +197,44 @@ class _NotificationSettingState extends State<NotificationSetting> with TickerPr
           ),
         ],
       ),
+    );
+  }
+  Widget _buildCheckboxRow(String label, bool isChecked, VoidCallback onTap, Animation<double> animation) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 26,
+            height: 23,
+            decoration: BoxDecoration(
+              color: AppColor.secondaryColor,
+              border: Border.all(
+                color: isChecked ? AppColor.primaryColor : AppColor.borderColor,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: FadeTransition(
+                opacity: animation,
+                child: const Icon(
+                  Icons.check_rounded,
+                  size: 20,
+                  color: AppColor.primaryColor,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        LabelField(
+          text: label,
+          fontSize: 16,
+          color: isChecked ? AppColor.labelTextColor : AppColor.hintColor,
+          fontWeight: FontWeight.w400,
+        ),
+      ],
     );
   }
 }

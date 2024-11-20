@@ -218,7 +218,7 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                                     LabelField(
                                       text: things['name'],
                                       fontSize: 12,
-                                      maxLIne: 2,
+                                      maxLIne: 1,
                                       color: AppColor.whiteColor,
                                     ),
                                     const SizedBox(

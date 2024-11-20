@@ -11,7 +11,13 @@ class SummaryStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List sortedStats = List.from(stats)
-      ..sort((a, b) => b['percentage'].compareTo(a['percentage']));
+      ..sort((a, b) => b['percentage'].toString().compareTo(a['percentage'].toString()));
+    // List sortedStats = List.from(stats)
+    //   ..sort((a, b) {
+    //     int percentageA = int.tryParse(a['percentage'].toString()) ?? 0;
+    //     int percentageB = int.tryParse(b['percentage'].toString()) ?? 0;
+    //     return percentageB.compareTo(percentageA);
+    //   });
     return SizedBox(
       height: Get.height * 0.5,
       child: GridView.builder(

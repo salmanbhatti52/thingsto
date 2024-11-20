@@ -69,7 +69,7 @@ class _RankPageState extends State<RankPage> {
       body: Column(
         children: [
           Obx(() => HomeBar(
-            title: "Ranking",
+            title: "ranking",
             titleTrue: true,
             icon2: AppAssets.notify,
             hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
@@ -93,7 +93,7 @@ class _RankPageState extends State<RankPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const LabelField(
-                      text: "Rank by",
+                      text: "rankBy",
                       fontSize: 14,
                     ),
                     Obx(() {
@@ -124,7 +124,7 @@ class _RankPageState extends State<RankPage> {
                     height: 50,
                   ) : CustomDropdown(
                     itemList: itemListForCategory,
-                    hintText: "Select Category",
+                    hintText: "allCategories",
                     onChanged: (value) {
                       setState(() {
                         selectCategory = value;
@@ -190,7 +190,7 @@ class _RankPageState extends State<RankPage> {
                         child: Padding(
                           padding: EdgeInsets.only(top: Get.height * 0.3,),
                           child: const LabelField(
-                            text: 'Ranking not found',
+                            text: 'rankingNotFound',
                             fontSize: 18,
                           ),
                         ),

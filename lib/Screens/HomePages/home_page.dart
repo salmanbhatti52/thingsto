@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   late LatLng _currentLocation = const LatLng(0, 0);
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final HomeController homeController = Get.put(HomeController());
-  final LanguageController languageController = Get.put(LanguageController());
+  // final LanguageController languageController = Get.put(LanguageController());
   final NotificationsController notificationsController = Get.put(NotificationsController());
 
   void _onMapCreated(GoogleMapController controller) {
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
         // }
       });
     } else {
-      CustomSnackbar.show(title: "Error", message: "Please select all fields");
+      CustomSnackbar.show(title: "error", message: "select_all_fields");
     }
     debugPrint("Thing Name: $thingName, isFind: $isFind, Category ID: $selectCategory");
   }
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const LabelField(
-                            text: "Welcome",
+                            text: "welcome",
                             fontSize: 18,
                           ),
                           LabelField(
@@ -186,23 +186,22 @@ class _HomePageState extends State<HomePage> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
+                      const Padding(
+                        padding: EdgeInsets.only(
                           left: 40.0,
                           right: 40.0,
                           top: 15.0,
                         ),
-                        child: Obx(() => LabelField(
-                          text: languageController.phrases['home_you_dont_know_what_to_do_around_you?_let_us_find_you_something_with_your_criteria_;)'] ??
-                              "You don’t know what to do around you? Let us find you something with your criteria ;)",
+                        child: LabelField(
+                          text: "dont_know",
                           fontSize: 18,
-                        )),
+                        ),
                       ),
                       SizedBox(
                         height: Get.height * 0.025,
                       ),
                       LargeButton(
-                          text: "FIND ME A THING",
+                          text: "find_me_a_thing",
                           onTap: () {
                             setState(() {
                               isDropDownShow = true;
@@ -254,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 28.0),
                                       child: LabelField(
-                                        text: "Things not found",
+                                        text: "things_not_found",
                                         fontSize: 18,
                                       ),
                                     ),
@@ -283,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 28.0),
                                         child: LabelField(
-                                          text: "No more things found",
+                                          text: "no_more_things_found",
                                           fontSize: 18,
                                         ),
                                       ),
@@ -291,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 10,),
                                     if (!homeController.isLastItemShown.value)
                                     LargeButton(
-                                      text: "Show More Thing",
+                                      text: "show_more_thing",
                                       onTap: showNextThing,
                                       width: Get.width * 0.46,
                                       height: Get.height * 0.05,
@@ -332,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 15.0),
                           child: LabelField(
-                            text: "The things of the moment",
+                            text: "things_of_the_moment",
                             fontSize: 18,
                             align: TextAlign.left,
                           ),
@@ -369,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 28.0),
                                 child: LabelField(
-                                  text: 'Things not found',
+                                  text: 'things_not_found',
                                 ),
                               ),
                             );
@@ -404,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         child: const LabelField(
-                          text: "We are now more than 50,000. Don’t hesitate to send your suggestions everyone.",
+                          text: "more_than_50000",
                           fontSize: 18,
                           align: TextAlign.left,
                         ),

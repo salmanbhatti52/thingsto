@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // class CustomDropdown extends StatefulWidget {
 //   final List<dynamic> itemList;
@@ -187,9 +188,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
       if (_searchController.text.isEmpty) {
         _filteredItemList = widget.itemList;
       } else {
-        _filteredItemList = widget.itemList
-            .where((item) => item.toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
+        _filteredItemList = widget.itemList.where((item) {
+          final itemText = item.toString().toLowerCase();
+          final searchText = _searchController.text.toLowerCase();
+          return itemText.contains(searchText);  // Match any occurrence of the search text
+        }).toList();
       }
     });
   }
@@ -234,37 +237,48 @@ class _CustomDropdownState extends State<CustomDropdown> {
           offset: Offset(0.0, size.height + 5.0),
           child: Material(
             elevation: 4.0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.itemList.length > 12)
-                TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: 'Search...',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  ),
-                ),
-                SizedBox(
-                  height: dropdownHeight,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    children: _filteredItemList.map((item) {
-                      return ListTile(
-                        title: Text(item),
-                        onTap: () {
-                          setState(() {
-                            _selectedItem = item;
-                            widget.onChanged(_selectedItem);
-                          });
-                          _removeOverlay();
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                // Update filter as the user types
+                _searchController.addListener(() {
+                  setState(() {
+                    _onSearchChanged();
+                  });
+                });
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.itemList.length > 12)
+                      TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        ),
+                      ),
+                    SizedBox(
+                      height: dropdownHeight,
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        children: _filteredItemList.map((item) {
+                          return ListTile(
+                            title: Text(item),
+                            onTap: () {
+                              setState(() {
+                                _selectedItem = item;
+                                widget.onChanged(_selectedItem);
+                              });
+                              _removeOverlay();
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -311,7 +325,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _selectedItem ?? widget.hintText,
+                _selectedItem ?? widget.hintText.tr(),
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.grey, // Update with your color

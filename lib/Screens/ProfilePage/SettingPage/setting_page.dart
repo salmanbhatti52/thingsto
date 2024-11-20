@@ -28,7 +28,7 @@ class SettingPage extends StatelessWidget {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Settings",
+            title: "settings",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -52,8 +52,8 @@ class SettingPage extends StatelessWidget {
                     children: [
                       SettingContainer(
                         image: AppAssets.editProfile,
-                        text: "Edit Profile",
-                        text1: "Edit your personal details",
+                        text: "edit_profile",
+                        text1: "edit_personal_details",
                         onBack: (){
                           Get.to(
                                 () => EditProfile(getProfile: getProfile,),
@@ -67,8 +67,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.notification,
-                        text: "Notifications Settings",
-                        text1: "Change notifications settings",
+                        text: "notifications_settings",
+                        text1: "change_notifications_settings",
                         onBack: (){
                           Get.to(
                                 () => NotificationSetting(getProfile: getProfile,),
@@ -82,8 +82,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.privacy,
-                        text: "Privacy Settings",
-                        text1: "Change privacy settings",
+                        text: "privacy_settings",
+                        text1: "change_privacy_settings",
                         onBack: (){
                           Get.to(
                                 () => PrivacySetting(getProfile: getProfile,),
@@ -97,8 +97,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.lang,
-                        text: "Language",
-                        text1: getProfile["language"] ?? "English",
+                        text: "language",
+                        text1: "english",
                         onBack: (){
                           Get.to(
                                 () => LanguageChangePage(getProfile: getProfile,),
@@ -112,8 +112,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.password,
-                        text: "Change Password",
-                        text1: "Reset your password here",
+                        text: "change_password",
+                        text1: "reset_password",
                         onBack: (){
                           Get.to(
                                 () => PasswordChangePage(),
@@ -127,8 +127,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.contact,
-                        text: "Contact Us",
-                        text1: "Contact for any query or help",
+                        text: "contact_us",
+                        text1: "contact_for_help",
                         onBack: (){
                           Get.to(
                                 () => const ContactPage(),
@@ -142,8 +142,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.subscribe,
-                        text: "Referral",
-                        text1: "Invite email referral",
+                        text: "referral",
+                        text1: "invite_email_referral",
                         onBack: (){
                           Get.to(
                                 () => InviteReferrals(getProfile: getProfile,),
@@ -157,8 +157,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.referral,
-                        text: "Subscribe Newsletter",
-                        text1: "Subscribe To Our Newsletter",
+                        text: "subscribe_newsletter",
+                        text1: "subscribe_to_newsletter",
                         onBack: (){
                           Get.to(
                                 () => SubscribeNewsLetter(),
@@ -172,8 +172,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.del,
-                        text: "Delete Account",
-                        text1: "Delete your account and all the data",
+                        text: "delete_account",
+                        text1: "delete_account_details",
                         onBack: (){
                           Get.to(
                                 () => DeleteAccountPage(),
@@ -187,8 +187,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.out,
-                        text: "Sign Out",
-                        text1: "SIgn out from the app",
+                        text: "sign_out",
+                        text1: "sign_out_details",
                         onBack: () async {
                           await prefs.clear();
                           Get.offAll(
@@ -203,8 +203,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.share,
-                        text: "Share App",
-                        text1: "Share app with your friends",
+                        text: "share_app",
+                        text1: "share_app_details",
                         onBack: (){
                           Get.to(
                                 () => const ShareApp(),
@@ -218,8 +218,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       SettingContainer(
                         image: AppAssets.rate,
-                        text: "Rate App",
-                        text1: "Rate how was your experience",
+                        text: "rate_app",
+                        text1: "rate_experience",
                         onBack: (){
                           // Get.to(
                           //       () => const EditProfile(),

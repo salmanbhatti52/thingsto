@@ -57,14 +57,14 @@ class EmailVerify extends StatelessWidget {
                   height: Get.height * 0.05,
                 ),
                 const MyText(
-                  text: "Verify Email",
+                  text: "verifyEmail",
                 ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
                 const LabelField(
                   text:
-                  'Enter code we have sent to your email address.',
+                  'enterCode',
                   color: AppColor.lightBrown,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -98,9 +98,10 @@ class EmailVerify extends StatelessWidget {
                   height: Get.height * 0.06,
                 ),
                 LargeButton(
-                  text: "Verify",
+                  text: "verify",
                   onTap: () {
                     if (pinController.text.toString() == otp.toString()) {
+                      authController.timer?.cancel();
                       Get.to(
                             () => PasswordChange(email: email.toString(), otp: otp,),
                         duration: const Duration(milliseconds: 350),
@@ -108,8 +109,8 @@ class EmailVerify extends StatelessWidget {
                       );
                     } else {
                       CustomSnackbar.show(
-                        title: 'Error',
-                        message: "Otp do not match.",
+                        title: 'error',
+                        message: "otpDoNotMatch",
                       );
                     }
                   },
@@ -130,7 +131,12 @@ class EmailVerify extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const LabelField(
-                      text: "Didn't Receive? ",
+                      text: "didntReceive",
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.lightBrown,
+                    ),
+                    const LabelField(
+                      text: " ",
                       fontWeight: FontWeight.w400,
                       color: AppColor.lightBrown,
                     ),
@@ -140,11 +146,11 @@ class EmailVerify extends StatelessWidget {
                        authController.resendOtp();
                      },
                      child: const LabelField(
-                       text: "Resend",
+                       text: "resend",
                        color: AppColor.primaryColor,
                      ),
                    ) : const LabelField(
-                     text: "Resend",
+                     text: "resend",
                    ),),
                   ],
                 ),

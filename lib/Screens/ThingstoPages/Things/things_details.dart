@@ -16,6 +16,7 @@ import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/large_Button.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,6 +51,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
   Duration? position;
   AudioPlayer? audioPlayer;
   List<WebViewController> controllers = [];
+  List<YoutubePlayerController> youtubeControllers = [];
   final ThingstoController thingstoController = Get.put(ThingstoController());
 
   void _onMapCreated(GoogleMapController controller) {
@@ -62,57 +64,183 @@ class _ThingsDetailsState extends State<ThingsDetails>
     super.didChangeDependencies();
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (widget.thingsto != null && widget.thingsto!.containsKey('images')) {
+  //     var media = widget.thingsto!['images'];
+  //     if (media is List) {
+  //       for (var item in media) {
+  //         if (item is Map<String, dynamic> && item.containsKey('name')) {
+  //           String iframeHtml = item['name'];
+  //
+  //           // Extract the URL from the src attribute in the iframe
+  //           final urlRegExp = RegExp(r'src="([^"]+)"');
+  //           final match = urlRegExp.firstMatch(iframeHtml);
+  //           String? url = match?.group(1);
+  //
+  //           // Check if a valid URL was extracted and it's a Spotify embed link
+  //           if (url != null && url.contains('https://')) {
+  //             var controller = WebViewController()
+  //               ..setJavaScriptMode(JavaScriptMode.unrestricted)
+  //               ..setNavigationDelegate(
+  //                 NavigationDelegate(
+  //                   onProgress: (int progress) {
+  //                     // Update loading bar.
+  //                   },
+  //                   onPageStarted: (String url) {},
+  //                   onPageFinished: (String url) {},
+  //                   onHttpError: (HttpResponseError error) {},
+  //                   onWebResourceError: (WebResourceError error) {},
+  //                   onNavigationRequest: (NavigationRequest request) {
+  //                     if (request.url.startsWith('https://')) {
+  //                       _launchURL(request.url);
+  //                       return NavigationDecision.prevent;
+  //                     }
+  //                     return NavigationDecision.navigate;
+  //                   },
+  //                 ),
+  //               )
+  //               ..loadRequest(Uri.parse(url));
+  //
+  //             controllers.add(controller);
+  //           }
+  //
+  //           listOfMedia.add({
+  //             'url': '$baseUrlImage${item['name']}',
+  //             'type': item['media_type']
+  //           });
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
+
+    // Check for 'images' array and process it
     if (widget.thingsto != null && widget.thingsto!.containsKey('images')) {
-      var media = widget.thingsto!['images'];
-      if (media is List) {
-        for (var item in media) {
+      var imageMedia = widget.thingsto!['images'];
+      if (imageMedia is List) {
+        for (var item in imageMedia) {
           if (item is Map<String, dynamic> && item.containsKey('name')) {
-            String iframeHtml = item['name'];
+            String imageUrl = item['name'];
+            String mediaType = item['media_type'] ?? 'Image';
 
-            // Extract the URL from the src attribute in the iframe
-            final urlRegExp = RegExp(r'src="([^"]+)"');
-            final match = urlRegExp.firstMatch(iframeHtml);
-            String? url = match?.group(1);
-
-            // Check if a valid URL was extracted and it's a Spotify embed link
-            if (url != null && url.contains('https://')) {
-              var controller = WebViewController()
-                ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                ..setNavigationDelegate(
-                  NavigationDelegate(
-                    onProgress: (int progress) {
-                      // Update loading bar.
-                    },
-                    onPageStarted: (String url) {},
-                    onPageFinished: (String url) {},
-                    onHttpError: (HttpResponseError error) {},
-                    onWebResourceError: (WebResourceError error) {},
-                    onNavigationRequest: (NavigationRequest request) {
-                      if (request.url.startsWith('https://')) {
-                        _launchURL(request.url);
-                        return NavigationDecision.prevent;
-                      }
-                      return NavigationDecision.navigate;
-                    },
-                  ),
-                )
-                ..loadRequest(Uri.parse(url));
-
-              controllers.add(controller);
+            if (mediaType == 'Image') {
+              // Add image data to listOfMedia
+              listOfMedia.add({
+                'url': '$baseUrlImage$imageUrl',
+                'type': mediaType,
+              });
             }
+          }
+        }
+      }
+    }
 
-            listOfMedia.add({
-              'url': '$baseUrlImage${item['name']}',
-              'type': item['media_type']
-            });
+    // Check for 'musics' array and process it
+    if (widget.thingsto != null && widget.thingsto!.containsKey('musics')) {
+      var musicMedia = widget.thingsto!['musics'];
+      if (musicMedia is List) {
+        for (var item in musicMedia) {
+          if (item is Map<String, dynamic> && item.containsKey('name')) {
+            String musicUrl = item['name'];
+            String mediaType = item['media_type'] ?? 'Music';
+
+            if (mediaType == 'Music') {
+              // Check if the URL is an iframe and extract the src if necessary
+              if (musicUrl.contains('<iframe')) {
+                final srcMatch = RegExp(r'src="([^"]+)"').firstMatch(musicUrl);
+                if (srcMatch != null) {
+                  musicUrl = srcMatch.group(1)!;
+                } else {
+                  debugPrint("No src found in iframe: $musicUrl");
+                  continue;
+                }
+              }
+
+              // Handle YouTube Music Links
+              if (musicUrl.contains('youtube.com') || musicUrl.contains('youtu.be')) {
+                final videoId = extractVideoId(musicUrl);
+                if (videoId != null) {
+                  var youtubeController = YoutubePlayerController.fromVideoId(
+                    videoId: videoId,
+                    params: const YoutubePlayerParams(
+                      showFullscreenButton: false,
+                    ),
+                  );
+                  youtubeControllers.add(youtubeController);
+
+                  // listOfMedia.add({
+                  //   'url': "https://www.youtube.com/embed/$videoId",
+                  //   'type': mediaType,
+                  // });
+                }
+              }
+              // Handle Spotify Links
+              else if (musicUrl.contains('spotify.com')) {
+                // Convert to embed URL if needed
+                if (!musicUrl.contains('/embed/')) {
+                  musicUrl = musicUrl.replaceFirst('open.spotify.com/track/', 'open.spotify.com/embed/track/');
+                  musicUrl = musicUrl.split('?')[0]; // Remove query parameters
+                }
+
+                var spotifyController = WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onProgress: (int progress) {},
+                      onPageStarted: (String url) {},
+                      onPageFinished: (String url) {},
+                      onHttpError: (HttpResponseError error) {},
+                      onWebResourceError: (WebResourceError error) {},
+                      onNavigationRequest: (NavigationRequest request) {
+                        if (request.url.startsWith('https://')) {
+                          _launchURL(request.url);
+                          return NavigationDecision.prevent;
+                        }
+                        return NavigationDecision.navigate;
+                      },
+                    ),
+                  )
+                  ..loadRequest(Uri.parse(musicUrl));
+                controllers.add(spotifyController);
+
+                // listOfMedia.add({
+                //   'url': musicUrl,
+                //   'type': mediaType,
+                // });
+              } else {
+                debugPrint("Unsupported music platform or URL: $musicUrl");
+              }
+            }
           }
         }
       }
     }
   }
+
+
+  String? extractVideoId(String url) {
+    // Check for regular YouTube and shortened YouTube URLs
+    final regularRegExp = RegExp(r'(?<=v=|\/)([0-9A-Za-z_-]{11})');
+    final shortenedRegExp = RegExp(r'youtu\.be\/([0-9A-Za-z_-]{11})');
+
+    if (regularRegExp.hasMatch(url)) {
+      return regularRegExp.firstMatch(url)?.group(0);
+    } else if (shortenedRegExp.hasMatch(url)) {
+      return shortenedRegExp.firstMatch(url)?.group(1);
+    } else if (url.contains('embed/')) {
+      return YoutubePlayerController.convertUrlToId(url);
+    }
+
+    return null;
+  }
+
+
 
   Future<void> _launchURL(String urls) async {
     if (Uri.tryParse(urls)?.hasAbsolutePath ?? false) {
@@ -152,9 +280,10 @@ class _ThingsDetailsState extends State<ThingsDetails>
   @override
   void dispose() {
     audioPlayer?.dispose();
-    // Use the available method to stop or reset the WebView
+    for (var controller in youtubeControllers) {
+      controller.close();
+    }
     for (var controller in controllers) {
-      // Example of navigating to a blank page
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.loadRequest(Uri.dataFromString('<html></html>', mimeType: 'text/html'));
       });
@@ -239,36 +368,40 @@ class _ThingsDetailsState extends State<ThingsDetails>
     thingstoController.initializeLikes(widget.thingsto?["likes"]);
     _center = LatLng(latitude, longitude);
     _currentLocation = LatLng(latitude, longitude);
-    List<Widget> mediaSliders = listOfMedia.map((item) {
-      if (item['type'] == 'Image') {
-        return Image.network(
-          item['url'],
-          width: MediaQuery.of(context).size.width,
-          height: 272,
-          fit: BoxFit.fill,
-          loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent? loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            } else {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: AppColor.primaryColor,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            }
-          },
-        );
-      } else if (item['type'] == 'Music') {
-        return Padding(
+    List<Widget> mediaSliders = [];
+    if (listOfMedia.isNotEmpty) {
+      mediaSliders = listOfMedia.map((item) {
+        if (item['type'] == 'Image') {
+          return Image.network(
+            item['url'],
+            width: MediaQuery.of(context).size.width,
+            height: 272,
+            fit: BoxFit.fill,
+            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor.primaryColor,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              }
+            },
+          );
+        }
+        return const SizedBox.shrink();
+      }).toList();
+    } else {
+      mediaSliders.add(
+        Padding(
           padding: const EdgeInsets.all(0.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(0),
-            child: widget.thingsto?['thumbnail'] !=null
+            child: widget.thingsto?['thumbnail'] != null
                 ? Image.network(
               '$baseUrlImage${widget.thingsto?['thumbnail']}',
               width: Get.width,
@@ -282,18 +415,15 @@ class _ThingsDetailsState extends State<ThingsDetails>
                   fit: BoxFit.fill,
                 );
               },
-              loadingBuilder:
-                  (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) {
                   return child;
                 }
                 return Center(
-                  child:
-                  CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     color: AppColor.primaryColor,
                     value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 );
@@ -306,46 +436,9 @@ class _ThingsDetailsState extends State<ThingsDetails>
               fit: BoxFit.fill,
             ),
           ),
-        );
-        //   Center(
-        //   child: Column(
-        //     children: [
-        //       SizedBox(height: Get.height * 0.05,),
-        //       SvgPicture.asset(
-        //         AppAssets.music,
-        //         width: 100,
-        //         height: 100,
-        //       ),
-        //       SizedBox(height: Get.height * 0.05,),
-        //       LabelField(
-        //         text: '${position?.inMinutes ?? 0}:${position?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'} / ${duration?.inMinutes ?? 0}:${duration?.inSeconds.remainder(60).toString().padLeft(2, '0') ?? '00'}',
-        //       ),
-        //       SizedBox(height: Get.height * 0.02,),
-        //       GestureDetector(
-        //           onTap: () {
-        //             _initAudioPlayer(item['url']);
-        //             playPause(item['url']);
-        //           },
-        //           child: isPlayingMap[0] == true
-        //               ? const Icon(
-        //             Icons.stop_circle_sharp,
-        //             size: 55,
-        //             color: AppColor.primaryColor,
-        //           )
-        //               : const Icon(
-        //             Icons.play_arrow_rounded,
-        //             size: 55,
-        //             color: AppColor.primaryColor,
-        //           )
-        //       ),
-        //     ],
-        //   ),
-        // );
-      } else {
-        return Container();
-      }
-    }).toList();
-
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -634,21 +727,48 @@ class _ThingsDetailsState extends State<ThingsDetails>
                    SizedBox(
                 height: Get.height * 0.015,
               ),
-              controllers.isNotEmpty
+              // controllers.isNotEmpty || youtubeControllers != null ||
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+                  widget.thingsto!['musics'][0]["media_type"] == "Music"
                   ? const LabelField(
                 text: "Extract:",
                 fontSize: 20,
               )
                   : const SizedBox(),
-              if (controllers.isNotEmpty) SizedBox(height: Get.height * 0.015),
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+                SizedBox(height: Get.height * 0.015),
               for (int i = 0; i < controllers.length; i++)
+                if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
                     SizedBox(
-                      height: 100,
+                      height:  widget.thingsto!['musics'][0]["media_type"] == "Music" ? 100 : 0,
                       child: WebViewWidget(
                         controller: controllers[i],
                       ),
                     ),
-              if (controllers.isNotEmpty)
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+              if (youtubeControllers != null &&  widget.thingsto!['musics'][0]["media_type"] == "Music")
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                     ListView.builder(
+                        itemCount: youtubeControllers.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: YoutubePlayer(
+                              controller: youtubeControllers[index],
+                              aspectRatio: 16 / 9,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+              if ( widget.thingsto!['musics'][0]["media_type"] == "Music")
                    SizedBox(
                 height: Get.height * 0.015,
               ),

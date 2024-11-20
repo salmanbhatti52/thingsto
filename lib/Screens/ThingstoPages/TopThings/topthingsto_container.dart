@@ -105,7 +105,7 @@ class TopThingstoContainer extends StatelessWidget {
                               interFont: true,
                               maxLIne: 1,
                             ),
-                            topThings['tags'] != null && topThings['tags'].isNotEmpty ||  topThings['location'] != null ? Container(
+                            topThings['tags'] != null && topThings['tags'].isNotEmpty && topThings['tags'][0]["name"] != "" ||  topThings['location'] != null ? Container(
                               width: Get.width * 0.37,
                               height: 55,
                               padding: const EdgeInsets.only(left: 20),

@@ -58,7 +58,7 @@ class ThingsValidate extends StatelessWidget {
         body: Column(
           children: [
             BackButtonBar(
-              title: "Thing Details",
+              title: "thingDetails",
               bottomPad: 15,
               onBack: () {
                 Get.back();
@@ -88,7 +88,9 @@ class ThingsValidate extends StatelessWidget {
                         children: [
                           LabelField(
                             align: TextAlign.left,
-                            text: "Posted By : ${thingsto["users_customers"] is List ? thingsto["users_customers"][0]["sur_name"] : thingsto["users_customers"]["sur_name"]}",
+                            text: "postedBy ${thingsto["users_customers"] is List ?
+                            thingsto["users_customers"][0]["sur_name"] :
+                            thingsto["users_customers"]["sur_name"]}",
                             fontSize: 20,
                           ),
                         ],
@@ -119,7 +121,7 @@ class ThingsValidate extends StatelessWidget {
                                       height: 10,
                                     ),
                                     const LabelField(
-                                      text: "Add Photo/Proof of your thing",
+                                      text: "addPhotoProof",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: AppColor.hintColor,
@@ -147,8 +149,8 @@ class ThingsValidate extends StatelessWidget {
                     thingsto["confirm_by_moderator"] == "No"
                         ? Obx(() => LargeButton(
                       text: thingstoController.isValidate.value
-                          ?  thingstoController.isLoading1.value ? "Please Wait..." : "Validated thing"
-                          : thingstoController.isLoading1.value ? "Please Wait..." : "Validate this thing",
+                          ?  thingstoController.isLoading1.value ? "please_wait" : "validatedThing"
+                          : thingstoController.isLoading1.value ? "please_wait" : "validateThisThing",
                       containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                       onTap: () {
                         !thingstoController.isValidate.value ?  thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto", context) : null;
@@ -156,17 +158,17 @@ class ThingsValidate extends StatelessWidget {
                     ),)
                    :  showValidate
                         ? LargeButton(
-                      text: "Validated thing",
+                      text: "validatedThing",
                       containerColor: const Color(0xffC4A484),
                       onTap: () {},
                     ) :  showValidateButton
                         ? LargeButton(
-                      text: "Things being moderated",
+                      text: "thingsBeingModerated",
                       containerColor: const Color(0xffC4A484),
                       onTap: () {},
                     )
                         : Obx(() => LargeButton(
-                        text: thingstoController.isLoading1.value ? "Please Wait..." : "Validate thing, send to moderation",
+                        text: thingstoController.isLoading1.value ? "please_wait" : "validateThingSendToModeration",
                         onTap: () {
                           thingstoController.moderateCheck.value = true;
                           if (thingstoController.imageFile.value != null) {
@@ -177,7 +179,7 @@ class ThingsValidate extends StatelessWidget {
                             );
                           } else {
                             CustomSnackbar.show(title: "",
-                                message: "Add Photo Proof of your thing");
+                                message: "addPhotoProofOfYourThing");
                           }
                         }),),
                     SizedBox(

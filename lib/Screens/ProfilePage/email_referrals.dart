@@ -27,6 +27,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
   final emailController = TextEditingController();
   final referralController = TextEditingController();
   double percentage = 0.0;
+  String extractedCode = "";
   final SettingController settingController = Get.put(SettingController());
 
   getUrls() {
@@ -44,7 +45,10 @@ class _InviteReferralsState extends State<InviteReferrals> {
     super.initState();
     getUrls();
     settingController.getReferralStats();
-   }
+    String referralLink = widget.getProfile["referral_link"];
+    extractedCode = referralLink.split('/').last;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +57,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Referral",
+            title: "referral",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -75,7 +79,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                         height: Get.height * 0.07,
                       ),
                       const LabelField(
-                        text: 'Email Of Your Friend',
+                        text: 'email_of_your_friend',
                       ),
                       const SizedBox(
                         height: 8,
@@ -91,7 +95,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                         height: 18,
                       ),
                       const LabelField(
-                        text: 'Referral link',
+                        text: 'referral_link',
                       ),
                       const SizedBox(
                         height: 8,
@@ -99,7 +103,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                       CustomTextFormField(
                         controller: referralController,
                         readOnly: true,
-                        hintText: "Mg==",
+                        hintText: extractedCode,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.done,
                         showSuffix: false,
@@ -123,7 +127,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                             return Column(
                               children: [
                                 const LabelField(
-                                  text: "Remaining Sponsorship",
+                                  text: "remaining_sponsorship",
                                   fontSize: 18,
                                 ),
                                 Padding(
@@ -143,9 +147,18 @@ class _InviteReferralsState extends State<InviteReferrals> {
                                     animationDuration: 2000,
                                   ),
                                 ),
-                                LabelField(
-                                  text: "${settingController.totalReferrals.value}/$referralBonusLimit sponsorship used",
-                                  fontSize: 14,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LabelField(
+                                      text: "${settingController.totalReferrals.value}/$referralBonusLimit",
+                                      fontSize: 14,
+                                    ),
+                                    const LabelField(
+                                      text: "sponsorship_used",
+                                      fontSize: 14,
+                                    ),
+                                  ],
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 5.0, bottom: 15),
@@ -162,7 +175,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                                         colorFilter: const ColorFilter.srgbToLinearGamma(),
                                       ),
                                       const LabelField(
-                                        text: "  win",
+                                        text: "win",
                                         fontSize: 14,
                                       ),
                                     ],
@@ -181,7 +194,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         const LabelField(
-                                          text: "Refer and Earn",
+                                          text: "refer_and_earn",
                                           fontSize: 23,
                                           fontWeight: FontWeight.w400,
                                           color: AppColor.lightBrown,
@@ -203,7 +216,7 @@ class _InviteReferralsState extends State<InviteReferrals> {
                                           ],
                                         ),
                                         const LabelField(
-                                          text: "Per sponsor",
+                                          text: "per_sponsor",
                                           fontSize: 20,
                                           fontWeight: FontWeight.w400,
                                           color: AppColor.lightBrown,
@@ -220,23 +233,22 @@ class _InviteReferralsState extends State<InviteReferrals> {
                       Obx(
                         () => settingController.isLoading.value
                             ? LargeButton(
-                                text: "Please Wait...",
+                                text: "please_wait",
                                 onTap: () {},
                               )
                             : LargeButton(
-                                text: "Send",
+                                text: "send",
                                 onTap: () {
                                   if (formKey.currentState!.validate()) {
                                     if (emailController.text.isNotEmpty) {
-                                      referralController.text = "Mg==";
                                       settingController.referralFriend(
                                         emailReferral: emailController.text,
-                                        referralLink: referralController.text,
+                                        referralLink: extractedCode,
                                       );
                                     } else {
                                       CustomSnackbar.show(
-                                        title: 'Error',
-                                        message: "Email is required",
+                                        title: 'error',
+                                        message: "email_required",
                                       );
                                     }
                                   }

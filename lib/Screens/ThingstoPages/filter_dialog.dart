@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -92,7 +93,7 @@ class _FilterDialogState extends State<FilterDialog> {
                             children: [
                               const SizedBox(),
                               const MyText(
-                                text: "Filter",
+                                text: "filter",
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -112,7 +113,7 @@ class _FilterDialogState extends State<FilterDialog> {
                           height: Get.height * 0.022,
                         ),
                         const LabelField(
-                          text: "Filter your results with following parameters",
+                          text: "filterYourResultsWithFollowingParameters",
                           fontWeight: FontWeight.w400,
                           color: AppColor.lightBrown,
                         ),
@@ -147,14 +148,14 @@ class _FilterDialogState extends State<FilterDialog> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const LabelField(
-                                      text: 'Country',
+                                      text: 'country',
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     CustomTextFormField(
                                       controller: countryController,
-                                      hintText: "Select Country",
+                                      hintText: "select_country",
                                       // validator: validateEmail,
                                       keyboardType: TextInputType.name,
                                       textInputAction: TextInputAction.done,
@@ -164,14 +165,14 @@ class _FilterDialogState extends State<FilterDialog> {
                                       height: 15,
                                     ),
                                     const LabelField(
-                                      text: 'City',
+                                      text: 'city',
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     CustomTextFormField(
                                       controller: cityController,
-                                      hintText: "Select City",
+                                      hintText: "select_city",
                                       // validator: validateEmail,
                                       keyboardType: TextInputType.name,
                                       textInputAction: TextInputAction.done,
@@ -181,14 +182,14 @@ class _FilterDialogState extends State<FilterDialog> {
                                       height: 15,
                                     ),
                                     const LabelField(
-                                      text: 'Category',
+                                      text: 'category',
                                     ),
                                     const SizedBox(
                                       height: 8,
                                     ),
                                     CustomDropdown(
                                       itemList: itemListForCategory,
-                                      hintText: "Select Category",
+                                      hintText: "selectCategory",
                                       onChanged: (value) {
                                         setState(() {
                                           selectCategory = value;
@@ -214,14 +215,14 @@ class _FilterDialogState extends State<FilterDialog> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const LabelField(
-                                            text: 'Subcategory',
+                                            text: 'subcategory',
                                           ),
                                           const SizedBox(
                                             height: 8,
                                           ),
                                           CustomDropdown(
                                             itemList: itemListForSubCategory,
-                                            hintText: "Select Subcategory",
+                                            hintText: "selectSubcategory",
                                             onChanged: (value) {
                                               setState(() {
                                                 selectSubCategory = value;
@@ -248,14 +249,14 @@ class _FilterDialogState extends State<FilterDialog> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const LabelField(
-                                            text: 'Sub child category',
+                                            text: 'subChildCategory',
                                           ),
                                           const SizedBox(
                                             height: 8,
                                           ),
                                           CustomDropdown(
                                             itemList: itemListForThirdCategory,
-                                            hintText: "Select Sub child category",
+                                            hintText: "selectSubChildCategory",
                                             onChanged: (value) {
                                               setState(() {
                                                 selectThirdCategory = value;
@@ -271,7 +272,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                         ],
                                       ),
                                     const LabelField(
-                                      text: 'Distance',
+                                      text: 'distance',
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -310,7 +311,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                           width: 10,
                                         ),
                                         const LabelField(
-                                          text: '10 Km',
+                                          text: '10Km',
                                           color: AppColor.lightBrown,
                                         ),
                                       ],
@@ -352,7 +353,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                           width: 10,
                                         ),
                                         const LabelField(
-                                          text: '30 Km',
+                                          text: '30Km',
                                           color: AppColor.lightBrown,
                                         ),
                                       ],
@@ -394,7 +395,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                           width: 10,
                                         ),
                                         const LabelField(
-                                          text: '50 Km',
+                                          text: '50Km',
                                           color: AppColor.lightBrown,
                                         ),
                                       ],
@@ -421,7 +422,7 @@ class _FilterDialogState extends State<FilterDialog> {
                                     },
                                   ),
                                   const LabelField(
-                                    text: 'Show All Items',
+                                    text: 'showAllItems',
                                     align: TextAlign.left,
                                   ),
                                 ],
@@ -446,9 +447,11 @@ class _FilterDialogState extends State<FilterDialog> {
                                       },
                                     ),
                                   ),
-                                  const LabelField(
-                                    text: 'Show only which are not done',
-                                    align: TextAlign.left,
+                                  Expanded(
+                                    child: const LabelField(
+                                      text: 'showOnlyWhichAreNotDone',
+                                      align: TextAlign.left,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -463,13 +466,13 @@ class _FilterDialogState extends State<FilterDialog> {
                               ? LargeButton(
                                 width: Get.width * 0.25,
                                 height : Get.height * 0.05,
-                            text: "Wait...",
+                            text: "wait",
                             onTap: () {},
                           )
                               : LargeButton(
                                 width: Get.width * 0.25,
                                 height : Get.height * 0.05,
-                                text: "Save",
+                                text: "save",
                                 onTap: () {
                                   if (formKey.currentState!.validate()) {
                                     if(checkBoxValue1){
