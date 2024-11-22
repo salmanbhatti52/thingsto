@@ -208,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                             });
                           },
                           width: Get.width * 0.46,
-                          height: Get.height * 0.05,
+                          height: Get.height * 0.06,
                       ),
                       SizedBox(
                         height: Get.height * 0.022,

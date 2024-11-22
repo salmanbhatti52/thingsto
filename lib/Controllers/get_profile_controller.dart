@@ -101,6 +101,7 @@ class GetProfileController extends GetxController {
 
   getThings({required String usersCustomersId}) async {
     try {
+      debugPrint("usersCustomersIdss $usersCustomersId");
       cachedThings.clear();
       isLoading.value = true;
       Map<String, String> data = {

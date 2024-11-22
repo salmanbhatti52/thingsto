@@ -46,6 +46,8 @@ class _LanguageChangePageState extends State<LanguageChangePage>
   bool get isEnglishSelected =>
       box.read('languageCode') == 'en' || box.read('languageCode') == null;
   bool get isFrenchSelected => box.read('languageCode') == 'fr';
+  bool get isSpanishSelected => box.read('languageCode') == 'es';
+  bool get isGermanSelected => box.read('languageCode') == 'de';
 
   void _changeLanguage(String languageCode) {
     _animationController.forward(from: 0);
@@ -193,11 +195,111 @@ class _LanguageChangePageState extends State<LanguageChangePage>
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10),
+                          GestureDetector(
+                            onTap: () {
+                              _changeLanguage('es');
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 26,
+                                    height: 23,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.secondaryColor,
+                                      border: Border.all(
+                                        color: isSpanishSelected
+                                            ? AppColor.primaryColor
+                                            : AppColor.borderColor,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Center(
+                                      child: FadeTransition(
+                                        opacity: isSpanishSelected
+                                            ? _animation
+                                            : const AlwaysStoppedAnimation(0),
+                                        child: const Icon(
+                                          Icons.check_rounded,
+                                          size: 20,
+                                          color: AppColor.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  LabelField(
+                                    text: "Spanish",
+                                    fontSize: 16,
+                                    color: isSpanishSelected
+                                        ? AppColor.labelTextColor
+                                        : AppColor.hintColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          GestureDetector(
+                            onTap: () {
+                              _changeLanguage('de');
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 26,
+                                    height: 23,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.secondaryColor,
+                                      border: Border.all(
+                                        color: isGermanSelected
+                                            ? AppColor.primaryColor
+                                            : AppColor.borderColor,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Center(
+                                      child: FadeTransition(
+                                        opacity: isGermanSelected
+                                            ? _animation
+                                            : const AlwaysStoppedAnimation(0),
+                                        child: const Icon(
+                                          Icons.check_rounded,
+                                          size: 20,
+                                          color: AppColor.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  LabelField(
+                                    text: "German",
+                                    fontSize: 16,
+                                    color: isGermanSelected
+                                        ? AppColor.labelTextColor
+                                        : AppColor.hintColor,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: Get.height * 0.52,
+                      height: Get.height * 0.43,
                     ),
                     LargeButton(
                       text: "apply",

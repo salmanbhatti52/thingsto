@@ -728,7 +728,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                 height: Get.height * 0.015,
               ),
               // controllers.isNotEmpty || youtubeControllers != null ||
-              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics') && widget.thingsto!['musics'] != null && widget.thingsto!['musics'].isNotEmpty)
                   widget.thingsto!['musics'][0]["media_type"] == "Music"
                   ? const LabelField(
                 text: "Extract:",
@@ -738,14 +738,14 @@ class _ThingsDetailsState extends State<ThingsDetails>
               if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
                 SizedBox(height: Get.height * 0.015),
               for (int i = 0; i < controllers.length; i++)
-                if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+                if (widget.thingsto != null && widget.thingsto!.containsKey('musics') && widget.thingsto!['musics'] != null && widget.thingsto!['musics'].isNotEmpty)
                     SizedBox(
                       height:  widget.thingsto!['musics'][0]["media_type"] == "Music" ? 100 : 0,
                       child: WebViewWidget(
                         controller: controllers[i],
                       ),
                     ),
-              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics') && widget.thingsto!['musics'] != null && widget.thingsto!['musics'].isNotEmpty)
               if (youtubeControllers != null &&  widget.thingsto!['musics'][0]["media_type"] == "Music")
                 SingleChildScrollView(
                   child: Column(
@@ -767,7 +767,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     ],
                   ),
                 ),
-              if (widget.thingsto != null && widget.thingsto!.containsKey('musics'))
+              if (widget.thingsto != null && widget.thingsto!.containsKey('musics') && widget.thingsto!['musics'] != null && widget.thingsto!['musics'].isNotEmpty)
               if ( widget.thingsto!['musics'][0]["media_type"] == "Music")
                    SizedBox(
                 height: Get.height * 0.015,
