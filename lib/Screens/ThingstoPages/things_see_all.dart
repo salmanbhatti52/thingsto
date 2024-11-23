@@ -266,7 +266,6 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                                     text: things['tags'][0]['name'],
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 9,
-                                                    maxLIne: 1,
                                                     width: 51,
                                                     height: 20,
                                                     radius: 5,

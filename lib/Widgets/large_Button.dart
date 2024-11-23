@@ -14,7 +14,7 @@ class LargeButton extends StatelessWidget {
   final FontWeight fontWeight;
   final TextAlign align;
   final Function onTap;
-  final int maxLIne;
+  final int maxLine;
   const LargeButton({
     super.key,
     this.width = 346,
@@ -26,7 +26,7 @@ class LargeButton extends StatelessWidget {
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.align = TextAlign.center,
-    this.maxLIne = 3,
+    this.maxLine = 1,
     required this.onTap,
   });
 
@@ -45,14 +45,18 @@ class LargeButton extends StatelessWidget {
           color: containerColor,
         ),
         child: Center(
-          child: Text(
-            maxLines: maxLIne,
-            text.tr(),
-            textAlign: align,
-            style: GoogleFonts.poppins(
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: textColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Text(
+              maxLines: maxLine,
+              overflow: TextOverflow.ellipsis,
+              text.tr(),
+              textAlign: align,
+              style: GoogleFonts.poppins(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: textColor,
+              ),
             ),
           ),
         ),

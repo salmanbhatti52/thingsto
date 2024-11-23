@@ -559,7 +559,6 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                       padding: const EdgeInsets.only(right: 8.0),
                       child: LargeButton(
                         text: tag["name"],
-                        maxLIne: 1,
                         onTap: () {},
                         width: buttonWidth,
                         height: 26,

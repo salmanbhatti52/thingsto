@@ -138,7 +138,6 @@ class TopThingstoContainer extends StatelessWidget {
                                       ? LargeButton(
                                     text: topThings['tags'][0]['name'],
                                     fontWeight: FontWeight.w500,
-                                    maxLIne: 1,
                                     fontSize: 9,
                                     width: 51,
                                     height: 20,
