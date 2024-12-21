@@ -574,6 +574,13 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
               SizedBox(
                 height: Get.height * 0.022,
               ),
+              if(widget.topThingsto?["description"] != null)
+                const LabelField(
+                  text: 'thing_description',
+                  fontSize: 20,
+                ),
+              if(widget.topThingsto?["description"] != null)
+                const SizedBox(height: 5),
               widget.topThingsto?["description"] != null
                   ? LabelField(
                 align: TextAlign.start,
@@ -584,9 +591,10 @@ class _TopThingsDetailsState extends State<TopThingsDetails>
                 maxLIne: 10,
               )
                   : const SizedBox(),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
+              if(widget.topThingsto?["description"] != null)
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
               source.isNotEmpty && source.any((sources) => sources["name"] != "")
                   ? const LabelField(
                 text: "Sources & Links",

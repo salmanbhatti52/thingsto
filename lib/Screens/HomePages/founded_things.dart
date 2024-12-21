@@ -615,6 +615,13 @@ class _FoundedThingsState extends State<FoundedThings>
               SizedBox(
                 height: Get.height * 0.022,
               ),
+              if(widget.foundedThings["description"] != null)
+                const LabelField(
+                  text: 'thing_description',
+                  fontSize: 20,
+                ),
+              if(widget.foundedThings["description"] != null)
+                const SizedBox(height: 5),
               widget.foundedThings["description"] != null
                   ? LabelField(
                 align: TextAlign.start,
@@ -623,10 +630,12 @@ class _FoundedThingsState extends State<FoundedThings>
                 fontWeight: FontWeight.w400,
                 color: AppColor.hintColor,
                 maxLIne: 10,
-              ) : const SizedBox(),
-              SizedBox(
-                height: Get.height * 0.015,
-              ),
+              )
+                  : const SizedBox(),
+              if(widget.foundedThings["description"] != null)
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
               // LabelField(
               //   align: TextAlign.start,
               //   text: widget.foundedThings?["sources_links"],

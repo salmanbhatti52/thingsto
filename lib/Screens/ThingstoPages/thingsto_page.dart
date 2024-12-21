@@ -89,6 +89,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
         );
         thingstoController.getChildCategory(
           categoriesId: categoryId,
+          page: 1,
         );
         thingstoController.topThingsByCategory(
           categoriesId: categoryId.toString(),
@@ -115,6 +116,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
           selectedCategoryId = previousCategory['id']!;
           thingstoController.getChildCategory(
             categoriesId: selectedCategoryId,
+            page: 1
           );
         }
       }
@@ -295,7 +297,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                     isSelect
                         ? Obx(
                             () {
-                              if (thingstoController.isSubLoading.value) {
+                              if (thingstoController.isSubLoading.value && thingstoController.subcategories.isEmpty) {
                                 return Shimmers(
                                   width: Get.width,
                                   height: Get.height * 0.15,
@@ -332,6 +334,13 @@ class _ThingstoPageState extends State<ThingstoPage> {
                                 subcategories: thingstoController.subcategories,
                                 onSelect: selectCategory,
                                 selectedCategoryId: selectedCategoryId,
+                                isLoading: thingstoController.isSubLoading.value,
+                                fetchNextPage: (int page) {
+                                  thingstoController.getChildCategory(
+                                    categoriesId: selectedCategoryId,
+                                    page: page,
+                                  );
+                                },
                               );
                             },
                           )

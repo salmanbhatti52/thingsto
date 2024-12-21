@@ -647,6 +647,13 @@ class _ThingsDetailsState extends State<ThingsDetails>
               SizedBox(
                 height: Get.height * 0.022,
               ),
+              if(widget.thingsto?["description"] != null)
+              const LabelField(
+                text: 'thing_description',
+                fontSize: 20,
+              ),
+              if(widget.thingsto?["description"] != null)
+              const SizedBox(height: 5),
               widget.thingsto?["description"] != null
               ? LabelField(
                 align: TextAlign.start,
@@ -657,6 +664,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
                 maxLIne: 10,
               )
               : const SizedBox(),
+              if(widget.thingsto?["description"] != null)
               SizedBox(
                 height: Get.height * 0.015,
               ),

@@ -83,8 +83,10 @@ class ThingstoController extends GetxController {
 
   getChildCategory({
     required String categoriesId,
+    required int page,
   }) async {
     try {
+      // page == 1 ? isSubLoading.value = true : isSubLoading.value = false;
       isSubLoading.value = true;
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
@@ -95,6 +97,7 @@ class ThingstoController extends GetxController {
         "categories_id": categoriesId,
         "current_longitude":  longitude1.toString(),
         "current_lattitude": latitude1.toString(),
+        "page": page.toString(),
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(categoriesSubApiUrl),
@@ -103,8 +106,14 @@ class ThingstoController extends GetxController {
       var categoryData = jsonDecode(response.body);
       debugPrint("categoryData $categoryData");
       if (categoryData['status'] == 'success') {
-        var data = jsonDecode(response.body)['data'] as List;
-        subcategories.value = data;
+        var data = categoryData['data'] as List;
+        if (page == 1) {
+          // Replace the list for the first page
+          subcategories.value = data;
+        } else {
+          // Append new data for subsequent pages
+          subcategories.addAll(data);
+        }
       } else {
         debugPrint(categoryData['status']);
       }
