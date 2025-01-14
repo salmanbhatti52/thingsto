@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ],
                               ),
-                              child: getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                              child: getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                   ? const Center(
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 40.0),
@@ -178,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                      child: getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                           ? const Shimmers2(
                                         width: 80,
                                         height: 95,
@@ -227,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                          getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                               ? const Shimmers2(
                                             width: 80,
                                             height: 20,
@@ -236,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             text: userName,
                                             fontSize: 16,
                                           ),
-                                          getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                          getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                               ? const Shimmers2(
                                             width: 100,
                                             height: 20,
@@ -247,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             fontWeight: FontWeight.w400,
                                             color: AppColor.lightBrown,
                                           ),
-                                          getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                                          getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                               ? const Shimmers2(
                                             width: 80,
                                             height: 20,
@@ -277,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                            getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                                 ? const SizedBox()
                                 : activeBadge == "None" ? const SizedBox()
                                 : Positioned(
@@ -347,7 +347,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       // itemListForTitle.isEmpty ? "No active title found.." :
                       Obx(() {
-                        return getProfileController.isLoading1.value
+                        return getProfileController.isLoadingTB.value
                             ? Shimmers2(
                           width: Get.width,
                           height: 60,
@@ -377,7 +377,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10,
                       ),
                       Obx(() {
-                        return getProfileController.isLoading1.value
+                        return getProfileController.isLoadingTB.value
                             ? Shimmers2(
                           width: Get.width,
                           height: 60,
@@ -401,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       Obx(() {
                         final quote = getProfileController.cachedGetProfile;
-                        return getProfileController.isLoading.value && getProfileController.cachedGetProfile.isEmpty
+                        return getProfileController.isLoadingProfile.value && getProfileController.cachedGetProfile.isEmpty
                             ? const Shimmers2(
                           width: 1,
                           height: 1,
@@ -435,7 +435,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: Get.height * 0.015,
                       ),
                       Obx(() {
-                          if (getProfileController.isLoading.value && getProfileController.cachedFavorites.isEmpty) {
+                          if (getProfileController.isLoadingFavorite.value && getProfileController.cachedFavorites.isEmpty) {
                             return Shimmers(
                               width: Get.width,
                               height:  Get.height * 0.255,
@@ -484,7 +484,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: Get.height * 0.015,
                       ),
                       Obx(() {
-                          if (getProfileController.isLoading.value && getProfileController.cachedThings.isEmpty) {
+                          if (getProfileController.isLoadingHistory.value && getProfileController.cachedThings.isEmpty) {
                             return Shimmers(
                               width: Get.width,
                               height:  Get.height * 0.255,
@@ -532,7 +532,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       Obx(
                             () {
-                          if (getProfileController.isLoading.value && getProfileController.cachedCategoriesStats.isEmpty) {
+                          if (getProfileController.isLoadingStats.value && getProfileController.cachedCategoriesStats.isEmpty) {
                             return Shimmers(
                               width: Get.width,
                               height:  Get.height * 0.15,

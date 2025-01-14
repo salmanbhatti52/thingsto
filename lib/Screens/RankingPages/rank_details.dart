@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
@@ -263,7 +264,7 @@ class _RankDetailsState extends State<RankDetails> {
                       height: Get.height * 0.015,
                     ),
                     Obx(() {
-                      if (getProfileController.isLoading.value) {
+                      if (getProfileController.isLoadingHistory.value) {
                         return Shimmers(
                           width: Get.width,
                           height:  Get.height * 0.255,
@@ -312,7 +313,7 @@ class _RankDetailsState extends State<RankDetails> {
                     ),
                     Obx(
                           () {
-                        if (getProfileController.isLoading.value && getProfileController.cachedCategoriesStats.isEmpty) {
+                        if (getProfileController.isLoadingStats.value && getProfileController.cachedCategoriesStats.isEmpty) {
                           return Shimmers(
                             width: Get.width,
                             height:  Get.height * 0.15,

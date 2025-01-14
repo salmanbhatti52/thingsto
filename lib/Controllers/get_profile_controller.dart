@@ -9,8 +9,11 @@ import 'package:thingsto/Utills/global.dart';
 import 'package:thingsto/Widgets/snackbar.dart';
 
 class GetProfileController extends GetxController {
-  var isLoading = false.obs;
-  var isLoading1 = false.obs;
+  var isLoadingProfile = false.obs;
+  var isLoadingFavorite = false.obs;
+  var isLoadingHistory = false.obs;
+  var isLoadingStats = false.obs;
+  var isLoadingTB = false.obs;
   var isError = false.obs;
   var getProfile = {}.obs;
   var favorites = [].obs;
@@ -18,7 +21,8 @@ class GetProfileController extends GetxController {
   var categoriesStats = [].obs;
   var getTitles = [].obs;
   var getBadges = [].obs;
-
+  RxInt currentPage = 1.obs;
+  RxBool isLoadingMore = false.obs;
   var cachedGetProfile = {}.obs;
   var isDataLoadedGetProfile = false.obs;
   var cachedFavorites = [].obs;
@@ -32,7 +36,7 @@ class GetProfileController extends GetxController {
 
   getUserProfile({required String usersCustomersId}) async {
     try {
-      isLoading.value = true;
+      isLoadingProfile.value = true;
       Map<String, String> data = {
         "users_customers_id": usersCustomersId,
       };
@@ -54,7 +58,7 @@ class GetProfileController extends GetxController {
       debugPrint("Error $e");
       isError.value = true;
     } finally {
-      isLoading.value = false;
+      isLoadingProfile.value = false;
     }
   }
 
@@ -62,7 +66,7 @@ class GetProfileController extends GetxController {
 
   getFavoritesThings() async {
     try {
-      isLoading.value = true;
+      isLoadingFavorite.value = true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       await GlobalService.getCurrentPosition();
@@ -93,7 +97,7 @@ class GetProfileController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading.value = false;
+      isLoadingFavorite.value = false;
     }
   }
 
@@ -103,7 +107,7 @@ class GetProfileController extends GetxController {
     try {
       debugPrint("usersCustomersIdss $usersCustomersId");
       cachedThings.clear();
-      isLoading.value = true;
+      isLoadingHistory.value = true;
       Map<String, String> data = {
         "users_customers_id": usersCustomersId,
       };
@@ -143,15 +147,16 @@ class GetProfileController extends GetxController {
     } catch (e) {
       debugPrint("Errorsss $e");
     } finally {
-      isLoading.value = false;
+      isLoadingHistory.value = false;
     }
   }
 
   /* Get Favorites Things Function */
 
-  getCategoriesStats({required String usersCustomersId}) async {
+  getCategoriesStats({required String usersCustomersId, int page = 1}) async {
     try {
-      isLoading.value = true;
+      if (page == 1) isLoadingStats.value = true;
+      isLoadingMore.value = page > 1;
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
@@ -161,6 +166,7 @@ class GetProfileController extends GetxController {
         "users_customers_id": usersCustomersId.toString(),
         "current_longitude":  longitude1.toString(),
         "current_lattitude": latitude1.toString(),
+        "page": page.toString(),
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(categoriesAllStatsApiUrl),
@@ -169,9 +175,14 @@ class GetProfileController extends GetxController {
       var statsData = jsonDecode(response.body);
       debugPrint("statsData $statsData");
       if (statsData['status'] == 'success') {
-        var data = jsonDecode(response.body)['data'] as List;
-        categoriesStats.value = data;
-        cachedCategoriesStats.value = data;
+        var newData = jsonDecode(response.body)['data'] as List;
+        if (page == 1) {
+          categoriesStats.value = newData;
+          cachedCategoriesStats.value = newData;
+        } else {
+          categoriesStats.addAll(newData);
+          cachedCategoriesStats.addAll(newData);
+        }
         isDataLoadedCategoriesStats.value = true;
       } else {
         debugPrint(statsData['status']);
@@ -180,7 +191,7 @@ class GetProfileController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading.value = false;
+      isLoadingStats.value = false;
     }
   }
 
@@ -188,7 +199,7 @@ class GetProfileController extends GetxController {
 
   getTitle() async {
     try {
-      isLoading1.value = true;
+      isLoadingTB.value = true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       Map<String, String> data = {
@@ -210,7 +221,7 @@ class GetProfileController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading1.value = false;
+      isLoadingTB.value = false;
     }
   }
 
@@ -218,7 +229,7 @@ class GetProfileController extends GetxController {
 
   getBadge() async {
     try {
-      isLoading1.value = true;
+      isLoadingTB.value = true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       Map<String, String> data = {
@@ -240,7 +251,7 @@ class GetProfileController extends GetxController {
     } catch (e) {
       debugPrint("Error $e");
     } finally {
-      isLoading1.value = false;
+      isLoadingTB.value = false;
     }
   }
 
