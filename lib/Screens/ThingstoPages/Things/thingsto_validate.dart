@@ -17,7 +17,8 @@ import 'things_details.dart';
 class ThingsValidate extends StatelessWidget {
   final Map<String, dynamic> thingsto;
   final String thingstoName;
-  const ThingsValidate({super.key, required this.thingsto, required this.thingstoName,});
+  final String? query;
+  const ThingsValidate({super.key, required this.thingsto, required this.thingstoName, this.query});
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,10 @@ class ThingsValidate extends StatelessWidget {
       onWillPop: (){
         thingstoController.moderateCheck.value = false;
         thingstoController.imageFile.value = null;
+        if(query != null && query!.isNotEmpty){
+          debugPrint("queryyyyy $query");
+          thingstoController.searchMembers(search: "things", name: query.toString());
+        }
         thingstoController.isLoadingLiked.value
             ? WidgetsBinding.instance.addPostFrameCallback((_) {
           thingstoController.getThingsto(checkValue: "No");
@@ -64,6 +69,10 @@ class ThingsValidate extends StatelessWidget {
                 Get.back();
                 thingstoController.moderateCheck.value = false;
                 thingstoController.imageFile.value = null;
+                if(query != null && query!.isNotEmpty){
+                  debugPrint("queryyyyy $query");
+                  thingstoController.searchMembers(search: "things", name: query.toString());
+                }
                 thingstoController.isLoadingLiked.value
                     ? WidgetsBinding.instance.addPostFrameCallback((_) {
                   thingstoController.getThingsto(checkValue: "No");
@@ -154,6 +163,10 @@ class ThingsValidate extends StatelessWidget {
                       containerColor: thingstoController.isValidate.value ? const Color(0xffD4A373) : AppColor.primaryColor,
                       onTap: () {
                         !thingstoController.isValidate.value ?  thingstoController.validateThings(thingsto["things_id"].toString(), "thingsto", context) : null;
+                        if(query != null && query!.isNotEmpty){
+                          debugPrint("queryyyyy $query");
+                          thingstoController.searchMembers(search: "things", name: query.toString());
+                        }
                       },
                     ),)
                    :  showValidate

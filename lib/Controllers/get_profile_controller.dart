@@ -12,13 +12,11 @@ class GetProfileController extends GetxController {
   var isLoadingProfile = false.obs;
   var isLoadingFavorite = false.obs;
   var isLoadingHistory = false.obs;
-  var isLoadingStats = false.obs;
   var isLoadingTB = false.obs;
   var isError = false.obs;
   var getProfile = {}.obs;
   var favorites = [].obs;
   var things = [].obs;
-  var categoriesStats = [].obs;
   var getTitles = [].obs;
   var getBadges = [].obs;
   RxInt currentPage = 1.obs;
@@ -29,8 +27,10 @@ class GetProfileController extends GetxController {
   var isDataLoadedFavorites = false.obs;
   var cachedThings = [].obs;
   var isDataLoadedThings = false.obs;
-  var cachedCategoriesStats = [].obs;
-  var isDataLoadedCategoriesStats = false.obs;
+  RxBool isLoadingStats = false.obs;
+  RxBool isDataLoadedCategoriesStats = false.obs;
+  RxList<Map<String, dynamic>> categoriesStats = <Map<String, dynamic>>[].obs;
+  RxList cachedCategoriesStats = [].obs;
 
   /* Get User Profile Function */
 
@@ -153,47 +153,132 @@ class GetProfileController extends GetxController {
 
   /* Get Favorites Things Function */
 
-  getCategoriesStats({required String usersCustomersId, int page = 1}) async {
+  Future<void> _fetchCategoryPercentage(String usersCustomersId, int categoryId) async {
     try {
-      if (page == 1) isLoadingStats.value = true;
-      isLoadingMore.value = page > 1;
+      const String url = "https://thingsto.fr/portal/api/get_category_stats";
+      Map<String, String> data = {
+        "users_customers_id": usersCustomersId.toString(),
+        "categories_id": categoryId.toString(),
+      };
+
+      final response = await http.post(Uri.parse(url),
+          headers: {'Accept': 'application/json'}, body: data);
+
+      var categoryData = jsonDecode(response.body);
+      debugPrint("Category response data: $categoryData");
+
+      if (categoryData['status'] == 'success') {
+        var categoryDataResponse = categoryData['data'];
+        var percentage = categoryDataResponse['percentage'];
+        var categoryIdFromResponse = categoryDataResponse['categories_id'];
+
+        debugPrint("Category ID: $categoryIdFromResponse, Percentage: $percentage");
+
+        // Safely parse percentage and categoryId
+        double parsedPercentage = double.tryParse(percentage.toString()) ?? 0.0;
+        int parsedCategoryId = int.tryParse(categoryIdFromResponse.toString()) ?? -1;
+
+        // Update category stats with new percentage
+        for (int i = 0; i < categoriesStats.length; i++) {
+          if (categoriesStats[i]['categories_id'] == parsedCategoryId) {
+            categoriesStats[i] = {
+              ...categoriesStats[i], // Keep existing values
+              'percentage': parsedPercentage, // Update the percentage
+              'isLoading': false, // Set loading to false after percentage update
+            };
+          }
+        }
+
+        for (int i = 0; i < cachedCategoriesStats.length; i++) {
+          if (cachedCategoriesStats[i]['categories_id'] == parsedCategoryId) {
+            cachedCategoriesStats[i] = {
+              ...cachedCategoriesStats[i], // Keep existing values
+              'percentage': parsedPercentage, // Update the percentage
+              'isLoading': false, // Set loading to false after percentage update
+            };
+          }
+        }
+
+        categoriesStats.refresh();
+        cachedCategoriesStats.refresh();
+
+        debugPrint("Updated category stats for ID $parsedCategoryId");
+      } else {
+        debugPrint("Error fetching percentage for category $categoryId");
+      }
+    } catch (e) {
+      debugPrint("Error fetching percentage for category $categoryId: $e");
+    }
+  }
+
+  Future<void> getCategoriesStats({required String usersCustomersId}) async {
+    try {
+      isLoadingStats.value = true;
+
+      // Get current location for coordinates
       await GlobalService.getCurrentPosition();
       double latitude1 = GlobalService.currentLocation!.latitude;
       double longitude1 = GlobalService.currentLocation!.longitude;
-      debugPrint('current latitude: $latitude1');
-      debugPrint('current longitude: $longitude1');
+      debugPrint('Current latitude: $latitude1');
+      debugPrint('Current longitude: $longitude1');
+
+      // Prepare data for API call
       Map<String, String> data = {
         "users_customers_id": usersCustomersId.toString(),
-        "current_longitude":  longitude1.toString(),
+        "current_longitude": longitude1.toString(),
         "current_lattitude": latitude1.toString(),
-        "page": page.toString(),
       };
-      debugPrint("data $data");
+
+      debugPrint("Sending data: $data");
+
+      // Fetch categories stats
       final response = await http.post(Uri.parse(categoriesAllStatsApiUrl),
           headers: {'Accept': 'application/json'}, body: data);
 
-      var statsData = jsonDecode(response.body);
-      debugPrint("statsData $statsData");
-      if (statsData['status'] == 'success') {
-        var newData = jsonDecode(response.body)['data'] as List;
-        if (page == 1) {
-          categoriesStats.value = newData;
-          cachedCategoriesStats.value = newData;
-        } else {
-          categoriesStats.addAll(newData);
-          cachedCategoriesStats.addAll(newData);
+      var categoriesData = jsonDecode(response.body);
+      debugPrint("Response data: $categoriesData");
+
+      if (categoriesData['status'] == 'success') {
+        categoriesStats.clear();
+        cachedCategoriesStats.clear();
+        var categoryList = categoriesData['data'] as List;
+
+        // Loop through each category and initialize its stats with default values
+        for (var category in categoryList) {
+          var categoryId = category['categories_id'];
+
+          categoriesStats.add({
+            'name': category['name'],
+            'categories_id': categoryId,
+            'percentage': 0.0,
+            'isLoading': true, // Set loading true while fetching percentage
+          });
         }
+
+        // Cache the initial stats for quick reference
+        cachedCategoriesStats.addAll(categoriesStats);
+
+        // Fetch the percentage for each category
+        for (var category in categoryList) {
+          var categoryId = category['categories_id'];
+          await _fetchCategoryPercentage(usersCustomersId, categoryId);
+        }
+
+        // Set the flag that data is loaded after processing all categories
         isDataLoadedCategoriesStats.value = true;
       } else {
-        debugPrint(statsData['status']);
+        debugPrint("Error fetching categories stats: ${categoriesData['status']}");
         isError.value = true;
       }
     } catch (e) {
-      debugPrint("Error $e");
+      debugPrint("Error fetching categories stats: $e");
+      isError.value = true;
     } finally {
-      isLoadingStats.value = false;
+      isLoadingStats.value = false; // Stop loading indicator
     }
   }
+
+
 
   /* Get Title Function */
 

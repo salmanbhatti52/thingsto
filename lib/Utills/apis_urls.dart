@@ -59,7 +59,9 @@ String categoriesSubApiUrl = '${baseUrl}categories_sub';
 
 String categoriesAllApiUrl = '${baseUrl}categories_all';
 
-String categoriesAllStatsApiUrl = '${baseUrl}categories_all_stats';
+// String categoriesAllStatsApiUrl = '${baseUrl}categories_all_stats';
+
+String categoriesAllStatsApiUrl = '${baseUrl}categories';
 
 String thingsAddApiUrl = '${baseUrl}things_add';
 

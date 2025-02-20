@@ -26,8 +26,6 @@ class _RankPageState extends State<RankPage> {
   final NotificationsController notificationsController = Get.put(NotificationsController());
 
   var itemListForCategory = <String>[];
-  String? selectCategory;
-  String? selectCategoryId;
 
   Future<void> getRankUser() async {
     if (rankingController.isRank.value) {
@@ -39,7 +37,7 @@ class _RankPageState extends State<RankPage> {
   }
 
   Future<void> fetchCategories() async {
-    await addThingsController.getAllCategory();
+    await addThingsController.getAllCategory(forceRefresh: true);
     if (mounted) {
       setState(() {
         itemListForCategory = ['All Categories'] +
@@ -57,8 +55,10 @@ class _RankPageState extends State<RankPage> {
     // TODO: implement initState
     super.initState();
     getRankUser();
-    fetchCategories();
+    // fetchCategories();
     notificationsController.getNotificationsAlert();
+    debugPrint("rankingController.isLoading: ${rankingController.isLoading.value}");
+    debugPrint("rankingController.cachedRankUser: ${rankingController.cachedRankUser}");
   }
 
 
@@ -68,141 +68,147 @@ class _RankPageState extends State<RankPage> {
       backgroundColor: AppColor.whiteColor,
       body: Column(
         children: [
-          Obx(() => HomeBar(
-            title: "ranking",
-            titleTrue: true,
-            icon2: AppAssets.notify,
-            hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
-            onClick: (){
-              Get.to(
-                    () => const NotificationsScreen(),
-                duration: const Duration(milliseconds: 350),
-                transition: Transition.upToDown,
-              );
-            },
-          ),),
-          SizedBox(
-            height: Get.height * 0.02,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const LabelField(
-                      text: "rankBy",
-                      fontSize: 14,
-                    ),
-                    Obx(() {
-                      if (rankingController.isFiltered.value) {
-                        return GestureDetector(
-                          onTap: () {
-                            // getRankUser();
-                            // selectCategory = null;
-                          },
-                          child: const LabelField(
-                            text: "",
-                            fontSize: 14,
-                          ),
-                        );
-                      } else {
-                        return const SizedBox();
-                      }
-                    })
-                  ],
-                ),
-                SizedBox(
-                  height: Get.height * 0.01,
-                ),
-                Obx(() {
-                  return addThingsController.isLoading1.value
-                      ? Shimmers2(
-                    width: Get.width,
-                    height: 50,
-                  ) : CustomDropdown(
-                    itemList: itemListForCategory,
-                    hintText: "allCategories",
-                    onChanged: (value) {
-                      setState(() {
-                        selectCategory = value;
-                        if (selectCategory == "All Categories") {
-                          selectCategoryId = "";
-                          rankingController.getRankUser(filter: "all", categoryId: "");
-                        } else {
-                          selectCategoryId = addThingsController.categoriesAll
-                              .firstWhere((c) => c['name'] == value)['categories_id']
-                              .toString();
-                          rankingController.getRankUser(
-                              filter: "category", categoryId: selectCategoryId.toString());
-                        }
-                        debugPrint("selectCategory: $selectCategory, selectCategoryId: $selectCategoryId");
-                      });
-                    },
-                    initialValue: selectCategory ?? null,
-                  );
-                }),
-                Obx(() {
-                    if (rankingController.isLoading.value && rankingController.cachedRankUser.isEmpty) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 15,),
-                          Shimmers2(
-                            width: Get.width,
-                            height: Get.height * 0.12,
-                          ),
-                          Shimmers2(
-                            width: Get.width,
-                            height: Get.height * 0.12,
-                          ),
-                          Shimmers2(
-                            width: Get.width,
-                            height: Get.height * 0.12,
-                          ),
-                          Shimmers2(
-                            width: Get.width,
-                            height: Get.height * 0.12,
-                          ),
-                          Shimmers2(
-                            width: Get.width,
-                            height: Get.height * 0.12,
-                          ),
-                        ],
-                      );
-                    }
-                    // if (thingstoController.isError.value) {
-                    //   return const Center(
-                    //     child: Padding(
-                    //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                    //       child: LabelField(
-                    //         text: "Things not found",
-                    //         fontSize: 21,
-                    //         color: AppColor.blackColor,
-                    //         interFont: true,
-                    //       ),
-                    //     ),
-                    //   );
-                    // }
-                    if (rankingController.cachedRankUser.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: Get.height * 0.3,),
-                          child: const LabelField(
-                            text: 'rankingNotFound',
-                            fontSize: 18,
-                          ),
-                        ),
-                      );
-                    }
-                    return RankUserList(
-                      rankUser: rankingController.cachedRankUser,
+                Obx(() => HomeBar(
+                  title: "ranking",
+                  titleTrue: true,
+                  icon2: AppAssets.notify,
+                  hasUnreadNotifications: notificationsController.hasUnreadNotifications.value,
+                  onClick: (){
+                    Get.to(
+                          () => const NotificationsScreen(),
+                      duration: const Duration(milliseconds: 350),
+                      transition: Transition.upToDown,
                     );
                   },
-                ),
+                ),),
                 SizedBox(
-                  height: Get.height * 0.01,
+                  height: Get.height * 0.02,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const LabelField(
+                            text: "rankBy",
+                            fontSize: 14,
+                          ),
+                          Obx(() {
+                            if (rankingController.isFiltered.value) {
+                              return GestureDetector(
+                                onTap: () {
+                                  // getRankUser();
+                                  // selectCategory = null;
+                                },
+                                child: const LabelField(
+                                  text: "",
+                                  fontSize: 14,
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          })
+                        ],
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.01,
+                      ),
+                      Obx(() {
+                        return addThingsController.isLoading1.value
+                            ? Shimmers2(width: Get.width, height: 50)
+                            : CustomDropdown(
+                          itemList: ['All Categories'] +
+                              addThingsController.categoriesP0
+                                  .map((c) => c['name'].toString())
+                                  .toSet()
+                                  .toList(),
+                          hintText: "allCategories",
+                          onChanged: (value) {
+                            addThingsController.selectCategory.value = value.toString();
+                            if (addThingsController.selectCategory.value == "All Categories") {
+                              addThingsController.selectCategory.value = "";
+                              rankingController.getRankUser(filter: "all", categoryId: "");
+                            } else {
+                              addThingsController.selectCategoryId.value = addThingsController.categoriesAll
+                                  .firstWhere((c) => c['name'] == value)['categories_id']
+                                  .toString();
+                              rankingController.getRankUser(
+                                  filter: "category", categoryId: addThingsController.selectCategoryId.value!);
+                            }
+                            // debugPrint("Selected: $addThingsController.selectCategory.value, ID: $addThingsController.selectCategoryId.value");
+                          },
+                          initialValue: addThingsController.selectCategory.value,
+                        );
+                      }),
+                      Obx(() {
+                        if (rankingController.isLoading.value && rankingController.cachedRankUser.isEmpty) {
+                          return Column(
+                            children: [
+                              const SizedBox(height: 15,),
+                              Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.12,
+                              ),
+                              Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.12,
+                              ),
+                              Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.12,
+                              ),
+                              Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.12,
+                              ),
+                              Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.12,
+                              ),
+                            ],
+                          );
+                        }
+                        // if (thingstoController.isError.value) {
+                        //   return const Center(
+                        //     child: Padding(
+                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                        //       child: LabelField(
+                        //         text: "Things not found",
+                        //         fontSize: 21,
+                        //         color: AppColor.blackColor,
+                        //         interFont: true,
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
+                        if (rankingController.cachedRankUser.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: Get.height * 0.3,),
+                              child: const LabelField(
+                                text: 'rankingNotFound',
+                                fontSize: 18,
+                              ),
+                            ),
+                          );
+                        }
+                        return RankUserList(
+                          rankUser: rankingController.cachedRankUser,
+                        );
+                      },
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.01,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

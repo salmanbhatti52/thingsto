@@ -249,6 +249,7 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                               ),
                                               child:  Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
                                                   LabelField(
                                                     text: things['location'] ?? "",

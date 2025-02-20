@@ -15,7 +15,7 @@ class CategoryContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 15, right: 10),
-      height: Get.height * 0.15,
+      height: Get.height * 0.16,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ScrollPhysics(),
@@ -85,13 +85,16 @@ class CategoryContainer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10,),
-                LabelField(
-                  text: category['name'],
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  color: AppColor.blackColor,
-                  interFont: true,
-                  maxLIne: 2,
+                SizedBox(
+                  width: Get.width * 0.18,  // Match category box width
+                  child: LabelField(
+                    text: category['name'],
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                    color: AppColor.blackColor,
+                    interFont: true,
+                    maxLIne: 2,
+                  ),
                 ),
               ],
             ),

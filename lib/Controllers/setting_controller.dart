@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
 import 'package:thingsto/Utills/const.dart';
 import 'package:thingsto/Utills/global.dart';
@@ -137,6 +138,11 @@ class SettingController extends GetxController {
         CustomSnackbar.show(
           title: 'success',
           message: referralData['message'],
+        );
+        Get.off(
+              () => const MyBottomNavigationBar(initialIndex: 4,),
+          duration: const Duration(milliseconds: 350),
+          transition: Transition.downToUp,
         );
       } else {
         debugPrint(referralData['message']);

@@ -15,15 +15,20 @@ class NotificationsController extends GetxController {
   var cachedNotifications = [].obs;
   var isDataLoadedNotifications = false.obs;
 
+  var currentPage = 1.obs;
+  var isLastPage = false.obs;
+
   /* Get Notifications Function */
 
-  getNotificationsThings() async {
+  Future<void> getNotificationsThings({bool loadMore = false}) async {
+    if (isLoading.value || isLastPage.value) return;
     try {
       isLoading.value = true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       Map<String, String> data = {
         "users_customers_id": userID.toString(),
+        "page": currentPage.value.toString(),
       };
       debugPrint("data $data");
       final response = await http.post(Uri.parse(notificationsApiUrl),
@@ -33,9 +38,19 @@ class NotificationsController extends GetxController {
       debugPrint("notificationsData $notificationsData");
       if (notificationsData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
-        notifications.value = data;
-        cachedNotifications.value = data;
-        isDataLoadedNotifications.value = true;
+        // notifications.value = data;
+        // cachedNotifications.value = data;
+        // isDataLoadedNotifications.value = true;
+        if (data.isEmpty) {
+          isLastPage.value = true;
+        } else {
+          if (loadMore) {
+            notifications.addAll(data);
+          } else {
+            notifications.value = data;
+          }
+          currentPage.value += 1;
+        }
       } else {
         debugPrint(notificationsData['status']);
         isError.value = true;

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -45,17 +44,17 @@ class _FilterDialogState extends State<FilterDialog> {
   final countryController = TextEditingController();
   final cityController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    addThingsController.getAllCategory().then((_) {
-      itemListForCategory = addThingsController.categoriesP0
-          .map((c) => c['name'].toString())
-          .toSet() // Ensure uniqueness
-          .toList();
-      debugPrint("itemListForCategory: $itemListForCategory");
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   addThingsController.getAllCategory().then((_) {
+  //     itemListForCategory = addThingsController.categoriesP0
+  //         .map((c) => c['name'].toString())
+  //         .toSet() // Ensure uniqueness
+  //         .toList();
+  //     debugPrint("itemListForCategory: $itemListForCategory");
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +187,10 @@ class _FilterDialogState extends State<FilterDialog> {
                                       height: 8,
                                     ),
                                     CustomDropdown(
-                                      itemList: itemListForCategory,
+                                      itemList: addThingsController.categoriesP0
+                                          .map((c) => c['name'].toString())
+                                          .toSet()
+                                          .toList(),
                                       hintText: "selectCategory",
                                       onChanged: (value) {
                                         setState(() {

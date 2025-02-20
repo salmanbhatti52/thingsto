@@ -123,7 +123,9 @@ class _ThingstoPageState extends State<ThingstoPage> {
     });
   }
 
+  String queries = "";
   void filterThings(String query) {
+    queries = query;
     thingstoController.searchMembers(search: "things", name: query);
     // final filteredThings = thingstoController.members.where((thing) {
     //   final thingName = thing['name'].toString().toLowerCase();
@@ -135,7 +137,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
     //   thingstoController.findingThings.assignAll(filteredThings);
     // });
   }
-  
+
   void filterMember(String query) {
     thingstoController.searchMembers(search: "members", name: query);
     // final filteredThings = thingstoController.cachedThingsto.where((thing) {
@@ -634,6 +636,7 @@ class _ThingstoPageState extends State<ThingstoPage> {
                   }
                   return ThingsSearch(
                     memberList: thingstoController.members,
+                    query: queries,
                   );
                 },
                 ),

@@ -7,7 +7,7 @@ import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
 import 'package:thingsto/Widgets/shimmer_effect.dart';
 
-class SummaryStats extends StatefulWidget {
+class SummaryStats extends StatelessWidget {
   final List stats;
   const SummaryStats({
     super.key,
@@ -15,44 +15,8 @@ class SummaryStats extends StatefulWidget {
   });
 
   @override
-  State<SummaryStats> createState() => _SummaryStatsState();
-}
-
-class _SummaryStatsState extends State<SummaryStats> {
-
-  final ScrollController _scrollController = ScrollController();
-  final GetProfileController getProfileController = Get.find();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _onScroll() async {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent &&
-        !getProfileController.isLoadingMore.value) {
-      // Load next page
-      getProfileController.currentPage.value += 1;
-      final prefs = await SharedPreferences.getInstance();
-      String? userID = prefs.getString('users_customers_id');
-      if (userID != null) {
-        getProfileController.getCategoriesStats(
-          usersCustomersId: userID,
-          page: getProfileController.currentPage.value,
-        );
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    debugPrint("categoriesStats ${stats.toString()}");
     // List sortedStats = List.from(stats)
     //   ..sort((a, b) => b['percentage'].toString().compareTo(a['percentage'].toString()));
     // List sortedStats = List.from(stats)
@@ -62,30 +26,23 @@ class _SummaryStatsState extends State<SummaryStats> {
     //     return percentageB.compareTo(percentageA);
     //   });
     return SizedBox(
-      height: Get.height * 0.24,
+      height: Get.height * 0.5,
       child: Obx(() {
         return GridView.builder(
-          controller: _scrollController,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 1 / 0.5,
             mainAxisSpacing: 15,
             crossAxisSpacing: 10,
           ),
-          itemCount: widget.stats.length + (getProfileController.isLoadingMore.value ? 1 : 0),
+          itemCount: stats.length,
           itemBuilder: (BuildContext context, i) {
-            if (i >= widget.stats.length) {
-              return Shimmers(
-                width: Get.width,
-                height:  Get.height * 0.15,
-                width1: Get.width * 0.4,
-                height1: Get.height * 0.08,
-                length: 2,
-              );
-            }
+            final categoriesStats = stats[i];
+            debugPrint("UI rebuilt with latest categoriesStats: $categoriesStats");
 
-            final categoriesStats = widget.stats[i];
-            double percentage = double.parse(categoriesStats['percentage'].toString());
+            // Ensure the percentage is a valid double
+            double percentage = (categoriesStats['percentage'] ?? 0.0).toDouble();
+            bool isLoading = categoriesStats['isLoading'] ?? false;
             return Stack(
               children: [
                 Container(
@@ -113,7 +70,7 @@ class _SummaryStatsState extends State<SummaryStats> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         LabelField(
-                          text: '${categoriesStats['percentage']}%',
+                          text: isLoading ? "..." : '${categoriesStats['percentage']}%',
                           fontSize: 18,
                         ),
                         LabelField(
@@ -129,9 +86,20 @@ class _SummaryStatsState extends State<SummaryStats> {
                   ),
                 ),
                 Positioned(
-                  top: 45,
-                  left: 8,
-                  child: LinearPercentIndicator(
+                  top: isLoading ? 35 : 45,
+                  left: isLoading ? 35 : 8,
+                  child: isLoading
+                      ? const Center(
+                    child: SizedBox(
+                      height: 20.0, // Adjust the size of the loader
+                      width: 20.0, // Adjust the size of the loader
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(AppColor.primaryColor), // Primary color
+                        strokeWidth: 3.0, // Make it thinner for a sleek look
+                      ),
+                    ),
+                  ) // ✅ Show loader
+                      : LinearPercentIndicator(
                     width: MediaQuery.of(context).size.width * 0.36,
                     lineHeight: 4.0,
                     percent: percentage / 100,

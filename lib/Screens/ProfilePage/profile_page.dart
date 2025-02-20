@@ -30,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? selectBadge;
   String? selectTitleId;
   String? selectBadgeId;
+  String? usersCustomersId;
 
   final GetProfileController getProfileController = Get.put(GetProfileController());
 
@@ -43,6 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
     String? userID = prefs.getString('users_customers_id');
+    usersCustomersId = userID.toString();
     if (userID != null) {
       if (getProfileController.isDataLoadedGetProfile.value) {
         getProfileController.getUserProfile(usersCustomersId: userID.toString());

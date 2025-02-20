@@ -49,7 +49,7 @@ class _FindThingsState extends State<FindThings> {
                     controller: controller,
                     hintText: "search_city",
                     keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                     showSuffix: false,
                     onChanged: (value) {
                       setState(() {
@@ -88,36 +88,44 @@ class _FindThingsState extends State<FindThings> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: 100,
-                            child: Obx(() {
-                              return ListView.builder(
+                          Obx(() {
+                            return homeController.filteredCities.isEmpty
+                                ? const SizedBox() // If no items, don't show anything
+                                : Container(
+                              constraints: const BoxConstraints(
+                                maxHeight: 300, // Optional: Prevent excessive height
+                              ),
+                              child: ListView.builder(
+                                shrinkWrap: true, // Adjust height dynamically
+                                // physics: const NeverScrollableScrollPhysics(), // Prevent internal scrolling
                                 itemCount: homeController.filteredCities.length,
                                 itemBuilder: (context, index) {
                                   var city = homeController.filteredCities[index];
                                   return GestureDetector(
-                                      onTap: (){
-                                        setState(() {
-                                          homeController.isLastItemShown.value = false;
-                                          homeController.findingThings.clear();
-                                          selectCity = city['name'];
-                                          selectCityId = city['cities_id'].toString();
-                                          controller.text = city['name'];
-                                          FocusManager.instance.primaryFocus?.unfocus();
-                                        });
-                                      },child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                                    child: LabelField(
-                                      text: city['name'],
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                      align: TextAlign.left,
+                                    onTap: () {
+                                      setState(() {
+                                        homeController.isLastItemShown.value = false;
+                                        homeController.findingThings.clear();
+                                        selectCity = city['name'];
+                                        selectCityId = city['cities_id'].toString();
+                                        controller.text = city['name'];
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                                      child: LabelField(
+                                        text: city['name'],
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15,
+                                        align: TextAlign.left,
+                                      ),
                                     ),
-                                  ));
+                                  );
                                 },
-                              );
-                            }),
-                          ),
+                              ),
+                            );
+                          }),
                         ],
                       );
                     } else {

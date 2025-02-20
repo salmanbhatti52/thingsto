@@ -124,6 +124,7 @@ class ThingstoContainer extends StatelessWidget {
                           ),
                           child:  Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               LabelField(
                                 text: things['location'] ?? "",

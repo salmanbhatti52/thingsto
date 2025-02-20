@@ -15,13 +15,15 @@ import 'package:thingsto/Widgets/snackbar.dart';
 
 class AddThingsController extends GetxController {
   var isLoading1 = false.obs;
+  var selectCategory = 'All Categories'.obs;
+  var selectCategoryId = ''.obs;
   var isLoading = false.obs;
   var isCountryLoading = false.obs;
   var isStateLoading = false.obs;
   var isCityLoading = false.obs;
   var isError = false.obs;
-  var categoriesAll = [].obs;
-  var categoriesP0 = [].obs;
+  var categoriesAll = <Map<String, dynamic>>[].obs;
+  var categoriesP0 = <Map<String, dynamic>>[].obs;
   // var allCountries = [].obs;
   // var allStates = [].obs;
   // var allCities = [].obs;
@@ -248,9 +250,14 @@ class AddThingsController extends GetxController {
 
   /* Get All Category  Function */
 
-  getAllCategory() async {
+  Future<void> getAllCategory({bool forceRefresh = false}) async {
+
+    if (categoriesAll.isNotEmpty && !forceRefresh) {
+      return;
+    }
+
     try {
-      isLoading1.value = true;
+      isLoading1.value = categoriesAll.isNotEmpty ? false : true;
       userID = (prefs.getString('users_customers_id').toString());
       debugPrint("userID $userID");
       await GlobalService.getCurrentPosition();
@@ -272,8 +279,8 @@ class AddThingsController extends GetxController {
       if (allCategoryData['status'] == 'success') {
         var data = jsonDecode(response.body)['data'] as List;
         var filteredData = data.where((category) => category['parent_id'] == 0).toList();
-        categoriesP0.value = filteredData;
-        categoriesAll.value = data;
+        categoriesP0.assignAll(filteredData.cast<Map<String, dynamic>>());
+        categoriesAll.assignAll(data.cast<Map<String, dynamic>>());
       } else {
         debugPrint(allCategoryData['status']);
         isError.value = true;

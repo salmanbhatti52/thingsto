@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:thingsto/Controllers/add_things_controller.dart';
 import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/notifications_controller.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   late LatLng _center = const LatLng(0, 0);
   late LatLng _currentLocation = const LatLng(0, 0);
   final ThingstoController thingstoController = Get.put(ThingstoController());
+  AddThingsController addThingsController = Get.put(AddThingsController());
   final HomeController homeController = Get.put(HomeController());
   // final LanguageController languageController = Get.put(LanguageController());
   final NotificationsController notificationsController = Get.put(NotificationsController());
@@ -67,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    addThingsController.getAllCategory(forceRefresh: true);
     getLocation();
     getName();
     getUserThings();

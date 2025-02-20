@@ -145,7 +145,7 @@ class ThingstoController extends GetxController {
       //   "current_lattitude": latitude1.toString(),
       // };
       // debugPrint("data $data");
-      final response = await http.get(Uri.parse(thingsGetApiUrl));
+      final response = await http.post(Uri.parse(thingsGetApiUrl));
           // headers: {'Accept': 'application/json'}, body: data);
 
       var thingstoData = jsonDecode(response.body);

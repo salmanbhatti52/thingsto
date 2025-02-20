@@ -137,12 +137,16 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   const SizedBox(
                     height: 10,
                   ),
-                  LabelField(
-                    text: category['name'],
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    color: AppColor.blackColor,
-                    interFont: true,
+                  SizedBox(
+                    width: Get.width * 0.3,  // Match category box width
+                    child: LabelField(
+                      text: category['name'],
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: AppColor.blackColor,
+                      interFont: true,
+                      maxLIne: 2,
+                    ),
                   ),
                 ],
               ),
