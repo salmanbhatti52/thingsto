@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
@@ -32,6 +33,7 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
 
   final ThingstoController thingstoController = Get.put(ThingstoController());
   final GetProfileController getProfileController = Get.put(GetProfileController());
+  final TranslationService translationService = Get.put(TranslationService());
   late List thingsto;
   late List<bool> isLoading;
 
@@ -40,6 +42,10 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
     super.initState();
     thingsto = widget.thingsto;
     isLoading = List.filled(thingsto.length, false);
+  }
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
   }
 
   @override
@@ -215,11 +221,32 @@ class _HomeSuggestionsState extends State<HomeSuggestions> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    LabelField(
-                                      text: things['name'],
-                                      fontSize: 12,
-                                      maxLIne: 1,
-                                      color: AppColor.whiteColor,
+                                    FutureBuilder<String>(
+                                      future: translateText(things['name']),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return LabelField(
+                                            text: things['name'],
+                                            fontSize: 12,
+                                            maxLIne: 1,
+                                            color: AppColor.whiteColor,
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return LabelField(
+                                            text: things['name'],
+                                            fontSize: 12,
+                                            maxLIne: 1,
+                                            color: AppColor.whiteColor,
+                                          );
+                                        } else {
+                                          return LabelField(
+                                            text: snapshot.data ?? things['name'],
+                                            fontSize: 12,
+                                            maxLIne: 1,
+                                            color: AppColor.whiteColor,
+                                          );
+                                        }
+                                      },
                                     ),
                                     const SizedBox(
                                       height: 5,

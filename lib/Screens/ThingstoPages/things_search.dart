@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
@@ -10,7 +11,13 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 class ThingsSearch extends StatelessWidget {
   final List memberList;
   final String? query;
-  const ThingsSearch({super.key, required this.memberList, this.query});
+   ThingsSearch({super.key, required this.memberList, this.query});
+
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,11 +139,34 @@ class ThingsSearch extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          LabelField(
-                            text: "${members['name']}".length > 20
-                          ? "${"${members['name']}".substring(0, 20)}..."
-                          : "${members['name']}",
-                            fontSize: 16,
+                          FutureBuilder<String>(
+                            future: translateText("${members['name']}".length > 20
+                                ? "${"${members['name']}".substring(0, 20)}..."
+                                : "${members['name']}"),
+                            builder: (context, snapshot) {
+                              String name = snapshot.data ?? members['name'];
+                              String displayName = name.length > 20 ? "${name.substring(0, 20)}..." : name;
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return LabelField(
+                                  text: "${members['name']}".length > 20
+                                      ? "${"${members['name']}".substring(0, 20)}..."
+                                      : "${members['name']}",
+                                  fontSize: 16,
+                                );
+                              } else if (snapshot.hasError) {
+                                return LabelField(
+                                  text: "${members['name']}".length > 20
+                                      ? "${"${members['name']}".substring(0, 20)}..."
+                                      : "${members['name']}",
+                                  fontSize: 16,
+                                );
+                              } else {
+                                return LabelField(
+                              text: displayName,
+                              fontSize: 16,
+                                );
+                              }
+                            },
                           ),
                           SizedBox(
                             width: Get.width * 0.55,

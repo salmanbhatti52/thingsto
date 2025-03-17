@@ -8,7 +8,10 @@ import 'package:thingsto/Widgets/TextFieldLabel.dart';
 
 class MemberSearch extends StatelessWidget {
   final List memberList;
-  const MemberSearch({super.key, required this.memberList,});
+  const MemberSearch({
+    super.key,
+    required this.memberList,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,81 +40,78 @@ class MemberSearch extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 15.0, top: 10, bottom: 10),
+              padding: const EdgeInsets.only(left: 15.0, top: 10, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   members['profile_picture'] != null
                       ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      '$baseUrlImage${members["profile_picture"]}',
-                      fit: BoxFit.fill,
-                      width: 80,
-                      height: 95,
-                      loadingBuilder: (BuildContext context,
-                          Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return SizedBox(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            '$baseUrlImage${members["profile_picture"]}',
+                            fit: BoxFit.fill,
                             width: 80,
                             height: 95,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppColor.primaryColor,
-                                value: loadingProgress
-                                    .expectedTotalBytes !=
-                                    null
-                                    ? loadingProgress
-                                    .cumulativeBytesLoaded /
-                                    loadingProgress
-                                        .expectedTotalBytes!
-                                    : null,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  )
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else {
+                                return SizedBox(
+                                  width: 80,
+                                  height: 95,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColor.primaryColor,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      AppAssets.dummyPic,
-                      fit: BoxFit.fill,
-                      width: 80,
-                      height: 95,
-                      loadingBuilder: (BuildContext context,
-                          Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return SizedBox(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            AppAssets.dummyPic,
+                            fit: BoxFit.fill,
                             width: 80,
                             height: 95,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppColor.primaryColor,
-                                value: loadingProgress
-                                    .expectedTotalBytes !=
-                                    null
-                                    ? loadingProgress
-                                    .cumulativeBytesLoaded /
-                                    loadingProgress
-                                        .expectedTotalBytes!
-                                    : null,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else {
+                                return SizedBox(
+                                  width: 80,
+                                  height: 95,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColor.primaryColor,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                   SizedBox(
                     width: Get.width * 0.06,
                   ),
@@ -124,11 +124,16 @@ class MemberSearch extends StatelessWidget {
                           text: "${members['sur_name']}",
                           fontSize: 16,
                         ),
-                        LabelField(
-                          text: "${members['email']}",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColor.lightBrown,
+                        SizedBox(
+                          width: Get.width * 0.5,
+                          child: LabelField(
+                            text: "${members['email']}",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            align: TextAlign.left,
+                            maxLIne: 1,
+                            color: AppColor.lightBrown,
+                          ),
                         ),
                         Row(
                           children: [

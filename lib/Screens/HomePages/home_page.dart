@@ -6,6 +6,7 @@ import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Controllers/notifications_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/HomePages/find_things.dart';
@@ -119,6 +120,12 @@ class _HomePageState extends State<HomePage> {
     homeController.showNextThing();
   }
 
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,11 +174,32 @@ class _HomePageState extends State<HomePage> {
                             text: "welcome",
                             fontSize: 18,
                           ),
-                          LabelField(
-                            text: surName.toString(),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.lightBrown,
+                          FutureBuilder<String>(
+                            future: translateText(surName!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return LabelField(
+                                  text: surName.toString(),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.lightBrown,
+                                );
+                              } else if (snapshot.hasError) {
+                                return LabelField(
+                                  text: surName.toString(),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.lightBrown,
+                                );
+                              } else {
+                                return LabelField(
+                                  text: snapshot.data ?? surName!,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.lightBrown,
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),

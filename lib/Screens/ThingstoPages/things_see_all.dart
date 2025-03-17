@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
@@ -35,6 +36,12 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
     setState(() {
       thingstoController.findingThings.assignAll(filteredThings);
     });
+  }
+
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
   }
 
 
@@ -220,16 +227,47 @@ class _ThingsSeeAllState extends State<ThingsSeeAll> {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 20.0),
-                                              child: LabelField(
-                                                text: things['name'],
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15,
-                                                color: AppColor.blackColor,
-                                                interFont: true,
-                                                maxLIne: 1,
-                                              ),
+                                            FutureBuilder<String>(
+                                              future: translateText(things['name']),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(left: 20.0),
+                                                    child: LabelField(
+                                                      text: things['name'],
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: AppColor.blackColor,
+                                                      interFont: true,
+                                                      maxLIne: 1,
+                                                    ),
+                                                  );
+                                                } else if (snapshot.hasError) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(left: 20.0),
+                                                    child: LabelField(
+                                                      text: things['name'],
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: AppColor.blackColor,
+                                                      interFont: true,
+                                                      maxLIne: 1,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(left: 20.0),
+                                                    child: LabelField(
+                                                      text: snapshot.data ?? things['name'],
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: AppColor.blackColor,
+                                                      interFont: true,
+                                                      maxLIne: 1,
+                                                    ),
+                                                  );
+                                                }
+                                              },
                                             ),
                                             things['tags'] != null && things['tags'].isNotEmpty && things['tags'][0]["name"] != "" ||  things['location'] != null
                                                 ? Container(

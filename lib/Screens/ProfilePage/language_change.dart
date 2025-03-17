@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:thingsto/Controllers/language_controller.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
 import 'package:thingsto/Widgets/TextFieldLabel.dart';
@@ -20,6 +21,7 @@ class _LanguageChangePageState extends State<LanguageChangePage>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  final LanguageController languageController = Get.put(LanguageController());
 
   @override
   void initState() {
@@ -55,6 +57,7 @@ class _LanguageChangePageState extends State<LanguageChangePage>
     Locale locale = Locale(languageCode);
     context.setLocale(locale);
     Get.updateLocale(locale);
+    languageController.changeLanguage(languageCode);
     setState(() {});
   }
 

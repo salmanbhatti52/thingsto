@@ -1,131 +1,52 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'dart:ui';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:thingsto/Screens/BottomNavigationBar/bottom_nav_bar.dart';
-import 'package:thingsto/Utills/apis_urls.dart';
-import 'package:thingsto/Utills/const.dart';
-import 'package:thingsto/Widgets/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'translation_service.dart';
 
 class LanguageController extends GetxController {
-  var isLoading = false.obs;
-  var isLoading1 = false.obs;
-  var phrases = {}.obs;
-  var language = <String>[].obs;
-  // var updateLanguage = [].obs;
+  var currentLanguage = 'en'.obs;
+  final TranslationService translationService = TranslationService();
+  var translatedTexts = <String, String>{}.obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   getSystemLanguages();
-  // }
+  @override
+  void onInit() {
+    loadLanguage();
+    super.onInit();
+  }
 
-  /* Get Languages  Function */
+  Future<void> loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? savedLanguage = prefs.getString('selected_language');
 
-  getSystemLanguages() async {
-    try {
-      isLoading.value = true;
-      final response = await http.get(Uri.parse(languagesApiUrl));
-
-      var data = jsonDecode(response.body);
-      debugPrint("languages $data");
-      if (data['status'] == 'success') {
-        language.value = List<String>.from(data['data']);
-      } else {
-        debugPrint(data['status']);
-      }
-    } catch (e) {
-      debugPrint("Error $e");
-    } finally {
-      isLoading.value = false;
+    if (savedLanguage != null) {
+      currentLanguage.value = savedLanguage;
+      Get.updateLocale(Locale(savedLanguage));
     }
   }
 
-  /* Update Languages  Function */
+  Future<void> changeLanguage(String languageCode) async {
+    currentLanguage.value = languageCode; // Update reactive variable
+    Get.updateLocale(Locale(languageCode)); // Update app locale
 
-  updateLanguages({
-    required String language,
-  }) async {
-    try {
-      isLoading1.value = true;
-      userID = (prefs.getString('users_customers_id').toString());
-      debugPrint("userId $userID");
-      Map<String, String> data = {
-        "users_customers_id": userID.toString(),
-        "language": language.toString(),
-      };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(updateProfileLanguageApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_language', languageCode);
 
-      var languageUpdateData = jsonDecode(response.body);
-      debugPrint("languageUpdateData $languageUpdateData");
-      if (languageUpdateData['status'] == 'success') {
-        // var data = jsonDecode(response.body)['data'] as List;
-        // updateLanguage.value = data;
-        CustomSnackbar.show(
-          title: 'success',
-          message: "language_update_success",
-        );
-        Get.off(
-              () => const MyBottomNavigationBar(initialIndex: 0,),
-          duration: const Duration(milliseconds: 350),
-          transition: Transition.downToUp,
-        );
-      } else {
-        debugPrint(languageUpdateData['status']);
-        CustomSnackbar.show(
-          title: 'error',
-          message: "something_wrong",
-        );
-      }
-    } catch (e) {
-      debugPrint("Error $e");
-    } finally {
-      isLoading1.value = false;
+    update(); // Notify listeners
+    print("Language changed to: $languageCode");
+  }
+
+  Future<void> translateApiText(String key, String text) async {
+    if (text.isNotEmpty && !translatedTexts.containsKey(key)) {
+      // String translated = await translationService.translateText(text, currentLanguage.value);
+      // translatedTexts[key] = translated;
+      update(); // Ensure this is called to update the state
     }
   }
 
-  /* Get Language Phrases  Function */
-
-  languagesPhrase({
-    required String language,
-  }) async {
-    try {
-      isLoading1.value = true;
-      Map<String, String> data = {
-        "language": language.toString(),
-      };
-      debugPrint("data $data");
-      final response = await http.post(Uri.parse(languagesPhrasesApiUrl),
-          headers: {'Accept': 'application/json'}, body: data);
-
-      var languagePhraseData = jsonDecode(response.body);
-      debugPrint("languagePhraseData $languagePhraseData");
-      if (languagePhraseData['status'] == 'success') {
-        phrases.value = Map<String, String>.from(languagePhraseData['data']);
-        // CustomSnackbar.show(
-        //   title: 'Success',
-        //   message: "Language applied successfully.",
-        // );
-        //
-        // Get.off(
-        //       () => const MyBottomNavigationBar(initialIndex: 0,),
-        //   duration: const Duration(milliseconds: 350),
-        //   transition: Transition.downToUp,
-        // );
-      } else {
-        debugPrint(languagePhraseData['status']);
-        // CustomSnackbar.show(
-        //   title: 'Error',
-        //   message: "Something wrong",
-        // );
-      }
-    } catch (e) {
-      debugPrint("Error $e");
-    } finally {
-      isLoading1.value = false;
-    }
+  String getTranslatedText(String key, String defaultText) {
+    print("Fetching translation for key: $key, language: ${currentLanguage.value}");
+    print("Translated texts: $translatedTexts");
+    return translatedTexts[key] ?? defaultText;
   }
 
 }

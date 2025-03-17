@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:thingsto/Controllers/get_profile_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
@@ -62,6 +63,12 @@ class _ThingsDetailsState extends State<ThingsDetails>
   void didChangeDependencies() {
     _animateController.dispose();
     super.didChangeDependencies();
+  }
+
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
   }
 
   // @override
@@ -503,12 +510,35 @@ class _ThingsDetailsState extends State<ThingsDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: LabelField(
-                  text: widget.thingsto?["name"],
-                  fontSize: 20,
-                  align: TextAlign.left,
-                ),
+              FutureBuilder<String>(
+                future: translateText(widget.thingsto?["name"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Expanded(
+                      child: LabelField(
+                        text: widget.thingsto?["name"],
+                        fontSize: 20,
+                        align: TextAlign.left,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Expanded(
+                      child: LabelField(
+                        text: widget.thingsto?["name"],
+                        fontSize: 20,
+                        align: TextAlign.left,
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                      child: LabelField(
+                        text: snapshot.data ?? widget.thingsto?["name"],
+                        fontSize: 20,
+                        align: TextAlign.left,
+                      ),
+                    );
+                  }
+                },
               ),
               GestureDetector(
                 onTap: () async {
@@ -628,17 +658,50 @@ class _ThingsDetailsState extends State<ThingsDetails>
                     final textLength = tag["name"].length;
                     final buttonWidth = textLength * 8.0 + 40;
                     return tag["name"] != ""
-                        ? Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: LargeButton(
-                        text: tag["name"],
-                        onTap: () {},
-                        width: buttonWidth,
-                        height: 26,
-                        containerColor: const Color(0xffF2AF70),
-                        fontSize: 12,
-                        radius: 20,
-                      ),
+                        ? FutureBuilder<String>(
+                      future: translateText(tag["name"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        } else {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: snapshot.data ?? tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        }
+                      },
                     ) : const SizedBox();
                   }).toList(),
                 ),
@@ -655,13 +718,38 @@ class _ThingsDetailsState extends State<ThingsDetails>
               if(widget.thingsto?["description"] != null)
               const SizedBox(height: 5),
               widget.thingsto?["description"] != null
-              ? LabelField(
-                align: TextAlign.start,
-                text: widget.thingsto?["description"],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColor.hintColor,
-                maxLIne: 10,
+              ? FutureBuilder<String>(
+                future: translateText(widget.thingsto?["description"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LabelField(
+                      align: TextAlign.start,
+                      text: widget.thingsto?["description"],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  } else if (snapshot.hasError) {
+                    return LabelField(
+                      align: TextAlign.start,
+                      text: widget.thingsto?["description"],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  } else {
+                    return LabelField(
+                      text: snapshot.data ?? widget.thingsto?["description"],
+                      align: TextAlign.start,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  }
+                },
               )
               : const SizedBox(),
               if(widget.thingsto?["description"] != null)
@@ -670,7 +758,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
               ),
               source.isNotEmpty && source.any((sources) => sources["name"] != "")
                   ? const LabelField(
-                text: "Sources & Links",
+                text: "sources_and_links",
                 fontSize: 20,
               )
                   : const SizedBox(),
@@ -781,7 +869,7 @@ class _ThingsDetailsState extends State<ThingsDetails>
               ),
               widget.thingsto?["location"] != null && widget.thingsto?["location"] != ""
                   ? const LabelField(
-                text: "Location",
+                text: "location",
                 fontSize: 20,
               )
                   : const SizedBox(),

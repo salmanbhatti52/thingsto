@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:thingsto/Controllers/notifications_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
@@ -46,6 +47,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +60,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: Column(
         children: [
           BackButtonBar(
-            title: "Notifications",
+            title: "notifications",
             bottomPad: 15,
             onBack: () {
               Get.back();
@@ -91,7 +98,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 if (notificationsController.notifications.isEmpty) {
                   return const Center(
                     child: LabelField(
-                      text: 'Notifications not found',
+                      text: 'notifications_not_found',
                       fontSize: 18,
                     ),
                   );
@@ -191,11 +198,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         fontSize: 19,
                         color: const Color(0xff080C2F),
                       ),
-                      LabelField(
-                        text: notification["message"],
-                        fontWeight: FontWeight.w500,
-                        align: TextAlign.left,
-                        maxLIne: 2,
+                      FutureBuilder<String>(
+                        future: translateText(notification["message"]),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return LabelField(
+                              text: notification["message"],
+                              fontWeight: FontWeight.w500,
+                              align: TextAlign.left,
+                              maxLIne: 2,
+                            );
+                          } else if (snapshot.hasError) {
+                            return LabelField(
+                              text: notification["message"],
+                              fontWeight: FontWeight.w500,
+                              align: TextAlign.left,
+                              maxLIne: 2,
+                            );
+                          } else {
+                            return LabelField(
+                              text: snapshot.data ?? notification["message"],
+                              fontWeight: FontWeight.w500,
+                              align: TextAlign.left,
+                              maxLIne: 2,
+                            );
+                          }
+                        },
                       ),
                       LabelField(
                         text: formattedDate,

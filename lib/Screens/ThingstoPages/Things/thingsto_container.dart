@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Screens/ThingstoPages/Things/thingsto_validate.dart';
@@ -10,7 +11,13 @@ import 'package:thingsto/Widgets/large_Button.dart';
 
 class ThingstoContainer extends StatelessWidget {
   final List thingsto;
-  const ThingstoContainer({super.key, required this.thingsto,});
+  ThingstoContainer({super.key, required this.thingsto,});
+
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,13 +106,38 @@ class ThingstoContainer extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        LabelField(
-                          text: things['name'],
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                          color: AppColor.blackColor,
-                          interFont: true,
-                          maxLIne: 1,
+                        FutureBuilder<String>(
+                          future: translateText(things['name']),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return LabelField(
+                                text: things['name'],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: AppColor.blackColor,
+                                interFont: true,
+                                maxLIne: 1,
+                              );
+                            } else if (snapshot.hasError) {
+                              return LabelField(
+                                text: things['name'],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: AppColor.blackColor,
+                                interFont: true,
+                                maxLIne: 1,
+                              );
+                            } else {
+                              return LabelField(
+                                text: snapshot.data ?? things['name'],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: AppColor.blackColor,
+                                interFont: true,
+                                maxLIne: 1,
+                              );
+                            }
+                          },
                         ),
                         things['tags'] != null && things['tags'].isNotEmpty && things['tags'][0]["name"] != "" || things['location'] != null ? Container(
                           width: Get.width * 0.37,

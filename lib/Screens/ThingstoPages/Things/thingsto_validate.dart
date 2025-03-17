@@ -95,9 +95,14 @@ class ThingsValidate extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 15.0, bottom: 10),
                       child: Row(
                         children: [
+                          const LabelField(
+                            align: TextAlign.left,
+                            text: "postedBy",
+                            fontSize: 20,
+                          ),
                           LabelField(
                             align: TextAlign.left,
-                            text: "postedBy ${thingsto["users_customers"] is List ?
+                            text: " ${thingsto["users_customers"] is List ?
                             thingsto["users_customers"][0]["sur_name"] :
                             thingsto["users_customers"]["sur_name"]}",
                             fontSize: 20,

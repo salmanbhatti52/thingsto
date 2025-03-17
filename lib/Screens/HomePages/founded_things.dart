@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:thingsto/Controllers/home_controller.dart';
 import 'package:thingsto/Controllers/thingsto_controller.dart';
+import 'package:thingsto/Controllers/translation_service.dart';
 import 'package:thingsto/Resources/app_assets.dart';
 import 'package:thingsto/Resources/app_colors.dart';
 import 'package:thingsto/Utills/apis_urls.dart';
@@ -329,6 +330,12 @@ class _FoundedThingsState extends State<FoundedThings>
     });
   }
 
+  final TranslationService translationService = Get.put(TranslationService());
+
+  Future<String> translateText(String text) async {
+    return await translationService.translateText(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     thingstoController.initializeThings(widget.foundedThings["things_validated"]);
@@ -493,9 +500,26 @@ class _FoundedThingsState extends State<FoundedThings>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LabelField(
-                text: widget.foundedThings["name"],
-                fontSize: 20,
+              FutureBuilder<String>(
+                future: translateText(widget.foundedThings["name"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LabelField(
+                      text: widget.foundedThings["name"],
+                      fontSize: 20,
+                    );
+                  } else if (snapshot.hasError) {
+                    return LabelField(
+                      text: widget.foundedThings["name"],
+                      fontSize: 20,
+                    );
+                  } else {
+                    return LabelField(
+                      text: snapshot.data ?? widget.foundedThings["name"],
+                      fontSize: 20,
+                    );
+                  }
+                },
               ),
               GestureDetector(
                 onTap: () {
@@ -514,6 +538,39 @@ class _FoundedThingsState extends State<FoundedThings>
                         color: AppColor.hintColor,
                         maxLIne: 2,
                       ),
+                      // FutureBuilder<String>(
+                      //   future: translateText(thingstoController.totalLikes.value.toString()),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.connectionState == ConnectionState.waiting) {
+                      //       return LabelField(
+                      //         align: TextAlign.start,
+                      //         text: thingstoController.totalLikes.value.toString(),
+                      //         fontWeight: FontWeight.w400,
+                      //         fontSize: 18,
+                      //         color: AppColor.hintColor,
+                      //         maxLIne: 2,
+                      //       );
+                      //     } else if (snapshot.hasError) {
+                      //       return LabelField(
+                      //         align: TextAlign.start,
+                      //         text: thingstoController.totalLikes.value.toString(),
+                      //         fontWeight: FontWeight.w400,
+                      //         fontSize: 18,
+                      //         color: AppColor.hintColor,
+                      //         maxLIne: 2,
+                      //       );
+                      //     } else {
+                      //       return LabelField(
+                      //         align: TextAlign.start,
+                      //         text: snapshot.data ?? thingstoController.totalLikes.value.toString(),
+                      //         fontWeight: FontWeight.w400,
+                      //         fontSize: 18,
+                      //         color: AppColor.hintColor,
+                      //         maxLIne: 2,
+                      //       );
+                      //     }
+                      //   },
+                      // ),
                       const SizedBox(
                         width: 5,
                       ),
@@ -549,14 +606,41 @@ class _FoundedThingsState extends State<FoundedThings>
                     const SizedBox(
                       width: 5,
                     ),
-                    Expanded(
-                      child: LabelField(
-                        align: TextAlign.start,
-                        text: widget.foundedThings["location"],
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.hintColor,
-                        maxLIne: 2,
-                      ),
+                    FutureBuilder<String>(
+                      future: translateText(widget.foundedThings["location"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Expanded(
+                            child: LabelField(
+                              align: TextAlign.start,
+                              text: widget.foundedThings["location"],
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.hintColor,
+                              maxLIne: 2,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Expanded(
+                            child: LabelField(
+                              align: TextAlign.start,
+                              text: widget.foundedThings["location"],
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.hintColor,
+                              maxLIne: 2,
+                            ),
+                          );
+                        } else {
+                          return Expanded(
+                            child: LabelField(
+                              align: TextAlign.start,
+                              text: snapshot.data ?? widget.foundedThings["location"],
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.hintColor,
+                              maxLIne: 2,
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -597,17 +681,50 @@ class _FoundedThingsState extends State<FoundedThings>
                     final textLength = tag["name"].length;
                     final buttonWidth = textLength * 8.0 + 40;
                     return tag["name"] != ""
-                        ? Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: LargeButton(
-                        text: tag["name"],
-                        onTap: () {},
-                        width: buttonWidth,
-                        height: 26,
-                        containerColor: const Color(0xffF2AF70),
-                        fontSize: 12,
-                        radius: 20,
-                      ),
+                        ?  FutureBuilder<String>(
+                      future: translateText(tag["name"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        } else {
+                          return  Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: LargeButton(
+                              text: snapshot.data ?? tag["name"],
+                              onTap: () {},
+                              width: buttonWidth,
+                              height: 26,
+                              containerColor: const Color(0xffF2AF70),
+                              fontSize: 12,
+                              radius: 20,
+                            ),
+                          );
+                        }
+                      },
                     ) : const SizedBox();
                   }).toList(),
                 ),
@@ -623,13 +740,38 @@ class _FoundedThingsState extends State<FoundedThings>
               if(widget.foundedThings["description"] != null)
                 const SizedBox(height: 5),
               widget.foundedThings["description"] != null
-                  ? LabelField(
-                align: TextAlign.start,
-                text: widget.foundedThings["description"],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColor.hintColor,
-                maxLIne: 10,
+                  ? FutureBuilder<String>(
+                future: translateText(widget.foundedThings["description"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LabelField(
+                      align: TextAlign.start,
+                      text: widget.foundedThings["description"],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  } else if (snapshot.hasError) {
+                    return LabelField(
+                      align: TextAlign.start,
+                      text: widget.foundedThings["description"],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  } else {
+                    return LabelField(
+                      text: snapshot.data ?? widget.foundedThings["description"],
+                      align: TextAlign.start,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.hintColor,
+                      maxLIne: 10,
+                    );
+                  }
+                },
               )
                   : const SizedBox(),
               if(widget.foundedThings["description"] != null)
@@ -671,14 +813,39 @@ class _FoundedThingsState extends State<FoundedThings>
                               throw Exception('Invalid URL: $urlStr');
                             }
                           },
-                          child: LabelField(
-                            text: sources["name"],
-                            align: TextAlign.start,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff277CE0),
-                            maxLIne: 1,
-                          ),
+                          child: FutureBuilder<String>(
+                            future: translateText(sources["name"]),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return LabelField(
+                                  text: sources["name"],
+                                  align: TextAlign.start,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff277CE0),
+                                  maxLIne: 1,
+                                );
+                              } else if (snapshot.hasError) {
+                                return LabelField(
+                                  text: sources["name"],
+                                  align: TextAlign.start,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff277CE0),
+                                  maxLIne: 1,
+                                );
+                              } else {
+                                return LabelField(
+                                  text: snapshot.data ?? sources["name"],
+                                  align: TextAlign.start,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff277CE0),
+                                  maxLIne: 1,
+                                );
+                              }
+                            },
+                          )
                         ),
                       );
                     }).toList(),
