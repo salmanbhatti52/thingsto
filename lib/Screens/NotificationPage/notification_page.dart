@@ -116,7 +116,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               
                     int reversedIndex = notificationsController.notifications.length - 1 - i;
                     final notification = notificationsController.notifications[reversedIndex];
-                    return _buildNotificationTile(notification);
+                    return _buildNotificationTile(notificationsController.notifications[i]);
                   },
                 );
               }),

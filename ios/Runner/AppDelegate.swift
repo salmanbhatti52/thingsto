@@ -2,7 +2,7 @@ import UIKit
 import Flutter
 
 @UIApplicationMain
-GMSServices.provideAPIKey("AIzaSyAkRI_T1EHnOseVgjpu5K-9Y91AohRky-U")
+GMSServices.provideAPIKey("AIzaSyCl2SWUH5dWbv7VDO9wKaP335h_aIPmX5w")
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
