@@ -25,6 +25,7 @@ class AuthController extends GetxController {
   var systemIos = ''.obs;
   var systemRef = ''.obs;
   var systemRefLim = ''.obs;
+  var systemRadius = ''.obs;
   var language = ''.obs;
 
   passwordTap() {
@@ -101,6 +102,12 @@ class AuthController extends GetxController {
               await prefs.setString('referral_bonus_limit', systemRefLim.toString());
               referralBonusLimit = prefs.getString('referral_bonus_limit') ?? '';
               debugPrint("referralBonusLimit: $referralBonusLimit");
+              break;
+              case 'radius':
+              systemRadius(setting['description']);
+              await prefs.setString('radius', systemRadius.toString());
+              radius = prefs.getString('radius') ?? '';
+              debugPrint("radius: $radius");
               break;
             default:
               debugPrint("Unknown setting type: ${setting['type']}");

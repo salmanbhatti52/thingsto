@@ -98,3 +98,5 @@ String notificationsUnreadApiUrl = '${baseUrl}notifications_unread';
 String searchMembersApiUrl = '${baseUrl}search_things_and_members';
 
 String getUserThingsApiUrl = '${baseUrl}get_user_validated_things';
+
+String thingsApiUrl = '${baseUrl}things';

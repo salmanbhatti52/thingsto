@@ -31,18 +31,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isDropDownShow = false;
   bool isFind = false;
-  late GoogleMapController mapController;
-  late LatLng _center = const LatLng(0, 0);
-  late LatLng _currentLocation = const LatLng(0, 0);
   final ThingstoController thingstoController = Get.put(ThingstoController());
   AddThingsController addThingsController = Get.put(AddThingsController());
   final HomeController homeController = Get.put(HomeController());
   // final LanguageController languageController = Get.put(LanguageController());
   final NotificationsController notificationsController = Get.put(NotificationsController());
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
 
   getName(){
     surName = prefs.getString('surName');
@@ -66,28 +59,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
     addThingsController.getAllCategory(forceRefresh: true);
-    getLocation();
+    homeController.getLocation();
+    homeController.fetchThings();
     getName();
     getUserThings();
-  }
-
-  getLocation() async {
-    await GlobalService.getCurrentPosition();
-    double latitude1 = GlobalService.currentLocation!.latitude;
-    double longitude1 = GlobalService.currentLocation!.longitude;
-    debugPrint('current latitude: $latitude1');
-    debugPrint('current longitude: $longitude1');
-    double latitude = double.parse(latitude1.toString());
-    double longitude = double.parse(longitude1.toString());
-    setState(() {
-      _center = LatLng(latitude, longitude);
-      _currentLocation = LatLng(latitude, longitude);
-    });
   }
 
   String? selectCategory;
@@ -232,14 +211,14 @@ class _HomePageState extends State<HomePage> {
                         height: Get.height * 0.025,
                       ),
                       LargeButton(
-                          text: "find_me_a_thing",
-                          onTap: () {
-                            setState(() {
-                              isDropDownShow = true;
-                            });
-                          },
-                          width: Get.width * 0.46,
-                          height: Get.height * 0.06,
+                        text: "find_me_a_thing",
+                        onTap: () {
+                          setState(() {
+                            isDropDownShow = true;
+                          });
+                        },
+                        width: Get.width * 0.46,
+                        height: Get.height * 0.06,
                       ),
                       SizedBox(
                         height: Get.height * 0.022,
@@ -254,104 +233,106 @@ class _HomePageState extends State<HomePage> {
                       ),
                       isFind
                           ? Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
-                            child: Obx(
-                                  () {
-                                if (homeController.isLoading.value) {
-                                  return Shimmers(
-                                    width: Get.width,
-                                    height:  Get.height * 0.555,
-                                    width1: Get.width * 0.9,
-                                    height1: Get.height * 0.1,
-                                    length: 1,
-                                  );
-                                }
-                                // if (homeController.errorMsg.value == "error") {
-                                //   return const Center(
-                                //     child: Padding(
-                                //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                                //       child: LabelField(
-                                //         text: "Things not found",
-                                //         fontSize: 21,
-                                //         color: AppColor.blackColor,
-                                //         interFont: true,
-                                //       ),
-                                //     ),
-                                //   );
-                                // }
-                                if (homeController.findingThings.isEmpty) {
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 28.0),
-                                      child: LabelField(
-                                        text: "things_not_found",
-                                        fontSize: 18,
-                                      ),
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Obx(
+                              () {
+                            if (homeController.isLoading.value) {
+                              return Shimmers(
+                                width: Get.width,
+                                height:  Get.height * 0.555,
+                                width1: Get.width * 0.9,
+                                height1: Get.height * 0.1,
+                                length: 1,
+                              );
+                            }
+                            // if (homeController.errorMsg.value == "error") {
+                            //   return const Center(
+                            //     child: Padding(
+                            //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                            //       child: LabelField(
+                            //         text: "Things not found",
+                            //         fontSize: 21,
+                            //         color: AppColor.blackColor,
+                            //         interFont: true,
+                            //       ),
+                            //     ),
+                            //   );
+                            // }
+                            if (homeController.findingThings.isEmpty) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 28.0),
+                                  child: LabelField(
+                                    text: "things_not_found",
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                            // return SizedBox(
+                            //   height: Get.height * 0.5,
+                            //   child: ListView.builder(
+                            //     scrollDirection: Axis.vertical,
+                            //     itemCount: 1,
+                            //     itemBuilder: (BuildContext context, i) {
+                            //       final findingThings = homeController.findingThings[0];
+                            //       return FoundedThings(
+                            //         foundedThings: findingThings,
+                            //       );
+                            //     },
+                            //   ),
+                            // );
+                            final findingThing = homeController.findingThings[homeController.currentItemIndex.value];
+                            return Column(
+                              children: [
+                                !homeController.isLastItemShown.value
+                                    ? FoundedThings(
+                                  foundedThings: findingThing,
+                                ) : const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 28.0),
+                                    child: LabelField(
+                                      text: "no_more_things_found",
+                                      fontSize: 18,
                                     ),
-                                  );
-                                }
-                                // return SizedBox(
-                                //   height: Get.height * 0.5,
-                                //   child: ListView.builder(
-                                //     scrollDirection: Axis.vertical,
-                                //     itemCount: 1,
-                                //     itemBuilder: (BuildContext context, i) {
-                                //       final findingThings = homeController.findingThings[0];
-                                //       return FoundedThings(
-                                //         foundedThings: findingThings,
-                                //       );
-                                //     },
-                                //   ),
-                                // );
-                                final findingThing = homeController.findingThings[homeController.currentItemIndex.value];
-                                return Column(
-                                  children: [
-                                    !homeController.isLastItemShown.value
-                                        ? FoundedThings(
-                                      foundedThings: findingThing,
-                                    ) : const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 28.0),
-                                        child: LabelField(
-                                          text: "no_more_things_found",
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10,),
-                                    if (!homeController.isLastItemShown.value)
-                                    LargeButton(
-                                      text: "show_more_thing",
-                                      onTap: showNextThing,
-                                      width: Get.width * 0.46,
-                                      height: Get.height * 0.05,
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          )
-                      : const SizedBox(),
+                                  ),
+                                ),
+                                const SizedBox(height: 10,),
+                                if (!homeController.isLastItemShown.value)
+                                  LargeButton(
+                                    text: "show_more_thing",
+                                    onTap: showNextThing,
+                                    width: Get.width * 0.46,
+                                    height: Get.height * 0.05,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                      )
+                          : const SizedBox(),
                       SizedBox(
                         height: Get.height * 0.3,
-                        child: _center.latitude != 0 && _center.longitude != 0 // Check if _center is set
-                            ? GoogleMap(
-                          onMapCreated: _onMapCreated,
-                          mapType: MapType.normal,
-
-                          initialCameraPosition: CameraPosition(
-                            target: _center,
-                            zoom: 11.0,
-                          ),
-                          markers: {
-                            Marker(
-                              markerId: const MarkerId("Location"),
-                              position: _currentLocation,
-                            ),
+                        child: Obx(
+                              () {
+                            if (homeController.mapLoading.value ||
+                                (homeController.center.value.latitude == 0 &&
+                                    homeController.center.value.longitude == 0)) {
+                              return Shimmers2(
+                                width: Get.width,
+                                height: Get.height * 0.3,
+                              );
+                            }
+                            return GoogleMap(
+                              onMapCreated: homeController.onMapCreated,
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: homeController.center.value,
+                                zoom: 11.0,
+                              ),
+                              markers: homeController.markers,
+                            );
                           },
-                        ) : Shimmers2(
-                          width: Get.width,
-                          height: Get.height * 0.3,
                         ),
                       ),
                       SizedBox(
@@ -372,43 +353,43 @@ class _HomePageState extends State<HomePage> {
                         height: Get.height * 0.022,
                       ),
                       Obx(() {
-                          if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
-                            return Shimmers(
-                              width: Get.width,
-                              height:  Get.height * 0.255,
-                              width1: Get.width * 0.37,
-                              height1: Get.height * 0.08,
-                              length: 6,
-                            );
-                          }
-                          // if (thingstoController.isError.value) {
-                          //   return const Center(
-                          //     child: Padding(
-                          //       padding: EdgeInsets.symmetric(vertical: 40.0),
-                          //       child: LabelField(
-                          //         text: "Things not found",
-                          //         fontSize: 21,
-                          //         color: AppColor.blackColor,
-                          //         interFont: true,
-                          //       ),
-                          //     ),
-                          //   );
-                          // }
-                          if (thingstoController.cachedThingsto.isEmpty) {
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 28.0),
-                                child: LabelField(
-                                  text: 'things_not_found',
-                                ),
-                              ),
-                            );
-                          }
-                          return HomeSuggestions(
-                            thingsto: thingstoController.cachedThingsto,
-                            thingstoName: "HomeSide",
+                        if (thingstoController.isLoading.value && thingstoController.cachedThingsto.isEmpty) {
+                          return Shimmers(
+                            width: Get.width,
+                            height:  Get.height * 0.255,
+                            width1: Get.width * 0.37,
+                            height1: Get.height * 0.08,
+                            length: 6,
                           );
-                        },
+                        }
+                        // if (thingstoController.isError.value) {
+                        //   return const Center(
+                        //     child: Padding(
+                        //       padding: EdgeInsets.symmetric(vertical: 40.0),
+                        //       child: LabelField(
+                        //         text: "Things not found",
+                        //         fontSize: 21,
+                        //         color: AppColor.blackColor,
+                        //         interFont: true,
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
+                        if (thingstoController.cachedThingsto.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 28.0),
+                              child: LabelField(
+                                text: 'things_not_found',
+                              ),
+                            ),
+                          );
+                        }
+                        return HomeSuggestions(
+                          thingsto: thingstoController.cachedThingsto,
+                          thingstoName: "HomeSide",
+                        );
+                      },
                       ),
                       SizedBox(
                         height: Get.height * 0.022,
@@ -416,8 +397,8 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 15,),
                         padding: const EdgeInsets.only(
-                          left: 15.0,
-                          top: 10.0
+                            left: 15.0,
+                            top: 10.0
                         ),
                         height: Get.height * 0.125,
                         decoration: BoxDecoration(

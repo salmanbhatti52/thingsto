@@ -12,4 +12,5 @@ String? shareAndroid;
 String? shareIos;
 String? referralBonus;
 String? referralBonusLimit;
+String? radius;
 // String? languages;
